@@ -1,3 +1,4 @@
+/* Палитра проекта и базовые переменные */
 :root {
   --bg: #070b10;
   --bg-contrast: #0d1219;
@@ -14,12 +15,14 @@
   font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* Унифицированный box-sizing */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+/* Общие настройки документа */
 html,
 body {
   margin: 0;
@@ -43,23 +46,27 @@ img {
   display: block;
 }
 
+/* Градиентный фон страницы */
 .page {
   position: relative;
   min-height: 100vh;
   background: linear-gradient(160deg, #06080d 0%, #0c151f 45%, #151e29 100%);
 }
 
+/* Контейнер, ограничивающий ширину контента */
 .container {
   width: min(1120px, calc(100% - 48px));
   margin: 0 auto;
 }
 
+/* Главный экран (hero) */
 .hero {
   position: relative;
   padding: 24px 0 160px;
   overflow: hidden;
 }
 
+/* Градиентные пятна позади hero */
 .hero-background .gradient {
   position: absolute;
   inset: 0;
@@ -70,6 +77,7 @@ img {
   animation: gradientPulse 12s ease-in-out infinite alternate;
 }
 
+/* Сетка поверх градиента */
 .hero-background .grid {
   position: absolute;
   inset: 0;
@@ -81,6 +89,7 @@ img {
   z-index: 0;
 }
 
+/* Анимированные светящиеся круги */
 .glow {
   position: absolute;
   width: 28vw;
@@ -106,6 +115,7 @@ img {
   animation-delay: 4s;
 }
 
+/* Навигационная панель */
 .navbar {
   position: sticky;
   top: 16px;
@@ -123,6 +133,7 @@ img {
   z-index: 10;
 }
 
+/* Логотип */
 .brand {
   font-weight: 700;
   font-size: 1.25rem;
@@ -137,6 +148,7 @@ img {
   color: var(--gold);
 }
 
+/* Список ссылок навигации */
 .navbar-links {
   list-style: none;
   display: flex;
@@ -192,6 +204,7 @@ img {
   transition: transform var(--transition);
 }
 
+/* Сетка hero-секции: текст + визуал */
 .hero-content {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -202,12 +215,20 @@ img {
   z-index: 1;
 }
 
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Основной заголовок */
 .hero-text h1 {
   font-size: clamp(2.75rem, 4vw, 3.5rem);
   line-height: 1.15;
   margin: 0 0 24px;
 }
 
+/* Подзаголовок */
 .hero-text p {
   color: var(--text-muted);
   font-size: 1.05rem;
@@ -229,12 +250,15 @@ img {
   font-size: 0.75rem;
 }
 
+/* Кнопки на первом экране */
 .hero-actions {
   display: flex;
   gap: 16px;
   margin-top: 30px;
+  flex-wrap: wrap;
 }
 
+/* Базовый вид кнопок */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -280,6 +304,7 @@ img {
   width: 100%;
 }
 
+/* Карточка оборудования и подсветка */
 .hero-visual {
   position: relative;
   display: flex;
@@ -287,6 +312,7 @@ img {
   justify-content: center;
 }
 
+/* Свечение-подложка за карточкой */
 .orb {
   width: clamp(280px, 32vw, 380px);
   height: clamp(280px, 32vw, 380px);
@@ -298,6 +324,7 @@ img {
   z-index: 0;
 }
 
+/* Карточка оборудования */
 .machine-card {
   position: relative;
   padding: 28px;
@@ -344,6 +371,7 @@ img {
   gap: 8px;
 }
 
+/* Блок с ключевыми цифрами */
 .hero-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -377,12 +405,14 @@ img {
   text-transform: uppercase;
 }
 
+/* Базовые параметры секций */
 .section {
   padding: 120px 0;
   position: relative;
   overflow: hidden;
 }
 
+/* Темный фон для контрастных блоков */
 .section.contrast {
   background: var(--bg-contrast);
 }
@@ -403,6 +433,7 @@ img {
   line-height: 1.6;
 }
 
+/* Карточки преимуществ компании */
 .about-grid {
   margin-top: 60px;
   display: grid;
@@ -428,6 +459,7 @@ img {
   color: var(--text-muted);
 }
 
+/* Панель фильтра каталога */
 .catalog-controls {
   display: flex;
   justify-content: space-between;
@@ -466,6 +498,7 @@ img {
   max-width: 420px;
 }
 
+/* Сетка каталога */
 .catalog-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -482,6 +515,7 @@ img {
   color: var(--text-muted);
 }
 
+/* Продуктовая карточка */
 .product-card {
   position: relative;
   padding: 28px;
@@ -555,6 +589,7 @@ img {
   color: var(--gold);
 }
 
+/* Секция услуг */
 .services-grid {
   display: grid;
   grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
@@ -562,12 +597,14 @@ img {
   align-items: center;
 }
 
+/* Сетка карточек услуг */
 .service-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
 
+/* Карточка услуги */
 .service-card {
   padding: 26px;
   border-radius: 18px;
@@ -585,6 +622,7 @@ img {
   color: var(--text-muted);
 }
 
+/* Call to action перед формой */
 .cta {
   padding: 100px 0;
 }
@@ -605,6 +643,7 @@ img {
   margin-top: 0;
 }
 
+/* Контактная секция: инфо + форма */
 .contact-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -633,6 +672,7 @@ img {
   color: var(--text);
 }
 
+/* Форма обратной связи */
 .contact-form {
   background: var(--surface);
   border-radius: 20px;
@@ -713,6 +753,7 @@ img {
   text-align: center;
 }
 
+/* Нижний колонтитул */
 .footer {
   padding: 64px 0 32px;
   background: #05070c;
@@ -753,6 +794,7 @@ img {
   color: var(--gold);
 }
 
+/* Фиксированные световые формы */
 .floating-shape {
   position: fixed;
   border-radius: 50%;
@@ -786,6 +828,7 @@ img {
   animation-delay: 3s;
 }
 
+/* Система уведомлений */
 .toast {
   position: fixed;
   bottom: 24px;
@@ -829,6 +872,7 @@ img {
   transform: translateY(0);
 }
 
+/* Анимации подсветок */
 @keyframes gradientPulse {
   0% {
     opacity: 0.6;
@@ -874,6 +918,7 @@ img {
   }
 }
 
+/* Брейкпоинт для планшетов */
 @media (max-width: 1024px) {
   .hero {
     padding-bottom: 120px;
@@ -909,9 +954,11 @@ img {
   }
 }
 
+/* Основной мобильный брейкпоинт */
 @media (max-width: 768px) {
   .navbar {
     padding: 16px 20px;
+    gap: 16px;
   }
 
   .navbar-toggle {
@@ -920,7 +967,7 @@ img {
 
   .navbar-links {
     position: absolute;
-    inset: 72px 16px auto 16px;
+    inset: 68px 16px auto 16px;
     padding: 18px 20px;
     flex-direction: column;
     background: rgba(7, 12, 18, 0.95);
@@ -984,5 +1031,162 @@ img {
 
   .floating-shape {
     display: none;
+  }
+}
+
+/* Сильное сжатие (ширина до 600px) */
+@media (max-width: 600px) {
+  .container {
+    width: calc(100% - 32px);
+  }
+
+  .hero-text {
+    align-items: stretch;
+    text-align: left;
+    gap: 16px;
+  }
+
+  .hero {
+    padding: 12px 0 80px;
+  }
+
+  .hero-content {
+    margin-top: 72px;
+    gap: 32px;
+  }
+
+  .hero-text h1 {
+    font-size: clamp(2.1rem, 8vw, 2.5rem);
+  }
+
+  .hero-text p {
+    font-size: 0.96rem;
+    margin: 0;
+  }
+
+  .hero-actions {
+    gap: 12px;
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .btn {
+    padding: 12px 18px;
+    font-size: 0.82rem;
+    width: 100%;
+  }
+
+  .hero-visual {
+    justify-content: center;
+  }
+
+  .machine-card {
+    width: min(300px, 92%);
+    padding: 24px;
+  }
+
+  .section {
+    padding: 80px 0;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(1.8rem, 7vw, 2.2rem);
+  }
+
+  .section-heading p {
+    font-size: 0.95rem;
+  }
+
+  .catalog-controls {
+    width: 100%;
+    gap: 18px;
+  }
+
+  .filter-group select {
+    width: 100%;
+  }
+
+  .filter-hint {
+    font-size: 0.85rem;
+  }
+
+  .product-card {
+    padding: 22px;
+    gap: 16px;
+  }
+
+  .services-grid {
+    gap: 32px;
+  }
+
+  .cta-content {
+    padding: 36px 32px;
+  }
+
+  .contact-form {
+    padding: 26px 24px;
+    gap: 16px;
+  }
+
+  .footer {
+    padding: 48px 0 24px;
+  }
+}
+
+/* Компактные устройства, примерно iPhone SE */
+@media (max-width: 440px) {
+  .navbar {
+    padding: 14px 16px;
+  }
+
+  .navbar-links {
+    inset: 62px 12px auto 12px;
+    padding: 16px 18px;
+  }
+
+  .brand {
+    font-size: 1.1rem;
+  }
+
+  .tagline {
+    font-size: 0.68rem;
+    padding: 5px 12px;
+  }
+
+  .hero-text h1 {
+    font-size: clamp(1.8rem, 8.5vw, 2.05rem);
+    line-height: 1.18;
+  }
+
+  .hero-text p {
+    font-size: 0.9rem;
+  }
+
+  .hero-stats {
+    gap: 16px;
+  }
+
+  .stat {
+    padding: 20px;
+  }
+
+  .catalog-controls {
+    gap: 12px;
+  }
+
+  .contact-form {
+    padding: 22px 20px;
+  }
+
+  .selected-product {
+    font-size: 0.9rem;
+  }
+
+  .hero-visual {
+    margin-top: -12px;
+  }
+
+  .cta-content {
+    padding: 30px 24px;
   }
 }
