@@ -12,4 +12,4 @@ build:
 run:
   command: npm start
   containerPort: 3000
-  scriptName: server.js
+  scriptName: ""
