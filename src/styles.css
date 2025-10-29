@@ -215,31 +215,41 @@ img {
   z-index: 1;
 }
 
+/* Текстовый блок героя */
 .hero-text {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: clamp(16px, 3vw, 24px);
+  max-width: 560px;
+  width: 100%;
 }
 
 /* Основной заголовок */
 .hero-text h1 {
-  font-size: clamp(2.75rem, 4vw, 3.5rem);
-  line-height: 1.15;
-  margin: 0 0 24px;
+  font-size: clamp(2.4rem, 5vw, 3.3rem);
+  line-height: 1.12;
+  margin: 0;
+  word-break: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  overflow-wrap: anywhere;
 }
 
 /* Подзаголовок */
 .hero-text p {
   color: var(--text-muted);
-  font-size: 1.05rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.5;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  overflow-wrap: anywhere;
 }
 
 .tagline {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px;
+  padding: 6px 12px;
   border-radius: 999px;
   background: rgba(201, 168, 87, 0.15);
   border: 1px solid var(--gold-soft);
@@ -247,15 +257,17 @@ img {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
 }
 
 /* Кнопки на первом экране */
 .hero-actions {
   display: flex;
-  gap: 16px;
-  margin-top: 30px;
+  gap: clamp(12px, 4vw, 16px);
+  margin-top: 24px;
   flex-wrap: wrap;
+  width: 100%;
+  max-width: 520px;
 }
 
 /* Базовый вид кнопок */
@@ -346,7 +358,7 @@ img {
   align-items: baseline;
   color: var(--text-muted);
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   letter-spacing: 0.12em;
 }
 
@@ -502,7 +514,7 @@ img {
 .catalog-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
+  gap: 24px;
 }
 
 .product-empty {
@@ -749,7 +761,7 @@ img {
 .form-footnote {
   margin: 0;
   color: var(--text-muted);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   text-align: center;
 }
 
@@ -1044,6 +1056,7 @@ img {
     align-items: stretch;
     text-align: left;
     gap: 16px;
+    max-width: 100%;
   }
 
   .hero {
@@ -1056,11 +1069,12 @@ img {
   }
 
   .hero-text h1 {
-    font-size: clamp(2.1rem, 8vw, 2.5rem);
+    font-size: clamp(1.5rem, 5.5vw, 1.75rem);
+    line-height: 1.22;
   }
 
   .hero-text p {
-    font-size: 0.96rem;
+    font-size: 0.78rem;
     margin: 0;
   }
 
@@ -1071,8 +1085,8 @@ img {
   }
 
   .btn {
-    padding: 12px 18px;
-    font-size: 0.82rem;
+    padding: 11px 15px;
+    font-size: 0.65rem;
     width: 100%;
   }
 
@@ -1149,17 +1163,21 @@ img {
   }
 
   .tagline {
-    font-size: 0.68rem;
-    padding: 5px 12px;
+    font-size: 0.64rem;
+    padding: 5px 10px;
   }
 
   .hero-text h1 {
-    font-size: clamp(1.8rem, 8.5vw, 2.05rem);
+    font-size: clamp(1.25rem, 5vw, 1.45rem);
     line-height: 1.18;
   }
 
+  .hero-text h1 .gold {
+    display: block;
+  }
+
   .hero-text p {
-    font-size: 0.9rem;
+    font-size: 0.72rem;
   }
 
   .hero-stats {
@@ -1183,10 +1201,27 @@ img {
   }
 
   .hero-visual {
-    margin-top: -12px;
+    margin-top: -8px;
   }
 
   .cta-content {
     padding: 30px 24px;
+  }
+}
+
+/* Минимальные ширины (<360px) */
+@media (max-width: 360px) {
+  .tagline {
+    font-size: 0.6rem;
+    padding: 4px 8px;
+  }
+
+  .hero-text h1 {
+    font-size: 1.28rem;
+  }
+
+  .btn {
+    font-size: 0.68rem;
+    padding: 9px 14px;
   }
 }
