@@ -10,3 +10,6 @@ dist
 
 # Runtime data
 data/inquiries.json
+
+# macOS
+.DS_Store
