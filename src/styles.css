@@ -968,9 +968,14 @@ img {
 
 /* Основной мобильный брейкпоинт */
 @media (max-width: 768px) {
+  .container {
+    width: calc(100% - 32px);
+  }
+
   .navbar {
     padding: 16px 20px;
     gap: 16px;
+    width: calc(100% - 32px);
   }
 
   .navbar-toggle {
@@ -1000,15 +1005,49 @@ img {
 
   .hero {
     padding-top: 16px;
+    padding-bottom: 100px;
+  }
+
+  .hero-content {
+    margin-top: 80px;
+    gap: 40px;
+    width: calc(100% - 32px);
+  }
+
+  .hero-text h1 {
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
+    line-height: 1.2;
+  }
+
+  .hero-text p {
+    font-size: 0.9rem;
   }
 
   .hero-actions {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    font-size: 0.75rem;
+    width: 100%;
   }
 
   .hero-stats {
     grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 60px;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
   }
 
   .about-grid {
@@ -1031,6 +1070,15 @@ img {
   .cta-content {
     flex-direction: column;
     align-items: flex-start;
+    padding: 32px 24px;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(1.6rem, 6vw, 2rem);
+  }
+
+  .section-heading p {
+    font-size: 0.95rem;
   }
 
   .footer-grid {
@@ -1069,24 +1117,25 @@ img {
   }
 
   .hero-text h1 {
-    font-size: clamp(1.5rem, 5.5vw, 1.75rem);
-    line-height: 1.22;
+    font-size: clamp(1.4rem, 5vw, 1.6rem);
+    line-height: 1.25;
   }
 
   .hero-text p {
-    font-size: 0.78rem;
+    font-size: 0.85rem;
     margin: 0;
+    line-height: 1.5;
   }
 
   .hero-actions {
-    gap: 12px;
+    gap: 10px;
     width: 100%;
     flex-direction: column;
   }
 
   .btn {
-    padding: 11px 15px;
-    font-size: 0.65rem;
+    padding: 12px 18px;
+    font-size: 0.75rem;
     width: 100%;
   }
 
@@ -1185,7 +1234,15 @@ img {
   }
 
   .stat {
-    padding: 20px;
+    padding: 18px;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
   }
 
   .catalog-controls {
@@ -1197,7 +1254,7 @@ img {
   }
 
   .selected-product {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   .hero-visual {
@@ -1205,23 +1262,81 @@ img {
   }
 
   .cta-content {
-    padding: 30px 24px;
+    padding: 28px 20px;
+  }
+
+  .cta-text h2 {
+    font-size: clamp(1.4rem, 5vw, 1.7rem);
+  }
+
+  .section-heading h2 {
+    font-size: clamp(1.5rem, 6vw, 1.8rem);
+  }
+
+  .section-heading p {
+    font-size: 0.88rem;
   }
 }
 
 /* Минимальные ширины (<360px) */
 @media (max-width: 360px) {
+  .navbar {
+    padding: 12px 14px;
+  }
+
+  .brand {
+    font-size: 1rem;
+  }
+
   .tagline {
     font-size: 0.6rem;
     padding: 4px 8px;
   }
 
+  .hero {
+    padding: 10px 0 70px;
+  }
+
+  .hero-content {
+    margin-top: 60px;
+    gap: 28px;
+  }
+
   .hero-text h1 {
-    font-size: 1.28rem;
+    font-size: clamp(1.2rem, 5vw, 1.4rem);
+    line-height: 1.2;
+  }
+
+  .hero-text p {
+    font-size: 0.8rem;
   }
 
   .btn {
-    font-size: 0.68rem;
-    padding: 9px 14px;
+    font-size: 0.7rem;
+    padding: 11px 16px;
+  }
+
+  .stat-value {
+    font-size: 1.6rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
+
+  .section-heading h2 {
+    font-size: clamp(1.3rem, 6vw, 1.6rem);
+  }
+
+  .section-heading p {
+    font-size: 0.85rem;
+  }
+
+  .product-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .cta-text h2 {
+    font-size: clamp(1.2rem, 5vw, 1.5rem);
   }
 }
