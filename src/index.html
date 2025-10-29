@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ApexGlobal — Асфальтобетонные заводы по всей России</title>
+    <meta
+      name="description"
+      content="ApexGlobal поставляет современные асфальтобетонные заводы и комплексные решения для дорожного строительства по всей России."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero" id="home">
+        <nav class="navbar">
+          <div class="brand">
+            <span class="brand-mark">Apex</span>
+            <span class="brand-mark gold">Global</span>
+          </div>
+          <button class="navbar-toggle" aria-label="Открыть меню">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <ul class="navbar-links">
+            <li><a href="#home">Главная</a></li>
+            <li><a href="#catalog">Каталог</a></li>
+            <li><a href="#about">О компании</a></li>
+            <li><a href="#contact">Контакты</a></li>
+          </ul>
+        </nav>
+
+        <div class="hero-content">
+          <div class="hero-text" data-animate>
+            <span class="tagline">Промышленные решения</span>
+            <h1>
+              Инновационные асфальтобетонные заводы
+              <span class="gold">для масштабных проектов</span>
+            </h1>
+            <p>
+              ApexGlobal проектирует, производит и поставляет асфальтобетонные комплексы по всей России.
+              Полный цикл — от подбора оборудования до пусконаладки и сервисного сопровождения.
+            </p>
+            <div class="hero-actions">
+              <a href="#catalog" class="btn btn-primary">Каталог решений</a>
+              <a href="#contact" class="btn btn-outline">Оставить заявку</a>
+            </div>
+          </div>
+          <div class="hero-visual" data-animate>
+            <div class="orb"></div>
+            <div class="machine-card">
+              <div class="machine-header">
+                <span>Производительность</span>
+                <strong>320 т/ч</strong>
+              </div>
+              <div class="machine-body">
+                <p>Модульная конструкция с энергоэффективной горелкой и системой точного дозирования.</p>
+                <ul>
+                  <li>Удалённый мониторинг</li>
+                  <li>Эко-фильтрация</li>
+                  <li>Сервис 24/7</li>
+                </ul>
+              </div>
+              <div class="machine-footer">
+                <span>Премиальная серия ApexCore</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-stats" data-animate>
+          <div class="stat">
+            <span class="stat-value">15+</span>
+            <span class="stat-label">лет опыта</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">70</span>
+            <span class="stat-label">установленных комплексов</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">24/7</span>
+            <span class="stat-label">Техподдержка</span>
+          </div>
+        </div>
+
+        <div class="hero-background">
+          <div class="gradient"></div>
+          <div class="grid"></div>
+          <div class="glow glow-one"></div>
+          <div class="glow glow-two"></div>
+        </div>
+      </header>
+
+      <main>
+        <section class="section" id="about">
+          <div class="container section-heading" data-animate>
+            <span class="tagline">О компании</span>
+            <h2>Технологический партнер дорожных строителей России</h2>
+            <p>
+              Мы объединяем производство, инженерию и сервис, чтобы внедрять современные комплексы для
+              строительства и ремонта дорог в суровых климатических условиях.
+            </p>
+          </div>
+          <div class="container about-grid">
+            <article class="about-card" data-animate>
+              <h3>Производственные мощности</h3>
+              <p>
+                Локализованные заводы и складские площадки позволяют поддерживать стабильные сроки поставки
+                и оперативно реагировать на запросы клиентов.
+              </p>
+            </article>
+            <article class="about-card" data-animate>
+              <h3>Инжиниринг и модернизация</h3>
+              <p>
+                Команда инженеров ApexGlobal проектирует кастомные решения, адаптированные под региональные
+                требования и задачи конкретного производства.
+              </p>
+            </article>
+            <article class="about-card" data-animate>
+              <h3>Сервисное сопровождение</h3>
+              <p>
+                Выездные бригады, удалённый мониторинг и запас ключевых узлов обеспечивают бесперебойную
+                работу комплекса на всем жизненном цикле.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section contrast" id="catalog">
+          <div class="container section-heading" data-animate>
+            <span class="tagline">Каталог</span>
+            <h2>Выберите оптимальную конфигурацию</h2>
+            <p>Модульные, стационарные и мобильные решения с производительностью от 120 до 400 т/ч.</p>
+          </div>
+
+          <div class="container catalog-controls" data-animate>
+            <div class="filter-group">
+              <label for="capacity-filter">Производительность</label>
+              <select id="capacity-filter">
+                <option value="all">Все</option>
+                <option value="low">до 180 т/ч</option>
+                <option value="medium">180—280 т/ч</option>
+                <option value="high">свыше 280 т/ч</option>
+              </select>
+            </div>
+            <div class="filter-hint">
+              Выберите комплекс, чтобы прикрепить его к заявке. В каталоге доступны расширенные спецификации.
+            </div>
+          </div>
+
+          <div class="container catalog-grid" data-catalog-grid></div>
+        </section>
+
+        <section class="section" id="services">
+          <div class="container services-grid">
+            <div class="services-intro" data-animate>
+              <span class="tagline">Комплексные услуги</span>
+              <h2>От разработки проекта до эксплуатации</h2>
+              <p>
+                ApexGlobal — единая команда инженеров, технологов и сервисных специалистов, которая берёт на себя полноценный цикл внедрения производственных комплексов.
+              </p>
+            </div>
+            <div class="service-list">
+              <article class="service-card" data-animate>
+                <h3>Проектирование площадки</h3>
+                <p>Подготовка инженерных расчётов, планировки и схем подключения коммуникаций.</p>
+              </article>
+              <article class="service-card" data-animate>
+                <h3>Логистика «под ключ»</h3>
+                <p>Комплектация поставки, доставки в любую точку России, монтаж и пусконаладка.</p>
+              </article>
+              <article class="service-card" data-animate>
+                <h3>Диспетчеризация</h3>
+                <p>Интеграция с системами управления, аналитика KPI, удалённое обновление ПО.</p>
+              </article>
+              <article class="service-card" data-animate>
+                <h3>Обучение и сервис</h3>
+                <p>Обучение персонала, регламентные работы, круглосуточная поддержка и выездные бригады.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="section contrast cta" id="cta">
+          <div class="container cta-content" data-animate>
+            <div class="cta-text">
+              <h2>Получите технико-экономическое обоснование проекта</h2>
+              <p>
+                Отправьте исходные данные — подготовим расчёт производительности, окупаемости и график
+                развертывания мощностей.
+              </p>
+            </div>
+            <a href="#contact" class="btn btn-primary">Запросить расчёт</a>
+          </div>
+        </section>
+
+        <section class="section" id="contact">
+          <div class="container contact-grid">
+            <div class="contact-info" data-animate>
+              <span class="tagline">Контакты</span>
+              <h2>Свяжитесь с ApexGlobal</h2>
+              <p>Ответим на вопросы, подготовим спецификацию и согласуем этапы внедрения.</p>
+              <ul class="contact-list">
+                <li>
+                  <span class="label">Штаб-квартира</span>
+                  <span class="value">г. Москва, ул. Техническая, 14</span>
+                </li>
+                <li>
+                  <span class="label">Телефон</span>
+                  <a href="tel:+78001234567" class="value">+7 (800) 123-45-67</a>
+                </li>
+                <li>
+                  <span class="label">E-mail</span>
+                  <a href="mailto:sales@apexglobal.ru" class="value">sales@apexglobal.ru</a>
+                </li>
+                <li>
+                  <span class="label">График</span>
+                  <span class="value">Пн–Пт, 09:00–19:00 (МСК)</span>
+                </li>
+              </ul>
+            </div>
+            <div class="contact-form-wrapper" data-animate>
+              <form id="inquiry-form" class="contact-form">
+                <div class="form-heading">
+                  <h3>Конфигуратор заявки</h3>
+                  <p>Выберите комплекс в каталоге или укажите требования вручную.</p>
+                </div>
+                <div class="form-group">
+                  <label for="name">Имя и компания *</label>
+                  <input type="text" id="name" name="name" placeholder="Иван Петров, ООО «Трасса»" required />
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="phone">Телефон *</label>
+                    <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" placeholder="sales@company.ru" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Выбранный комплекс</label>
+                  <div class="selected-product" id="selected-product">
+                    <strong id="selected-product-name">Не выбран</strong>
+                    <span id="selected-product-capacity"></span>
+                  </div>
+                  <input type="hidden" id="productId" name="productId" />
+                </div>
+                <div class="form-group">
+                  <label for="message">Комментарий</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows="4"
+                    placeholder="Расскажите о задачах, планируемых объёмах и требованиях к автоматизации."
+                  ></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary full-width">Отправить заявку</button>
+                <p class="form-footnote">
+                  Нажимая «Отправить», вы соглашаетесь на обработку персональных данных и условия политики
+                  конфиденциальности.
+                </p>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="container footer-grid">
+          <div>
+            <div class="brand footer-brand">
+              <span class="brand-mark">Apex</span>
+              <span class="brand-mark gold">Global</span>
+            </div>
+            <p>© 2024 ApexGlobal. Поставка асфальтобетонных заводов и промышленных решений по всей России.</p>
+          </div>
+          <div>
+            <h4>О компании</h4>
+            <ul>
+              <li><a href="#about">Наша экспертиза</a></li>
+              <li><a href="#services">Услуги</a></li>
+              <li><a href="#catalog">Каталог</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Связаться</h4>
+            <ul>
+              <li><a href="tel:+78001234567">+7 (800) 123-45-67</a></li>
+              <li><a href="mailto:sales@apexglobal.ru">sales@apexglobal.ru</a></li>
+              <li><a href="#contact">Форма обратной связи</a></li>
+            </ul>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <div class="floating-shape shape-one"></div>
+    <div class="floating-shape shape-two"></div>
+    <div class="floating-shape shape-three"></div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
