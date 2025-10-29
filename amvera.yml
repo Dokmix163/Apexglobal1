@@ -1,15 +1,19 @@
----
-version: null
+version: 1
 meta:
   environment: node
   toolchain:
     name: npm
-    version: 18
+    version: "18"
 build:
   skip: false
+  command: npm run build
   artifacts:
     dist: dist
 run:
   command: npm start
   containerPort: 3000
-  scriptName: ""
+  env:
+    NODE_ENV: production
+  persistence:
+    - mountPath: data
+      size: 1Gi
