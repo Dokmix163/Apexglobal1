@@ -12,6 +12,68 @@ const STATIC_DIR = path.join(ROOT, NODE_ENV === 'production' ? 'dist' : 'src');
 const DATA_DIR = path.join(ROOT, 'data');
 const INQUIRIES_FILE = path.join(DATA_DIR, 'inquiries.json');
 
+// Простая in-memory защита: лимит запросов на IP
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 минут
+const RATE_LIMIT_MAX = 20; // максимум 20 запросов за окно на IP
+const rateStore = new Map(); // ip -> { count, windowStart }
+
+function getClientIp(req) {
+  const xfwd = req.headers['x-forwarded-for'];
+  if (typeof xfwd === 'string' && xfwd.length > 0) {
+    return xfwd.split(',')[0].trim();
+  }
+  return req.socket.remoteAddress || 'unknown';
+}
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  const entry = rateStore.get(ip) || { count: 0, windowStart: now };
+  if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    entry.count = 0;
+    entry.windowStart = now;
+  }
+  entry.count += 1;
+  rateStore.set(ip, entry);
+  return entry.count > RATE_LIMIT_MAX;
+}
+
+function validateInquiry(body) {
+  const errors = [];
+  const data = {
+    name: body?.name ? String(body.name).trim() : '',
+    phone: body?.phone ? String(body.phone).trim() : '',
+    email: body?.email ? String(body.email).trim() : '',
+    productId: body?.productId ? String(body.productId).trim() : '',
+    message: body?.message ? String(body.message).trim() : ''
+  };
+
+  if (!data.name || data.name.length < 2) {
+    errors.push('Укажите имя (не менее 2 символов).');
+  }
+  if (!data.productId) {
+    errors.push('Выберите продукт.');
+  }
+  if (!data.phone && !data.email) {
+    errors.push('Укажите телефон или email.');
+  }
+
+  if (data.phone) {
+    const digits = data.phone.replace(/\D+/g, '');
+    if (!(digits.length >= 11 && (digits.startsWith('7') || digits.startsWith('8')))) {
+      errors.push('Телефон указан в неверном формате.');
+    }
+  }
+
+  if (data.email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+    if (!emailRegex.test(data.email)) {
+      errors.push('Email указан в неверном формате.');
+    }
+  }
+
+  return { data, errors };
+}
+
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -115,23 +177,30 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'POST' && pathname === '/api/inquiry') {
     try {
-      const body = await parseBody(req);
-      const { name, phone, email, productId, message } = body;
-
-      if (!name || (!phone && !email) || !productId) {
-        return sendJson(res, 400, {
+      const ip = getClientIp(req);
+      if (isRateLimited(ip)) {
+        return sendJson(res, 429, {
           status: 'error',
-          message: 'Заполните имя, выберите продукт и оставьте телефон или email.'
+          message: 'Слишком много запросов. Попробуйте позже.'
         });
       }
 
-      await appendInquiry({
-        name: String(name).trim(),
-        phone: phone ? String(phone).trim() : '',
-        email: email ? String(email).trim() : '',
-        productId: String(productId).trim(),
-        message: message ? String(message).trim() : ''
-      });
+      const body = await parseBody(req);
+
+      // Honeypot: если боты заполняют скрытое поле — отклоняем
+      if (body && typeof body.website === 'string' && body.website.trim() !== '') {
+        return sendJson(res, 200, { status: 'ok', message: 'Спасибо.' });
+      }
+
+      const { data, errors } = validateInquiry(body);
+      if (errors.length) {
+        return sendJson(res, 400, {
+          status: 'error',
+          message: errors.join(' ')
+        });
+      }
+
+      await appendInquiry(data);
 
       return sendJson(res, 200, {
         status: 'ok',
