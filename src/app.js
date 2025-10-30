@@ -390,6 +390,18 @@ function init() {
 
   // Simple phone mask
   if (phoneInput) {
+    // Prefill with +7 on load if empty
+    if (!phoneInput.value.trim()) {
+      phoneInput.value = '+7 ';
+    }
+
+    // Ensure +7 appears on focus if cleared
+    phoneInput.addEventListener('focus', () => {
+      if (!phoneInput.value.trim() || !phoneInput.value.trim().startsWith('+7')) {
+        phoneInput.value = '+7 ';
+      }
+    });
+
     phoneInput.addEventListener('input', () => {
       let digits = phoneInput.value.replace(/\D+/g, '');
       if (digits.startsWith('8')) digits = '7' + digits.slice(1);
