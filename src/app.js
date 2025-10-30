@@ -287,13 +287,53 @@ function setupRevealAnimations() {
 }
 
 function setupNavbar() {
-  navbarToggle?.addEventListener('click', () => {
-    navbarLinks.classList.toggle('is-open');
+  if (!navbarToggle || !navbarLinks) {
+    return;
+  }
+
+  const firstMenuLink = navbarLinks.querySelector('a');
+  const closeMenu = () => {
+    navbarLinks.classList.remove('is-open');
+    navbarToggle.setAttribute('aria-expanded', 'false');
+    navbarToggle.focus();
+    document.removeEventListener('keydown', onKeydown);
+    document.removeEventListener('click', onOutsideClick, true);
+  };
+
+  const openMenu = () => {
+    navbarLinks.classList.add('is-open');
+    navbarToggle.setAttribute('aria-expanded', 'true');
+    if (firstMenuLink) {
+      firstMenuLink.focus();
+    }
+    document.addEventListener('keydown', onKeydown);
+    document.addEventListener('click', onOutsideClick, true);
+  };
+
+  const onKeydown = (event) => {
+    if (event.key === 'Escape') {
+      closeMenu();
+    }
+  };
+
+  const onOutsideClick = (event) => {
+    if (!navbarLinks.contains(event.target) && event.target !== navbarToggle) {
+      closeMenu();
+    }
+  };
+
+  navbarToggle.addEventListener('click', () => {
+    const isOpen = navbarLinks.classList.contains('is-open');
+    if (isOpen) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
   });
 
   navbarLinks.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', () => {
-      navbarLinks.classList.remove('is-open');
+      closeMenu();
     });
   });
 }
