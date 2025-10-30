@@ -153,6 +153,12 @@ video, iframe {
   text-transform: uppercase;
 }
 
+.brand-logo {
+  height: 24px;
+  width: auto;
+  display: block;
+}
+
 .brand-mark.gold {
   color: var(--gold);
 }
@@ -1244,6 +1250,10 @@ video, iframe {
   .navbar {
     padding: 14px 16px;
     width: calc(100% - 24px);
+  }
+
+  .brand-logo {
+    height: 20px;
   }
 
   .navbar-links {
