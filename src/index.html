@@ -228,7 +228,7 @@
               </ul>
             </div>
             <div class="contact-form-wrapper" data-animate>
-              <form id="inquiry-form" class="contact-form">
+              <form id="inquiry-form" class="contact-form" novalidate>
                 <div class="form-heading">
                   <h3>Конфигуратор заявки</h3>
                   <p>Выберите комплекс в каталоге или укажите требования вручную.</p>
@@ -240,13 +240,14 @@
                 <div class="form-row">
                   <div class="form-group">
                     <label for="phone">Телефон *</label>
-                    <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__" required />
+                    <input type="tel" id="phone" name="phone" placeholder="+7 (___) ___-__-__" inputmode="tel" autocomplete="tel" required />
                   </div>
                   <div class="form-group">
                     <label for="email">E-mail</label>
                     <input type="email" id="email" name="email" placeholder="sales@company.ru" />
                   </div>
                 </div>
+                <input type="text" name="website" id="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;border:0;padding:0;margin:0;" />
                 <div class="form-group">
                   <label>Выбранный комплекс</label>
                   <div class="selected-product" id="selected-product">
@@ -263,6 +264,12 @@
                     rows="4"
                     placeholder="Расскажите о задачах, планируемых объёмах и требованиях к автоматизации."
                   ></textarea>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="consent" name="consent" required />
+                    Я даю согласие на обработку персональных данных
+                  </label>
                 </div>
                 <button type="submit" class="btn btn-primary full-width">Отправить заявку</button>
                 <p class="form-footnote">

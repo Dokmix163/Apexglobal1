@@ -99,6 +99,8 @@ const catalogGrid = document.querySelector('[data-catalog-grid]');
 const capacityFilter = document.querySelector('#capacity-filter');
 const toast = document.querySelector('#toast');
 const form = document.querySelector('#inquiry-form');
+const consent = document.querySelector('#consent');
+const phoneInput = document.querySelector('#phone');
 const navbarToggle = document.querySelector('.navbar-toggle');
 const navbarLinks = document.querySelector('.navbar-links');
 
@@ -227,9 +229,25 @@ async function handleSubmit(event) {
   event.preventDefault();
 
   const formData = new FormData(form);
+
+  // Honeypot: silently drop
+  if (formData.get('website')) {
+    return;
+  }
+
+  if (consent && !consent.checked) {
+    showToast('Подтвердите согласие на обработку персональных данных.', 'error');
+    consent.focus();
+    return;
+  }
+
+  const rawPhone = String(formData.get('phone') || '').trim();
+  const phoneDigits = rawPhone.replace(/\D+/g, '');
+  const isValidPhone = phoneDigits.length >= 11 && (phoneDigits.startsWith('7') || phoneDigits.startsWith('8'));
+
   const payload = {
     name: formData.get('name')?.trim(),
-    phone: formData.get('phone')?.trim(),
+    phone: rawPhone,
     email: formData.get('email')?.trim(),
     productId: formData.get('productId')?.trim(),
     message: formData.get('message')?.trim()
@@ -237,6 +255,12 @@ async function handleSubmit(event) {
 
   if (!payload.productId) {
     showToast('Выберите комплекс в каталоге перед отправкой заявки.', 'error');
+    return;
+  }
+
+  if (!isValidPhone) {
+    showToast('Введите корректный телефон в формате +7 (___) ___-__-__', 'error');
+    phoneInput?.focus();
     return;
   }
 
@@ -363,6 +387,27 @@ function init() {
   });
 
   form?.addEventListener('submit', handleSubmit);
+
+  // Simple phone mask
+  if (phoneInput) {
+    phoneInput.addEventListener('input', () => {
+      let digits = phoneInput.value.replace(/\D+/g, '');
+      if (digits.startsWith('8')) digits = '7' + digits.slice(1);
+      if (!digits.startsWith('7')) digits = '7' + digits;
+      const parts = ['+7'];
+      if (digits.length > 1) {
+        const a = digits.slice(1, 4);
+        if (a) parts.push(` (${a}`);
+        const b = digits.slice(4, 7);
+        if (b) parts.push(`) ${b}`);
+        const c = digits.slice(7, 9);
+        if (c) parts.push(`-${c}`);
+        const d = digits.slice(9, 11);
+        if (d) parts.push(`-${d}`);
+      }
+      phoneInput.value = parts.join('');
+    });
+  }
 
   document.addEventListener('mousemove', (event) => {
     const orb = document.querySelector('.orb');
