@@ -432,6 +432,22 @@ function init() {
   });
 }
 
+// Обработка глобальных ошибок JavaScript
+window.addEventListener('error', (event) => {
+  console.error('JS Error:', event.error);
+  // В production можно отправлять ошибки на сервер
+  if (window.toast && typeof showToast === 'function') {
+    showToast('Произошла ошибка. Пожалуйста, обновите страницу.', 'error');
+  }
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled Promise Rejection:', event.reason);
+  if (window.toast && typeof showToast === 'function') {
+    showToast('Произошла ошибка при загрузке данных.', 'error');
+  }
+});
+
 // Регистрация Service Worker для PWA
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

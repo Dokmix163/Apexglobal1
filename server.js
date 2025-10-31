@@ -138,8 +138,18 @@ function serveStatic(req, res, urlPath) {
         return serveStatic(req, res, '/');
       }
 
-      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-      res.end('Файл не найден');
+      // Для 404 отдаём специальную страницу
+      const notFoundPath = path.join(STATIC_DIR, '404.html');
+      fs.stat(notFoundPath, (notFoundErr, notFoundStats) => {
+        if (!notFoundErr && notFoundStats.isFile()) {
+          const stream = fs.createReadStream(notFoundPath);
+          res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+          stream.pipe(res);
+        } else {
+          res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+          res.end('Файл не найден');
+        }
+      });
       return;
     }
 
