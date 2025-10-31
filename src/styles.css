@@ -374,24 +374,59 @@ video, iframe {
   width: 100%;
 }
 
-/* Карточка оборудования и подсветка */
+/* Визуальная секция с изображением завода */
 .hero-visual {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 500px;
 }
 
-/* Свечение-подложка за карточкой */
-.orb {
-  width: clamp(280px, 32vw, 380px);
-  height: clamp(280px, 32vw, 380px);
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(201, 168, 87, 0.4), rgba(9, 14, 21, 0.85));
-  filter: blur(0px);
-  animation: breathe 9s ease-in-out infinite;
+/* Премиальное свечение вокруг изображения завода */
+.plant-glow {
   position: absolute;
+  inset: -60px;
   z-index: 0;
+  background: 
+    radial-gradient(ellipse at center, rgba(201, 168, 87, 0.4) 0%, transparent 70%),
+    radial-gradient(ellipse at 30% 40%, rgba(201, 168, 87, 0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, rgba(201, 168, 87, 0.2) 0%, transparent 50%);
+  filter: blur(60px);
+  animation: plantGlowPulse 8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+/* Контейнер для изображения завода */
+.plant-image-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 900px;
+  filter: drop-shadow(0 30px 80px rgba(201, 168, 87, 0.3));
+  transition: transform 0.6s ease;
+}
+
+.plant-image-wrapper:hover {
+  transform: scale(1.02);
+}
+
+.plant-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+}
+
+@keyframes plantGlowPulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
 }
 
 /* Карточка оборудования */
@@ -1224,11 +1259,17 @@ video, iframe {
 
   .hero-visual {
     justify-content: center;
+    min-height: 350px;
   }
 
-  .machine-card {
-    width: min(300px, 92%);
-    padding: 24px;
+  .plant-image-wrapper {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+
+  .plant-glow {
+    inset: -40px;
+    filter: blur(40px);
   }
 
   .section {
@@ -1351,6 +1392,16 @@ video, iframe {
 
   .hero-visual {
     margin-top: -8px;
+    min-height: 280px;
+  }
+
+  .plant-image-wrapper {
+    padding: 0 12px;
+  }
+
+  .plant-glow {
+    inset: -30px;
+    filter: blur(30px);
   }
 
   .cta-content {

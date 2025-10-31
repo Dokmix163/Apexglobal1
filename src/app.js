@@ -421,15 +421,6 @@ function init() {
     });
   }
 
-  document.addEventListener('mousemove', (event) => {
-    const orb = document.querySelector('.orb');
-    if (!orb) {
-      return;
-    }
-    const x = (event.clientX / window.innerWidth - 0.5) * 20;
-    const y = (event.clientY / window.innerHeight - 0.5) * 20;
-    orb.style.transform = `translate(${x}px, ${y}px)`;
-  });
 }
 
 // Обработка глобальных ошибок JavaScript
