@@ -1843,11 +1843,16 @@ video, iframe {
 }
 
 @media (max-width: 768px) {
+  .product-modal {
+    z-index: 10000 !important;
+  }
+
   .modal-container {
-    width: 100vw;
-    max-height: 100vh;
-    border-radius: 0;
-    height: 100vh;
+    width: 100vw !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+    height: 100vh !important;
+    z-index: 10001 !important;
   }
 
   .modal-content {
@@ -1876,6 +1881,8 @@ video, iframe {
   .modal-info {
     padding: 24px 20px;
     max-height: 60vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .modal-close {
@@ -1883,6 +1890,7 @@ video, iframe {
     right: 12px;
     width: 40px;
     height: 40px;
+    z-index: 10002 !important;
   }
 
   .specs-list {
