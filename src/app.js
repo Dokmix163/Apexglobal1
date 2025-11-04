@@ -558,9 +558,19 @@ function openProductModal(productId) {
   updateGallery();
 
   // Показываем модальное окно
+  if (!modal) {
+    console.error('Modal element not found');
+    return;
+  }
+  
   modal.setAttribute('aria-hidden', 'false');
   modal.classList.add('is-open');
   document.body.style.overflow = 'hidden';
+  
+  // Принудительно показываем модальное окно (на случай проблем с CSS)
+  modal.style.display = 'flex';
+  modal.style.opacity = '1';
+  modal.style.visibility = 'visible';
 
   // Выбираем продукт в форме
   selectProduct(productId);
