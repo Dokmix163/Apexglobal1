@@ -213,49 +213,52 @@ function createProductCard(product) {
   card.appendChild(createFeatureList(product.features));
 
   // Обработка клика и touch для мобильных
-  let touchStartTime = 0;
-  let touchMoved = false;
+  let lastTouchTime = 0;
+  let touchStartPos = { x: 0, y: 0 };
 
   const handleCardActivation = (e) => {
     // Предотвращаем открытие модалки если клик по ссылке внутри карточки
-    if (e.target.tagName === 'A') {
-      return;
-    }
-    
-    // Проверяем, не был ли это swipe
-    if (touchMoved) {
+    if (e.target && e.target.tagName === 'A') {
       return;
     }
     
     e.stopPropagation();
+    e.preventDefault();
+    
+    console.log('Card activated:', product.name);
     openProductModal(product.id);
   };
 
-  // Обработка touch событий
+  // Обработка touch событий для мобильных
   card.addEventListener('touchstart', (e) => {
-    touchStartTime = Date.now();
-    touchMoved = false;
-  }, { passive: true });
-
-  card.addEventListener('touchmove', () => {
-    touchMoved = true;
+    const touch = e.touches[0];
+    touchStartPos.x = touch.clientX;
+    touchStartPos.y = touch.clientY;
+    lastTouchTime = Date.now();
   }, { passive: true });
 
   card.addEventListener('touchend', (e) => {
-    const touchDuration = Date.now() - touchStartTime;
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
     
-    // Если это был быстрый тап (менее 300ms) и не было движения
-    if (!touchMoved && touchDuration < 300) {
+    const touch = e.changedTouches[0];
+    const deltaX = Math.abs(touch.clientX - touchStartPos.x);
+    const deltaY = Math.abs(touch.clientY - touchStartPos.y);
+    const touchDuration = Date.now() - lastTouchTime;
+    
+    // Если движение было небольшое (менее 10px) и тап был быстрый (менее 500ms)
+    // Это считается кликом, а не swipe
+    if (deltaX < 10 && deltaY < 10 && touchDuration < 500) {
       e.preventDefault();
+      e.stopPropagation();
       handleCardActivation(e);
     }
   }, { passive: false });
 
   // Обработка клика для десктопа
   card.addEventListener('click', (e) => {
-    // На мобильных устройствах click может сработать после touchend
-    // Поэтому проверяем, не было ли это touch событие
-    if (Date.now() - touchStartTime < 400) {
+    // На мобильных устройствах игнорируем click если недавно было touch событие
+    const timeSinceTouch = Date.now() - lastTouchTime;
+    if (timeSinceTouch < 600) {
       return;
     }
     handleCardActivation(e);
@@ -485,15 +488,23 @@ let currentGalleryIndex = 0;
 let currentGalleryImages = [];
 
 function openProductModal(productId) {
+  console.log('openProductModal called with:', productId);
+  
   const product = products.find((p) => p.id === productId);
   if (!product) {
-    console.log('Product not found:', productId);
+    console.error('Product not found:', productId);
     return;
   }
   
   console.log('Opening modal for product:', product.name);
 
   const modal = document.getElementById('product-modal');
+  if (!modal) {
+    console.error('Modal element not found in DOM');
+    return;
+  }
+  
+  console.log('Modal element found');
   const modalTitle = document.getElementById('modal-title');
   const modalMeta = document.getElementById('modal-meta');
   const modalDescription = document.getElementById('modal-description');
@@ -558,19 +569,21 @@ function openProductModal(productId) {
   updateGallery();
 
   // Показываем модальное окно
-  if (!modal) {
-    console.error('Modal element not found');
-    return;
-  }
+  console.log('Setting modal visible');
   
   modal.setAttribute('aria-hidden', 'false');
   modal.classList.add('is-open');
-  document.body.style.overflow = 'hidden';
   
-  // Принудительно показываем модальное окно (на случай проблем с CSS)
+  // Принудительно показываем модальное окно через inline стили
   modal.style.display = 'flex';
   modal.style.opacity = '1';
   modal.style.visibility = 'visible';
+  modal.style.pointerEvents = 'auto';
+  modal.style.zIndex = '10000';
+  
+  document.body.style.overflow = 'hidden';
+  
+  console.log('Modal should be visible now');
 
   // Выбираем продукт в форме
   selectProduct(productId);
