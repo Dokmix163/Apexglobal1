@@ -12,7 +12,17 @@ const products = [
       'Интеллектуальная горелка с модуляцией пламени',
       'Экологическая фильтрация с автоматической регенерацией рукавов',
       'Интеграция с ERP и системами мониторинга'
-    ]
+    ],
+    images: ['./plant.png'],
+    specs: {
+      'Производительность': '320 т/ч',
+      'Мощность горелки': '25 МВт',
+      'Объём смесителя': '3,5 м³',
+      'Температура сушки': 'до 180°C',
+      'Потребление электроэнергии': '450 кВт',
+      'Размеры площадки': '45×60 м',
+      'Вес оборудования': '85 т'
+    }
   },
   {
     id: 'apexflex-210',
@@ -27,7 +37,17 @@ const products = [
       'Стандартные транспортные габариты блоков',
       'Опциональные силосы минерального порошка до 80 т',
       'Удалённая диагностика и поддержка 24/7'
-    ]
+    ],
+    images: ['./plant.png'],
+    specs: {
+      'Производительность': '210 т/ч',
+      'Мощность горелки': '18 МВт',
+      'Объём смесителя': '2,8 м³',
+      'Температура сушки': 'до 180°C',
+      'Потребление электроэнергии': '320 кВт',
+      'Размеры площадки': '35×50 м',
+      'Вес оборудования': '65 т'
+    }
   },
   {
     id: 'apexmobile-160',
@@ -42,7 +62,17 @@ const products = [
       'Энергоэффективная дизельная горелка',
       'Усиленная рама для эксплуатации в -45 °C',
       'Комплект телеметрии и удаленного управления'
-    ]
+    ],
+    images: ['./plant.png'],
+    specs: {
+      'Производительность': '160 т/ч',
+      'Мощность горелки': '14 МВт',
+      'Объём смесителя': '2,2 м³',
+      'Температура сушки': 'до 180°C',
+      'Потребление электроэнергии': '250 кВт',
+      'Размеры площадки': '30×40 м',
+      'Вес оборудования': '48 т'
+    }
   },
   {
     id: 'apexeco-260',
@@ -57,7 +87,17 @@ const products = [
       'Рекуперация тепла сушильного барабана',
       'Автоматизированная система контроля качества',
       'Опция переработки РАП до 40 %'
-    ]
+    ],
+    images: ['./plant.png'],
+    specs: {
+      'Производительность': '260 т/ч',
+      'Мощность горелки': '20 МВт',
+      'Объём смесителя': '3,0 м³',
+      'Температура сушки': 'до 180°C',
+      'Потребление электроэнергии': '280 кВт',
+      'Размеры площадки': '40×55 м',
+      'Вес оборудования': '72 т'
+    }
   },
   {
     id: 'apexmicro-140',
@@ -72,7 +112,17 @@ const products = [
       'Автоматическое ведение журнальных записей',
       'Опция комплектования силосом минералов 40 т',
       'Оптимизированная логистика и монтаж'
-    ]
+    ],
+    images: ['./plant.png'],
+    specs: {
+      'Производительность': '140 т/ч',
+      'Мощность горелки': '12 МВт',
+      'Объём смесителя': '2,0 м³',
+      'Температура сушки': 'до 180°C',
+      'Потребление электроэнергии': '220 кВт',
+      'Размеры площадки': '28×38 м',
+      'Вес оборудования': '42 т'
+    }
   },
   {
     id: 'apexpro-400',
@@ -87,7 +137,17 @@ const products = [
       'Система автоматической подачи добавок и модификаторов',
       'Непрерывный контроль качества смеси',
       'Встроенный центр диагностики и аналитики'
-    ]
+    ],
+    images: ['./plant.png'],
+    specs: {
+      'Производительность': '400 т/ч',
+      'Мощность горелки': '32 МВт',
+      'Объём смесителя': '4,5 м³',
+      'Температура сушки': 'до 180°C',
+      'Потребление электроэнергии': '650 кВт',
+      'Размеры площадки': '55×70 м',
+      'Вес оборудования': '120 т'
+    }
   }
 ];
 
@@ -153,7 +213,7 @@ function createProductCard(product) {
   card.appendChild(createFeatureList(product.features));
 
   card.addEventListener('click', () => {
-    selectProduct(product.id, { scroll: true });
+    openProductModal(product.id);
   });
 
   return card;
@@ -375,12 +435,209 @@ function setupSmoothAnchors() {
   });
 }
 
+// Модальное окно деталей продукта
+let currentGalleryIndex = 0;
+let currentGalleryImages = [];
+
+function openProductModal(productId) {
+  const product = products.find((p) => p.id === productId);
+  if (!product) return;
+
+  const modal = document.getElementById('product-modal');
+  const modalTitle = document.getElementById('modal-title');
+  const modalMeta = document.getElementById('modal-meta');
+  const modalDescription = document.getElementById('modal-description');
+  const specsList = document.getElementById('specs-list');
+  const featuresList = document.getElementById('features-list-modal');
+  const galleryTrack = document.getElementById('gallery-track');
+  const galleryIndicators = document.getElementById('gallery-indicators');
+
+  // Заполняем заголовок и мета-информацию
+  modalTitle.textContent = product.name;
+  modalMeta.innerHTML = `
+    <span class="meta-tag">${product.capacity} т/ч</span>
+    <span class="meta-tag">${product.type}</span>
+  `;
+  modalDescription.textContent = product.description;
+
+  // Заполняем технические характеристики
+  specsList.innerHTML = '';
+  if (product.specs) {
+    Object.entries(product.specs).forEach(([key, value]) => {
+      const dt = document.createElement('dt');
+      dt.textContent = key;
+      const dd = document.createElement('dd');
+      dd.textContent = value;
+      specsList.appendChild(dt);
+      specsList.appendChild(dd);
+    });
+  }
+
+  // Заполняем особенности
+  featuresList.innerHTML = '';
+  product.features.forEach((feature) => {
+    const li = document.createElement('li');
+    li.textContent = feature;
+    featuresList.appendChild(li);
+  });
+
+  // Создаем карусель изображений
+  currentGalleryImages = product.images || ['./plant.png'];
+  currentGalleryIndex = 0;
+  galleryTrack.innerHTML = '';
+  galleryIndicators.innerHTML = '';
+
+  currentGalleryImages.forEach((imgSrc, index) => {
+    const imgWrapper = document.createElement('div');
+    imgWrapper.className = 'gallery-slide';
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.alt = `${product.name} - изображение ${index + 1}`;
+    img.loading = 'lazy';
+    imgWrapper.appendChild(img);
+    galleryTrack.appendChild(imgWrapper);
+
+    const indicator = document.createElement('button');
+    indicator.className = 'gallery-indicator';
+    indicator.setAttribute('aria-label', `Перейти к изображению ${index + 1}`);
+    if (index === 0) indicator.classList.add('active');
+    indicator.addEventListener('click', () => goToGallerySlide(index));
+    galleryIndicators.appendChild(indicator);
+  });
+
+  updateGallery();
+
+  // Показываем модальное окно
+  modal.setAttribute('aria-hidden', 'false');
+  modal.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+
+  // Выбираем продукт в форме
+  selectProduct(productId);
+}
+
+function closeProductModal() {
+  const modal = document.getElementById('product-modal');
+  modal.setAttribute('aria-hidden', 'true');
+  modal.classList.remove('is-open');
+  document.body.style.overflow = '';
+}
+
+function goToGallerySlide(index) {
+  if (index < 0 || index >= currentGalleryImages.length) return;
+  currentGalleryIndex = index;
+  updateGallery();
+}
+
+function updateGallery() {
+  const galleryTrack = document.getElementById('gallery-track');
+  const indicators = document.querySelectorAll('.gallery-indicator');
+  
+  if (galleryTrack) {
+    galleryTrack.style.transform = `translateX(-${currentGalleryIndex * 100}%)`;
+  }
+
+  indicators.forEach((indicator, index) => {
+    indicator.classList.toggle('active', index === currentGalleryIndex);
+  });
+}
+
+function setupProductModal() {
+  const modal = document.getElementById('product-modal');
+  const modalBackdrop = document.getElementById('modal-backdrop');
+  const modalClose = document.getElementById('modal-close');
+  const galleryPrev = document.getElementById('gallery-prev');
+  const galleryNext = document.getElementById('gallery-next');
+  const modalSelectBtn = document.getElementById('modal-select-btn');
+
+  if (!modal) return;
+
+  // Закрытие по клику на backdrop
+  modalBackdrop?.addEventListener('click', closeProductModal);
+  
+  // Закрытие по кнопке
+  modalClose?.addEventListener('click', closeProductModal);
+
+  // Закрытие по Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+      closeProductModal();
+    }
+  });
+
+  // Навигация по галерее
+  galleryPrev?.addEventListener('click', () => {
+    const newIndex = currentGalleryIndex > 0 
+      ? currentGalleryIndex - 1 
+      : currentGalleryImages.length - 1;
+    goToGallerySlide(newIndex);
+  });
+
+  galleryNext?.addEventListener('click', () => {
+    const newIndex = currentGalleryIndex < currentGalleryImages.length - 1
+      ? currentGalleryIndex + 1
+      : 0;
+    goToGallerySlide(newIndex);
+  });
+
+  // Кнопка выбора продукта
+  modalSelectBtn?.addEventListener('click', () => {
+    const productId = state.selectedProductId;
+    if (productId) {
+      closeProductModal();
+      // Прокручиваем к форме
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+
+  // Swipe для мобильных
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const galleryViewport = document.querySelector('.gallery-viewport');
+  
+  if (galleryViewport) {
+    galleryViewport.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+
+    galleryViewport.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    });
+  }
+
+  function handleSwipe() {
+    const swipeThreshold = 50;
+    const diff = touchStartX - touchEndX;
+    
+    if (Math.abs(diff) > swipeThreshold) {
+      if (diff > 0) {
+        // Swipe left - next
+        const newIndex = currentGalleryIndex < currentGalleryImages.length - 1
+          ? currentGalleryIndex + 1
+          : 0;
+        goToGallerySlide(newIndex);
+      } else {
+        // Swipe right - prev
+        const newIndex = currentGalleryIndex > 0 
+          ? currentGalleryIndex - 1 
+          : currentGalleryImages.length - 1;
+        goToGallerySlide(newIndex);
+      }
+    }
+  }
+}
+
 function init() {
   renderProducts();
   selectProduct(products[0].id);
   setupRevealAnimations();
   setupNavbar();
   setupSmoothAnchors();
+  setupProductModal();
 
   capacityFilter?.addEventListener('change', (event) => {
     renderProducts(event.target.value);

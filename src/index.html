@@ -327,6 +327,58 @@
 
     <div class="toast" id="toast"></div>
 
+    <!-- Модальное окно деталей продукта -->
+    <div id="product-modal" class="product-modal" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
+      <div class="modal-backdrop" id="modal-backdrop"></div>
+      <div class="modal-container">
+        <button class="modal-close" id="modal-close" aria-label="Закрыть">
+          <span></span>
+          <span></span>
+        </button>
+        
+        <div class="modal-content">
+          <div class="modal-gallery">
+            <div class="gallery-viewport">
+              <div class="gallery-track" id="gallery-track"></div>
+            </div>
+            <button class="gallery-nav gallery-prev" id="gallery-prev" aria-label="Предыдущее изображение">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"/>
+              </svg>
+            </button>
+            <button class="gallery-nav gallery-next" id="gallery-next" aria-label="Следующее изображение">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </button>
+            <div class="gallery-indicators" id="gallery-indicators"></div>
+          </div>
+          
+          <div class="modal-info">
+            <div class="modal-header">
+              <h2 id="modal-title" class="modal-title"></h2>
+              <div class="modal-meta" id="modal-meta"></div>
+            </div>
+            <p class="modal-description" id="modal-description"></p>
+            
+            <div class="modal-specs">
+              <h3>Технические характеристики</h3>
+              <dl class="specs-list" id="specs-list"></dl>
+            </div>
+            
+            <div class="modal-features">
+              <h3>Ключевые особенности</h3>
+              <ul class="features-list-modal" id="features-list-modal"></ul>
+            </div>
+            
+            <div class="modal-actions">
+              <button class="btn btn-primary" id="modal-select-btn">Выбрать этот комплекс</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="./app.js" type="module"></script>
   </body>
 </html>
