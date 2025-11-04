@@ -612,6 +612,17 @@ function navigateGallery(direction) {
 async function handleSubmit(event) {
   event.preventDefault();
 
+  const submitBtn = document.querySelector('#submit-btn');
+  const submitText = submitBtn?.querySelector('.submit-text');
+  const submitSpinner = submitBtn?.querySelector('.submit-spinner');
+  
+  // Показываем индикатор отправки
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    if (submitText) submitText.style.display = 'none';
+    if (submitSpinner) submitSpinner.style.display = 'inline-flex';
+  }
+
   const formData = new FormData(form);
 
   // Honeypot: silently drop
@@ -696,6 +707,13 @@ async function handleSubmit(event) {
       error.message || 'Произошла техническая ошибка. Попробуйте повторить попытку позже.',
       'error'
     );
+  } finally {
+    // Убираем индикатор отправки
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      if (submitText) submitText.style.display = 'inline';
+      if (submitSpinner) submitSpinner.style.display = 'none';
+    }
   }
 }
 

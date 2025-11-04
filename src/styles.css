@@ -950,7 +950,14 @@ video, iframe {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+}
+
+.form-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: -4px;
+  font-style: italic;
 }
 
 .form-row {
@@ -1006,6 +1013,51 @@ video, iframe {
   font-size: 0.875rem;
   text-align: center;
   line-height: 1.5;
+}
+
+.form-sla {
+  margin: 12px 0 0;
+  padding: 12px 16px;
+  background: rgba(201, 168, 87, 0.1);
+  border: 1px solid rgba(201, 168, 87, 0.3);
+  border-radius: 10px;
+  font-size: 0.875rem;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.form-sla strong {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* Индикатор отправки */
+.submit-spinner {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  animation: spin 1s linear infinite;
+}
+
+.submit-spinner svg {
+  width: 20px;
+  height: 20px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* Нижний колонтитул */
