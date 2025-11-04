@@ -486,7 +486,12 @@ let currentGalleryImages = [];
 
 function openProductModal(productId) {
   const product = products.find((p) => p.id === productId);
-  if (!product) return;
+  if (!product) {
+    console.log('Product not found:', productId);
+    return;
+  }
+  
+  console.log('Opening modal for product:', product.name);
 
   const modal = document.getElementById('product-modal');
   const modalTitle = document.getElementById('modal-title');
