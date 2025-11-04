@@ -213,24 +213,53 @@ function createProductCard(product) {
   card.appendChild(createFeatureList(product.features));
 
   // Обработка клика и touch для мобильных
-  const handleCardClick = (e) => {
+  let touchStartTime = 0;
+  let touchMoved = false;
+
+  const handleCardActivation = (e) => {
     // Предотвращаем открытие модалки если клик по ссылке внутри карточки
     if (e.target.tagName === 'A') {
       return;
     }
-    e.preventDefault();
+    
+    // Проверяем, не был ли это swipe
+    if (touchMoved) {
+      return;
+    }
+    
     e.stopPropagation();
     openProductModal(product.id);
   };
 
-  card.addEventListener('click', handleCardClick);
+  // Обработка touch событий
+  card.addEventListener('touchstart', (e) => {
+    touchStartTime = Date.now();
+    touchMoved = false;
+  }, { passive: true });
+
+  card.addEventListener('touchmove', () => {
+    touchMoved = true;
+  }, { passive: true });
+
   card.addEventListener('touchend', (e) => {
-    // Для touch событий предотвращаем двойное срабатывание
-    if (e.cancelable) {
+    const touchDuration = Date.now() - touchStartTime;
+    
+    // Если это был быстрый тап (менее 300ms) и не было движения
+    if (!touchMoved && touchDuration < 300) {
       e.preventDefault();
+      handleCardActivation(e);
     }
-    handleCardClick(e);
   }, { passive: false });
+
+  // Обработка клика для десктопа
+  card.addEventListener('click', (e) => {
+    // На мобильных устройствах click может сработать после touchend
+    // Поэтому проверяем, не было ли это touch событие
+    if (Date.now() - touchStartTime < 400) {
+      return;
+    }
+    handleCardActivation(e);
+  });
 
   return card;
 }
