@@ -634,9 +634,11 @@ video, iframe {
   transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+  touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  will-change: transform;
 }
 
 .product-card:hover {
