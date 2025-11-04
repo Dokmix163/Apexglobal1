@@ -633,6 +633,13 @@ video, iframe {
   gap: 20px;
   transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
   cursor: pointer;
+  outline: none;
+}
+
+.product-card:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+  border-color: rgba(201, 168, 87, 0.5);
 }
 
 .product-card:hover {
