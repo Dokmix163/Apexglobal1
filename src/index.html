@@ -374,8 +374,36 @@
             <h2 id="modal-title" class="modal-title"></h2>
             <div class="modal-meta" id="modal-meta"></div>
             <p class="modal-description" id="modal-description"></p>
+            
+            <!-- Что входит в комплекс -->
+            <div class="modal-includes" id="modal-includes">
+              <h3 class="modal-section-title">Что входит в комплекс</h3>
+              <div class="includes-grid" id="includes-grid"></div>
+            </div>
+            
+            <!-- Таблица параметров -->
+            <div class="modal-specs" id="modal-specs">
+              <h3 class="modal-section-title">Технические параметры</h3>
+              <div class="specs-table-wrapper">
+                <table class="specs-table" id="specs-table">
+                  <tbody id="specs-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+            
             <div class="modal-features" id="modal-features"></div>
+            
             <div class="modal-actions">
+              <a href="#" id="modal-pdf-link" class="btn btn-outline" target="_blank" rel="noopener noreferrer" style="display: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 8px;">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                Скачать PDF-спецификацию
+              </a>
               <button type="button" class="btn btn-primary" id="modal-contact-btn">Оставить заявку</button>
             </div>
           </div>

@@ -1989,6 +1989,100 @@ video, iframe {
   overflow-y: auto;
 }
 
+.modal-section-title {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Блок "Что входит в комплекс" */
+.modal-includes {
+  margin-top: 8px;
+}
+
+.includes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.include-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: rgba(7, 12, 18, 0.6);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.include-item:hover {
+  border-color: rgba(201, 168, 87, 0.3);
+  background: rgba(7, 12, 18, 0.8);
+}
+
+.include-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.include-text {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+/* Таблица параметров */
+.modal-specs {
+  margin-top: 8px;
+}
+
+.specs-table-wrapper {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(7, 12, 18, 0.6);
+}
+
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.specs-table tr {
+  border-bottom: 1px solid var(--border);
+}
+
+.specs-table tr:last-child {
+  border-bottom: none;
+}
+
+.specs-table td {
+  padding: 14px 18px;
+  font-size: 0.9rem;
+}
+
+.spec-label {
+  color: var(--text-muted);
+  font-weight: 500;
+  width: 50%;
+}
+
+.spec-value {
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
+}
+
+.specs-table tr:hover {
+  background: rgba(201, 168, 87, 0.05);
+}
+
 .modal-title {
   margin: 0;
   font-size: clamp(1.8rem, 4vw, 2.5rem);
@@ -2035,6 +2129,20 @@ video, iframe {
 .modal-actions {
   margin-top: auto;
   padding-top: 24px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.modal-actions .btn {
+  flex: 1;
+  min-width: 200px;
+}
+
+.modal-actions .btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Адаптивность модального окна */

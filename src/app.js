@@ -16,6 +16,23 @@ const products = [
       'Экологическая фильтрация с автоматической регенерацией рукавов',
       'Интеграция с ERP и системами мониторинга'
     ],
+    includes: [
+      { icon: '⚙️', text: 'Сушильный барабан с системой рекуперации' },
+      { icon: '📊', text: 'Система дозирования компонентов' },
+      { icon: '🔥', text: 'Интеллектуальная горелка' },
+      { icon: '🌿', text: 'Система фильтрации пыли' },
+      { icon: '💻', text: 'Система управления и контроля' },
+      { icon: '📦', text: 'Силосы для минерального порошка' }
+    ],
+    specs: [
+      { label: 'Производительность', value: '320 т/ч' },
+      { label: 'Мощность горелки', value: '25 МВт' },
+      { label: 'Температура сушки', value: 'до 180°C' },
+      { label: 'Энергопотребление', value: '450 кВт' },
+      { label: 'Площадь установки', value: '45×25 м' },
+      { label: 'Вес', value: '280 т' }
+    ],
+    pdfSpec: '#',
     images: ['./plant.png', './plant.png', './plant.png']
   },
   {
@@ -53,6 +70,23 @@ const products = [
       'Усиленная рама для эксплуатации в -45 °C',
       'Комплект телеметрии и удаленного управления'
     ],
+    includes: [
+      { icon: '🚚', text: 'Мобильная платформа' },
+      { icon: '⚙️', text: 'Сушильный барабан' },
+      { icon: '📊', text: 'Система дозирования' },
+      { icon: '🔥', text: 'Дизельная горелка' },
+      { icon: '🌿', text: 'Система фильтрации' },
+      { icon: '💻', text: 'Система телеметрии' }
+    ],
+    specs: [
+      { label: 'Производительность', value: '160 т/ч' },
+      { label: 'Мощность горелки', value: '12 МВт' },
+      { label: 'Температура сушки', value: 'до 180°C' },
+      { label: 'Энергопотребление', value: '280 кВт' },
+      { label: 'Площадь установки', value: '32×18 м' },
+      { label: 'Вес', value: '180 т' }
+    ],
+    pdfSpec: '#',
     images: ['./plant.png', './plant.png', './plant.png']
   },
   {
@@ -71,6 +105,23 @@ const products = [
       'Автоматизированная система контроля качества',
       'Опция переработки РАП до 40 %'
     ],
+    includes: [
+      { icon: '⚙️', text: 'Сушильный барабан с рекуперацией' },
+      { icon: '📊', text: 'Система дозирования' },
+      { icon: '🔥', text: 'Энергоэффективная горелка' },
+      { icon: '🌿', text: 'Замкнутая система фильтрации' },
+      { icon: '💻', text: 'Система контроля качества' },
+      { icon: '♻️', text: 'Система переработки РАП' }
+    ],
+    specs: [
+      { label: 'Производительность', value: '260 т/ч' },
+      { label: 'Мощность горелки', value: '20 МВт' },
+      { label: 'Температура сушки', value: 'до 180°C' },
+      { label: 'Энергопотребление', value: '380 кВт' },
+      { label: 'Площадь установки', value: '42×24 м' },
+      { label: 'Вес', value: '250 т' }
+    ],
+    pdfSpec: '#',
     images: ['./plant.png', './plant.png', './plant.png']
   },
   {
@@ -89,6 +140,23 @@ const products = [
       'Опция комплектования силосом минералов 40 т',
       'Оптимизированная логистика и монтаж'
     ],
+    includes: [
+      { icon: '⚙️', text: 'Компактный сушильный барабан' },
+      { icon: '📊', text: 'Система дозирования' },
+      { icon: '🔥', text: 'Газовая горелка' },
+      { icon: '🌿', text: 'Система фильтрации' },
+      { icon: '💻', text: 'Панель управления' },
+      { icon: '📦', text: 'Силос минерального порошка 40 т' }
+    ],
+    specs: [
+      { label: 'Производительность', value: '140 т/ч' },
+      { label: 'Мощность горелки', value: '10 МВт' },
+      { label: 'Температура сушки', value: 'до 180°C' },
+      { label: 'Энергопотребление', value: '240 кВт' },
+      { label: 'Площадь установки', value: '30×16 м' },
+      { label: 'Вес', value: '150 т' }
+    ],
+    pdfSpec: '#',
     images: ['./plant.png', './plant.png', './plant.png']
   },
   {
@@ -389,6 +457,52 @@ function openProductModal(productId) {
   modalMeta.innerHTML = '';
   const metaRow = createMetaRow(product);
   modalMeta.appendChild(metaRow);
+
+  // Заполняем "Что входит в комплекс"
+  const includesGrid = document.querySelector('#includes-grid');
+  const modalIncludes = document.querySelector('#modal-includes');
+  if (product.includes && product.includes.length > 0) {
+    includesGrid.innerHTML = '';
+    product.includes.forEach((item) => {
+      const includeItem = document.createElement('div');
+      includeItem.className = 'include-item';
+      includeItem.innerHTML = `
+        <span class="include-icon">${item.icon}</span>
+        <span class="include-text">${item.text}</span>
+      `;
+      includesGrid.appendChild(includeItem);
+    });
+    modalIncludes.style.display = 'block';
+  } else {
+    modalIncludes.style.display = 'none';
+  }
+
+  // Заполняем таблицу параметров
+  const specsTbody = document.querySelector('#specs-tbody');
+  const modalSpecs = document.querySelector('#modal-specs');
+  if (product.specs && product.specs.length > 0) {
+    specsTbody.innerHTML = '';
+    product.specs.forEach((spec) => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="spec-label">${spec.label}</td>
+        <td class="spec-value">${spec.value}</td>
+      `;
+      specsTbody.appendChild(row);
+    });
+    modalSpecs.style.display = 'block';
+  } else {
+    modalSpecs.style.display = 'none';
+  }
+
+  // Ссылка на PDF
+  const pdfLink = document.querySelector('#modal-pdf-link');
+  if (product.pdfSpec && product.pdfSpec !== '#') {
+    pdfLink.href = product.pdfSpec;
+    pdfLink.style.display = 'inline-flex';
+  } else {
+    pdfLink.style.display = 'none';
+  }
 
   const modalFeatures = document.querySelector('#modal-features');
   modalFeatures.innerHTML = '';
