@@ -476,6 +476,40 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
+    <!-- Баннер консультации -->
+    <div class="consultation-banner" id="consultation-banner" aria-hidden="true">
+      <div class="consultation-banner-content">
+        <div class="consultation-banner-text">
+          <strong>Нужна консультация?</strong>
+          <span>Получите бесплатную консультацию нашего специалиста</span>
+        </div>
+        <div class="consultation-banner-actions">
+          <button type="button" class="btn btn-primary btn-sm" onclick="openContactModal()">Связаться</button>
+          <button type="button" class="consultation-banner-close" aria-label="Закрыть баннер">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Кнопка "Наверх" -->
+    <button class="back-to-top" id="back-to-top" aria-label="Вернуться наверх" style="display: none;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
+    </button>
+
+    <!-- Чат-виджет (простая кнопка) -->
+    <button class="chat-widget" id="chat-widget" aria-label="Открыть чат" title="Написать нам">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <span class="chat-widget-badge">1</span>
+    </button>
+
     <!-- Модальное окно продукта -->
     <div class="product-modal" id="product-modal" aria-hidden="true" role="dialog" aria-labelledby="modal-title">
       <div class="modal-overlay"></div>

@@ -1851,6 +1851,24 @@ video, iframe {
   .cta-text h2 {
     font-size: clamp(1.2rem, 5vw, 1.5rem);
   }
+
+  .cases-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .case-image {
+    height: 200px;
+  }
+
+  .case-metrics {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .case-content {
+    padding: 20px;
+  }
 }
 
 /* Модальное окно продукта */
