@@ -7,22 +7,15 @@ const products = [
     type: 'Стационарный комплекс',
     description:
       'Флагманская линия с высокой долей автоматизации, подходит для магистральных проектов и городских программ.',
+    fullDescription:
+      'ApexCore 320 — это флагманский комплекс для производства асфальтобетона с производительностью 320 тонн в час. Идеально подходит для крупных магистральных проектов и городских программ ремонта дорог. Комплекс включает прецизионную систему дозирования, интеллектуальную горелку с модуляцией пламени и экологическую фильтрацию.',
     features: [
       'Прецизионная система дозирования и контроля влажности',
       'Интеллектуальная горелка с модуляцией пламени',
       'Экологическая фильтрация с автоматической регенерацией рукавов',
       'Интеграция с ERP и системами мониторинга'
     ],
-    images: ['./plant.png'],
-    specs: {
-      'Производительность': '320 т/ч',
-      'Мощность горелки': '25 МВт',
-      'Объём смесителя': '3,5 м³',
-      'Температура сушки': 'до 180°C',
-      'Потребление электроэнергии': '450 кВт',
-      'Размеры площадки': '45×60 м',
-      'Вес оборудования': '85 т'
-    }
+    images: ['./plant.png', './plant.png', './plant.png']
   },
   {
     id: 'apexflex-210',
@@ -32,22 +25,15 @@ const products = [
     type: 'Модульный комплекс',
     description:
       'Быстровозводимая модульная конструкция для региональных проектов. Легко масштабируется и транспортируется.',
+    fullDescription:
+      'ApexFlex 210 — модульный комплекс производительностью 210 тонн в час. Быстровозводимая конструкция идеальна для региональных проектов. Сборка и ввод в эксплуатацию занимают всего 10 дней. Комплекс легко масштабируется и транспортируется благодаря стандартным транспортным габаритам.',
     features: [
       'Сборка и ввод в эксплуатацию за 10 дней',
       'Стандартные транспортные габариты блоков',
       'Опциональные силосы минерального порошка до 80 т',
       'Удалённая диагностика и поддержка 24/7'
     ],
-    images: ['./plant.png'],
-    specs: {
-      'Производительность': '210 т/ч',
-      'Мощность горелки': '18 МВт',
-      'Объём смесителя': '2,8 м³',
-      'Температура сушки': 'до 180°C',
-      'Потребление электроэнергии': '320 кВт',
-      'Размеры площадки': '35×50 м',
-      'Вес оборудования': '65 т'
-    }
+    images: ['./plant.png', './plant.png', './plant.png']
   },
   {
     id: 'apexmobile-160',
@@ -57,22 +43,15 @@ const products = [
     type: 'Мобильная установка',
     description:
       'Компактный мобильный комплекс для строительства и ремонта дорог в труднодоступных регионах.',
+    fullDescription:
+      'ApexMobile 160 — компактный мобильный комплекс производительностью 160 тонн в час. Предназначен для строительства и ремонта дорог в труднодоступных регионах. Развертывание на площадке занимает менее 72 часов. Усиленная рама позволяет эксплуатировать комплекс при температуре до -45°C.',
     features: [
       'Развертывание на площадке менее чем за 72 часа',
       'Энергоэффективная дизельная горелка',
       'Усиленная рама для эксплуатации в -45 °C',
       'Комплект телеметрии и удаленного управления'
     ],
-    images: ['./plant.png'],
-    specs: {
-      'Производительность': '160 т/ч',
-      'Мощность горелки': '14 МВт',
-      'Объём смесителя': '2,2 м³',
-      'Температура сушки': 'до 180°C',
-      'Потребление электроэнергии': '250 кВт',
-      'Размеры площадки': '30×40 м',
-      'Вес оборудования': '48 т'
-    }
+    images: ['./plant.png', './plant.png', './plant.png']
   },
   {
     id: 'apexeco-260',
@@ -82,22 +61,15 @@ const products = [
     type: 'Стационарный комплекс',
     description:
       'Энергоэффективная модель с рекуперацией тепла и сниженным потреблением электроэнергии до 18%.',
+    fullDescription:
+      'ApexEco 260 — энергоэффективный комплекс производительностью 260 тонн в час. Модель оснащена системой рекуперации тепла сушильного барабана, что позволяет снизить потребление электроэнергии до 18%. Замкнутый цикл пылеулавливания обеспечивает экологичность производства.',
     features: [
       'Замкнутый цикл пылеулавливания',
       'Рекуперация тепла сушильного барабана',
       'Автоматизированная система контроля качества',
       'Опция переработки РАП до 40 %'
     ],
-    images: ['./plant.png'],
-    specs: {
-      'Производительность': '260 т/ч',
-      'Мощность горелки': '20 МВт',
-      'Объём смесителя': '3,0 м³',
-      'Температура сушки': 'до 180°C',
-      'Потребление электроэнергии': '280 кВт',
-      'Размеры площадки': '40×55 м',
-      'Вес оборудования': '72 т'
-    }
+    images: ['./plant.png', './plant.png', './plant.png']
   },
   {
     id: 'apexmicro-140',
@@ -107,22 +79,15 @@ const products = [
     type: 'Компактный комплекс',
     description:
       'Решение для муниципальных подрядчиков и небольших производств с упором на безостановочный цикл.',
+    fullDescription:
+      'ApexMicro 140 — компактный комплекс производительностью 140 тонн в час. Идеальное решение для муниципальных подрядчиков и небольших производств. Компактная планировка и пониженное энергопотребление делают его экономически выгодным для небольших проектов.',
     features: [
       'Компактная планировка и пониженное энергопотребление',
       'Автоматическое ведение журнальных записей',
       'Опция комплектования силосом минералов 40 т',
       'Оптимизированная логистика и монтаж'
     ],
-    images: ['./plant.png'],
-    specs: {
-      'Производительность': '140 т/ч',
-      'Мощность горелки': '12 МВт',
-      'Объём смесителя': '2,0 м³',
-      'Температура сушки': 'до 180°C',
-      'Потребление электроэнергии': '220 кВт',
-      'Размеры площадки': '28×38 м',
-      'Вес оборудования': '42 т'
-    }
+    images: ['./plant.png', './plant.png', './plant.png']
   },
   {
     id: 'apexpro-400',
@@ -132,22 +97,15 @@ const products = [
     type: 'Высокопроизводительный комплекс',
     description:
       'Максимальная производительность для федеральных проектов, резервирование ключевых узлов и двойные циклы.',
+    fullDescription:
+      'ApexPro 400 — высокопроизводительный комплекс с максимальной производительностью 400 тонн в час. Предназначен для федеральных проектов и крупных инфраструктурных объектов. Двойной смесительный узел обеспечивает непрерывное производство, а резервирование ключевых узлов гарантирует надежность работы.',
     features: [
       'Двойной смесительный узел',
       'Система автоматической подачи добавок и модификаторов',
       'Непрерывный контроль качества смеси',
       'Встроенный центр диагностики и аналитики'
     ],
-    images: ['./plant.png'],
-    specs: {
-      'Производительность': '400 т/ч',
-      'Мощность горелки': '32 МВт',
-      'Объём смесителя': '4,5 м³',
-      'Температура сушки': 'до 180°C',
-      'Потребление электроэнергии': '650 кВт',
-      'Размеры площадки': '55×70 м',
-      'Вес оборудования': '120 т'
-    }
+    images: ['./plant.png', './plant.png', './plant.png']
   }
 ];
 
@@ -167,6 +125,18 @@ const navbarLinks = document.querySelector('.navbar-links');
 const selectedProductName = document.querySelector('#selected-product-name');
 const selectedProductCapacity = document.querySelector('#selected-product-capacity');
 const selectedProductInput = document.querySelector('#productId');
+
+// Модальное окно
+const productModal = document.querySelector('#product-modal');
+const modalOverlay = document.querySelector('.modal-overlay');
+const modalClose = document.querySelector('.modal-close');
+const galleryMain = document.querySelector('#gallery-main');
+const galleryThumbnails = document.querySelector('#gallery-thumbnails');
+const galleryPrev = document.querySelector('.gallery-prev');
+const galleryNext = document.querySelector('.gallery-next');
+
+let currentGalleryIndex = 0;
+let currentProductImages = [];
 
 function createFeatureList(features) {
   const list = document.createElement('ul');
@@ -212,56 +182,8 @@ function createProductCard(product) {
   card.appendChild(description);
   card.appendChild(createFeatureList(product.features));
 
-  // Обработка клика и touch для мобильных
-  let lastTouchTime = 0;
-  let touchStartPos = { x: 0, y: 0 };
-
-  const handleCardActivation = (e) => {
-    // Предотвращаем открытие модалки если клик по ссылке внутри карточки
-    if (e.target && e.target.tagName === 'A') {
-      return;
-    }
-    
-    e.stopPropagation();
-    e.preventDefault();
-    
-    console.log('Card activated:', product.name);
+  card.addEventListener('click', () => {
     openProductModal(product.id);
-  };
-
-  // Обработка touch событий для мобильных
-  card.addEventListener('touchstart', (e) => {
-    const touch = e.touches[0];
-    touchStartPos.x = touch.clientX;
-    touchStartPos.y = touch.clientY;
-    lastTouchTime = Date.now();
-  }, { passive: true });
-
-  card.addEventListener('touchend', (e) => {
-    if (!e.changedTouches || e.changedTouches.length === 0) return;
-    
-    const touch = e.changedTouches[0];
-    const deltaX = Math.abs(touch.clientX - touchStartPos.x);
-    const deltaY = Math.abs(touch.clientY - touchStartPos.y);
-    const touchDuration = Date.now() - lastTouchTime;
-    
-    // Если движение было небольшое (менее 10px) и тап был быстрый (менее 500ms)
-    // Это считается кликом, а не swipe
-    if (deltaX < 10 && deltaY < 10 && touchDuration < 500) {
-      e.preventDefault();
-      e.stopPropagation();
-      handleCardActivation(e);
-    }
-  }, { passive: false });
-
-  // Обработка клика для десктопа
-  card.addEventListener('click', (e) => {
-    // На мобильных устройствах игнорируем click если недавно было touch событие
-    const timeSinceTouch = Date.now() - lastTouchTime;
-    if (timeSinceTouch < 600) {
-      return;
-    }
-    handleCardActivation(e);
   });
 
   return card;
@@ -331,6 +253,97 @@ function showToast(message, type = 'success') {
   setTimeout(() => {
     toast.classList.remove('visible');
   }, 4200);
+}
+
+// Функции для модального окна
+function openProductModal(productId) {
+  const product = products.find((p) => p.id === productId);
+  if (!product || !productModal) return;
+
+  currentProductImages = product.images || [];
+  currentGalleryIndex = 0;
+
+  // Заполняем информацию о продукте
+  document.querySelector('#modal-title').textContent = product.name;
+  document.querySelector('#modal-description').textContent = product.fullDescription || product.description;
+  
+  const modalMeta = document.querySelector('#modal-meta');
+  modalMeta.innerHTML = '';
+  const metaRow = createMetaRow(product);
+  modalMeta.appendChild(metaRow);
+
+  const modalFeatures = document.querySelector('#modal-features');
+  modalFeatures.innerHTML = '';
+  const featuresList = createFeatureList(product.features);
+  featuresList.className = 'modal-features-list';
+  modalFeatures.appendChild(featuresList);
+
+  // Выбираем продукт в форме
+  selectProduct(productId);
+
+  // Обновляем галерею
+  updateGallery();
+
+  // Открываем модальное окно
+  productModal.setAttribute('aria-hidden', 'false');
+  productModal.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+
+  // Фокус на кнопку закрытия для доступности
+  modalClose?.focus();
+}
+
+function closeProductModal() {
+  if (!productModal) return;
+  productModal.setAttribute('aria-hidden', 'true');
+  productModal.classList.remove('is-open');
+  document.body.style.overflow = '';
+}
+
+function updateGallery() {
+  if (!galleryMain || !galleryThumbnails || currentProductImages.length === 0) return;
+
+  // Основное изображение
+  galleryMain.innerHTML = '';
+  const mainImg = document.createElement('img');
+  mainImg.src = currentProductImages[currentGalleryIndex];
+  mainImg.alt = `Изображение ${currentGalleryIndex + 1}`;
+  mainImg.className = 'gallery-main-image';
+  galleryMain.appendChild(mainImg);
+
+  // Миниатюры
+  galleryThumbnails.innerHTML = '';
+  currentProductImages.forEach((imgSrc, index) => {
+    const thumb = document.createElement('button');
+    thumb.className = `gallery-thumb ${index === currentGalleryIndex ? 'active' : ''}`;
+    thumb.type = 'button';
+    thumb.setAttribute('aria-label', `Показать изображение ${index + 1}`);
+    const thumbImg = document.createElement('img');
+    thumbImg.src = imgSrc;
+    thumbImg.alt = `Миниатюра ${index + 1}`;
+    thumb.appendChild(thumbImg);
+    thumb.addEventListener('click', () => {
+      currentGalleryIndex = index;
+      updateGallery();
+    });
+    galleryThumbnails.appendChild(thumb);
+  });
+
+  // Показываем/скрываем кнопки навигации
+  if (galleryPrev && galleryNext) {
+    galleryPrev.style.display = currentProductImages.length > 1 ? 'flex' : 'none';
+    galleryNext.style.display = currentProductImages.length > 1 ? 'flex' : 'none';
+  }
+}
+
+function navigateGallery(direction) {
+  if (currentProductImages.length === 0) return;
+  if (direction === 'next') {
+    currentGalleryIndex = (currentGalleryIndex + 1) % currentProductImages.length;
+  } else {
+    currentGalleryIndex = currentGalleryIndex === 0 ? currentProductImages.length - 1 : currentGalleryIndex - 1;
+  }
+  updateGallery();
 }
 
 async function handleSubmit(event) {
@@ -483,234 +496,12 @@ function setupSmoothAnchors() {
   });
 }
 
-// Модальное окно деталей продукта
-let currentGalleryIndex = 0;
-let currentGalleryImages = [];
-
-function openProductModal(productId) {
-  console.log('openProductModal called with:', productId);
-  
-  const product = products.find((p) => p.id === productId);
-  if (!product) {
-    console.error('Product not found:', productId);
-    return;
-  }
-  
-  console.log('Opening modal for product:', product.name);
-
-  const modal = document.getElementById('product-modal');
-  if (!modal) {
-    console.error('Modal element not found in DOM');
-    return;
-  }
-  
-  console.log('Modal element found');
-  const modalTitle = document.getElementById('modal-title');
-  const modalMeta = document.getElementById('modal-meta');
-  const modalDescription = document.getElementById('modal-description');
-  const specsList = document.getElementById('specs-list');
-  const featuresList = document.getElementById('features-list-modal');
-  const galleryTrack = document.getElementById('gallery-track');
-  const galleryIndicators = document.getElementById('gallery-indicators');
-
-  // Заполняем заголовок и мета-информацию
-  modalTitle.textContent = product.name;
-  modalMeta.innerHTML = `
-    <span class="meta-tag">${product.capacity} т/ч</span>
-    <span class="meta-tag">${product.type}</span>
-  `;
-  modalDescription.textContent = product.description;
-
-  // Заполняем технические характеристики
-  specsList.innerHTML = '';
-  if (product.specs) {
-    Object.entries(product.specs).forEach(([key, value]) => {
-      const dt = document.createElement('dt');
-      dt.textContent = key;
-      const dd = document.createElement('dd');
-      dd.textContent = value;
-      specsList.appendChild(dt);
-      specsList.appendChild(dd);
-    });
-  }
-
-  // Заполняем особенности
-  featuresList.innerHTML = '';
-  product.features.forEach((feature) => {
-    const li = document.createElement('li');
-    li.textContent = feature;
-    featuresList.appendChild(li);
-  });
-
-  // Создаем карусель изображений
-  currentGalleryImages = product.images || ['./plant.png'];
-  currentGalleryIndex = 0;
-  galleryTrack.innerHTML = '';
-  galleryIndicators.innerHTML = '';
-
-  currentGalleryImages.forEach((imgSrc, index) => {
-    const imgWrapper = document.createElement('div');
-    imgWrapper.className = 'gallery-slide';
-    const img = document.createElement('img');
-    img.src = imgSrc;
-    img.alt = `${product.name} - изображение ${index + 1}`;
-    img.loading = 'lazy';
-    imgWrapper.appendChild(img);
-    galleryTrack.appendChild(imgWrapper);
-
-    const indicator = document.createElement('button');
-    indicator.className = 'gallery-indicator';
-    indicator.setAttribute('aria-label', `Перейти к изображению ${index + 1}`);
-    if (index === 0) indicator.classList.add('active');
-    indicator.addEventListener('click', () => goToGallerySlide(index));
-    galleryIndicators.appendChild(indicator);
-  });
-
-  updateGallery();
-
-  // Показываем модальное окно
-  console.log('Setting modal visible');
-  
-  modal.setAttribute('aria-hidden', 'false');
-  modal.classList.add('is-open');
-  
-  // Принудительно показываем модальное окно через inline стили
-  modal.style.display = 'flex';
-  modal.style.opacity = '1';
-  modal.style.visibility = 'visible';
-  modal.style.pointerEvents = 'auto';
-  modal.style.zIndex = '10000';
-  
-  document.body.style.overflow = 'hidden';
-  
-  console.log('Modal should be visible now');
-
-  // Выбираем продукт в форме
-  selectProduct(productId);
-}
-
-function closeProductModal() {
-  const modal = document.getElementById('product-modal');
-  modal.setAttribute('aria-hidden', 'true');
-  modal.classList.remove('is-open');
-  document.body.style.overflow = '';
-}
-
-function goToGallerySlide(index) {
-  if (index < 0 || index >= currentGalleryImages.length) return;
-  currentGalleryIndex = index;
-  updateGallery();
-}
-
-function updateGallery() {
-  const galleryTrack = document.getElementById('gallery-track');
-  const indicators = document.querySelectorAll('.gallery-indicator');
-  
-  if (galleryTrack) {
-    galleryTrack.style.transform = `translateX(-${currentGalleryIndex * 100}%)`;
-  }
-
-  indicators.forEach((indicator, index) => {
-    indicator.classList.toggle('active', index === currentGalleryIndex);
-  });
-}
-
-function setupProductModal() {
-  const modal = document.getElementById('product-modal');
-  const modalBackdrop = document.getElementById('modal-backdrop');
-  const modalClose = document.getElementById('modal-close');
-  const galleryPrev = document.getElementById('gallery-prev');
-  const galleryNext = document.getElementById('gallery-next');
-  const modalSelectBtn = document.getElementById('modal-select-btn');
-
-  if (!modal) return;
-
-  // Закрытие по клику на backdrop
-  modalBackdrop?.addEventListener('click', closeProductModal);
-  
-  // Закрытие по кнопке
-  modalClose?.addEventListener('click', closeProductModal);
-
-  // Закрытие по Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('is-open')) {
-      closeProductModal();
-    }
-  });
-
-  // Навигация по галерее
-  galleryPrev?.addEventListener('click', () => {
-    const newIndex = currentGalleryIndex > 0 
-      ? currentGalleryIndex - 1 
-      : currentGalleryImages.length - 1;
-    goToGallerySlide(newIndex);
-  });
-
-  galleryNext?.addEventListener('click', () => {
-    const newIndex = currentGalleryIndex < currentGalleryImages.length - 1
-      ? currentGalleryIndex + 1
-      : 0;
-    goToGallerySlide(newIndex);
-  });
-
-  // Кнопка выбора продукта
-  modalSelectBtn?.addEventListener('click', () => {
-    const productId = state.selectedProductId;
-    if (productId) {
-      closeProductModal();
-      // Прокручиваем к форме
-      const contactSection = document.getElementById('contact');
-      if (contactSection) {
-        contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  });
-
-  // Swipe для мобильных
-  let touchStartX = 0;
-  let touchEndX = 0;
-  const galleryViewport = document.querySelector('.gallery-viewport');
-  
-  if (galleryViewport) {
-    galleryViewport.addEventListener('touchstart', (e) => {
-      touchStartX = e.changedTouches[0].screenX;
-    });
-
-    galleryViewport.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].screenX;
-      handleSwipe();
-    });
-  }
-
-  function handleSwipe() {
-    const swipeThreshold = 50;
-    const diff = touchStartX - touchEndX;
-    
-    if (Math.abs(diff) > swipeThreshold) {
-      if (diff > 0) {
-        // Swipe left - next
-        const newIndex = currentGalleryIndex < currentGalleryImages.length - 1
-          ? currentGalleryIndex + 1
-          : 0;
-        goToGallerySlide(newIndex);
-      } else {
-        // Swipe right - prev
-        const newIndex = currentGalleryIndex > 0 
-          ? currentGalleryIndex - 1 
-          : currentGalleryImages.length - 1;
-        goToGallerySlide(newIndex);
-      }
-    }
-  }
-}
-
 function init() {
   renderProducts();
   selectProduct(products[0].id);
   setupRevealAnimations();
   setupNavbar();
   setupSmoothAnchors();
-  setupProductModal();
 
   capacityFilter?.addEventListener('change', (event) => {
     renderProducts(event.target.value);
@@ -750,6 +541,27 @@ function init() {
       phoneInput.value = parts.join('');
     });
   }
+
+  // Модальное окно
+  if (modalClose) {
+    modalClose.addEventListener('click', closeProductModal);
+  }
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', closeProductModal);
+  }
+  if (galleryPrev) {
+    galleryPrev.addEventListener('click', () => navigateGallery('prev'));
+  }
+  if (galleryNext) {
+    galleryNext.addEventListener('click', () => navigateGallery('next'));
+  }
+
+  // Закрытие по Escape
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && productModal?.classList.contains('is-open')) {
+      closeProductModal();
+    }
+  });
 
 }
 
