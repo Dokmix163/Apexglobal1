@@ -52,7 +52,7 @@
             <span></span>
             <span></span>
           </button>
-          <ul class="navbar-links" id="navbar-links" aria-hidden="true">
+          <ul class="navbar-links" id="navbar-links">
             <li><a href="#home">Главная</a></li>
             <li><a href="#catalog">Каталог</a></li>
             <li><a href="#about">О компании</a></li>
@@ -364,8 +364,71 @@
             <p class="modal-description" id="modal-description"></p>
             <div class="modal-features" id="modal-features"></div>
             <div class="modal-actions">
-              <a href="#contact" class="btn btn-primary">Оставить заявку</a>
+              <button type="button" class="btn btn-primary" id="modal-contact-btn">Оставить заявку</button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно формы заявки -->
+    <div class="contact-modal" id="contact-modal" aria-hidden="true" role="dialog" aria-labelledby="contact-modal-title">
+      <div class="modal-overlay contact-modal-overlay"></div>
+      <div class="modal-content contact-modal-content">
+        <button class="modal-close contact-modal-close" aria-label="Закрыть форму заявки">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        
+        <div class="contact-modal-body">
+          <h2 id="contact-modal-title" class="modal-title">Оставить заявку</h2>
+          <div class="contact-form-wrapper">
+            <form id="inquiry-form-modal" class="contact-form" novalidate>
+              <div class="form-group">
+                <label for="name-modal">Имя и компания *</label>
+                <input type="text" id="name-modal" name="name" placeholder="Иван Петров, ООО «Трасса»" required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="phone-modal">Телефон *</label>
+                  <input type="tel" id="phone-modal" name="phone" placeholder="+7 (___) ___-__-__" inputmode="tel" autocomplete="tel" required />
+                </div>
+                <div class="form-group">
+                  <label for="email-modal">E-mail</label>
+                  <input type="email" id="email-modal" name="email" placeholder="sales@company.ru" />
+                </div>
+              </div>
+              <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;border:0;padding:0;margin:0;" />
+              <div class="form-group">
+                <label>Выбранный комплекс</label>
+                <div class="selected-product" id="selected-product-modal">
+                  <strong id="selected-product-name-modal">Не выбран</strong>
+                  <span id="selected-product-capacity-modal"></span>
+                </div>
+                <input type="hidden" id="productId-modal" name="productId" />
+              </div>
+              <div class="form-group">
+                <label for="message-modal">Комментарий</label>
+                <textarea
+                  id="message-modal"
+                  name="message"
+                  rows="4"
+                  placeholder="Расскажите о задачах, планируемых объёмах и требованиях к автоматизации."
+                ></textarea>
+              </div>
+              <div class="form-group">
+                <label>
+                  <input type="checkbox" id="consent-modal" name="consent" required />
+                  Я даю согласие на обработку персональных данных
+                </label>
+              </div>
+              <button type="submit" class="btn btn-primary full-width">Отправить заявку</button>
+              <p class="form-footnote">
+                Нажимая «Отправить», вы соглашаетесь на обработку персональных данных и условия <a href="./privacy.html" style="color: var(--gold); text-decoration: underline;">политики конфиденциальности</a>.
+              </p>
+            </form>
           </div>
         </div>
       </div>

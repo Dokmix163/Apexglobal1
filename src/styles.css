@@ -1518,6 +1518,107 @@ video, iframe {
   transition: opacity 0.3s ease;
 }
 
+/* Модальное окно формы (поверх модального окна продукта) */
+.contact-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.contact-modal.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.contact-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(8px);
+}
+
+.contact-modal-content {
+  position: relative;
+  z-index: 1;
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+}
+
+.contact-modal.is-open .contact-modal-content {
+  transform: scale(1);
+}
+
+.contact-modal-body {
+  padding: 32px;
+}
+
+.contact-modal-body .modal-title {
+  margin-bottom: 24px;
+  font-size: 1.8rem;
+}
+
+.contact-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.contact-modal-close:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.contact-modal-close:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+  .contact-modal-content {
+    max-width: 100%;
+    max-height: 95vh;
+    border-radius: 20px 20px 0 0;
+    margin-top: auto;
+  }
+
+  .contact-modal-body {
+    padding: 24px 20px;
+  }
+
+  .contact-modal-body .modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+}
+
 .product-modal.is-open {
   opacity: 1;
   pointer-events: auto;

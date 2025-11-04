@@ -126,7 +126,7 @@ const selectedProductName = document.querySelector('#selected-product-name');
 const selectedProductCapacity = document.querySelector('#selected-product-capacity');
 const selectedProductInput = document.querySelector('#productId');
 
-// Модальное окно
+// Модальное окно продукта
 const productModal = document.querySelector('#product-modal');
 const modalOverlay = document.querySelector('.modal-overlay');
 const modalClose = document.querySelector('.modal-close');
@@ -134,9 +134,19 @@ const galleryMain = document.querySelector('#gallery-main');
 const galleryThumbnails = document.querySelector('#gallery-thumbnails');
 const galleryPrev = document.querySelector('.gallery-prev');
 const galleryNext = document.querySelector('.gallery-next');
+const modalContactBtn = document.querySelector('#modal-contact-btn');
+
+// Модальное окно формы
+const contactModal = document.querySelector('#contact-modal');
+const contactModalOverlay = document.querySelector('.contact-modal-overlay');
+const contactModalClose = document.querySelector('.contact-modal-close');
+const contactFormModal = document.querySelector('#inquiry-form-modal');
+const phoneInputModal = document.querySelector('#phone-modal');
+const consentModal = document.querySelector('#consent-modal');
 
 let currentGalleryIndex = 0;
 let currentProductImages = [];
+let previousContactFocusElement = null;
 
 function createFeatureList(features) {
   const list = document.createElement('ul');
@@ -215,13 +225,15 @@ function renderProducts(filterValue = 'all') {
     catalogGrid.appendChild(card);
   });
 
-  if (
-    filteredProducts.length &&
-    !filteredProducts.some((product) => product.id === state.selectedProductId)
-  ) {
-    selectProduct(filteredProducts[0].id);
-  } else {
-    selectProduct(state.selectedProductId);
+  // Выбираем продукт только если он был явно выбран пользователем
+  if (state.selectedProductId) {
+    const selectedProduct = filteredProducts.find((p) => p.id === state.selectedProductId);
+    if (selectedProduct) {
+      selectProduct(state.selectedProductId);
+    } else {
+      // Если выбранный продукт не в фильтре, сбрасываем выбор
+      selectProduct(null);
+    }
   }
 
   if (!filteredProducts.length) {
@@ -234,6 +246,16 @@ function renderProducts(filterValue = 'all') {
 
 function selectProduct(productId, options = {}) {
   if (!productId) {
+    // Сбрасываем выбор в обеих формах
+    selectedProductName.textContent = 'Не выбран';
+    selectedProductCapacity.textContent = '';
+    selectedProductInput.value = '';
+    
+    if (document.querySelector('#selected-product-name-modal')) {
+      document.querySelector('#selected-product-name-modal').textContent = 'Не выбран';
+      document.querySelector('#selected-product-capacity-modal').textContent = '';
+      document.querySelector('#productId-modal').value = '';
+    }
     return;
   }
   const { scroll = false } = options;
@@ -252,9 +274,20 @@ function selectProduct(productId, options = {}) {
     return;
   }
 
+  // Обновляем основную форму
   selectedProductName.textContent = product.name;
   selectedProductCapacity.textContent = `${product.capacity} т/ч • ${product.type}`;
   selectedProductInput.value = product.id;
+
+  // Обновляем модальную форму, если она существует
+  const selectedProductNameModal = document.querySelector('#selected-product-name-modal');
+  const selectedProductCapacityModal = document.querySelector('#selected-product-capacity-modal');
+  const selectedProductInputModal = document.querySelector('#productId-modal');
+  if (selectedProductNameModal) {
+    selectedProductNameModal.textContent = product.name;
+    selectedProductCapacityModal.textContent = `${product.capacity} т/ч • ${product.type}`;
+    selectedProductInputModal.value = product.id;
+  }
 }
 
 function showToast(message, type = 'success') {
@@ -363,6 +396,103 @@ function removeFocusTrap() {
   if (productModal._focusTrapHandler) {
     productModal.removeEventListener('keydown', productModal._focusTrapHandler);
     productModal._focusTrapHandler = null;
+  }
+}
+
+// Функции для модального окна формы
+function openContactModal() {
+  if (!contactModal) return;
+  
+  // Сохраняем элемент, который открыл модальное окно
+  previousContactFocusElement = document.activeElement;
+  
+  // Обновляем информацию о выбранном продукте в модальной форме
+  if (state.selectedProductId) {
+    const product = products.find((p) => p.id === state.selectedProductId);
+    if (product) {
+      const selectedProductNameModal = document.querySelector('#selected-product-name-modal');
+      const selectedProductCapacityModal = document.querySelector('#selected-product-capacity-modal');
+      const selectedProductInputModal = document.querySelector('#productId-modal');
+      if (selectedProductNameModal) {
+        selectedProductNameModal.textContent = product.name;
+        selectedProductCapacityModal.textContent = `${product.capacity} т/ч • ${product.type}`;
+        selectedProductInputModal.value = product.id;
+      }
+    }
+  }
+  
+  // Открываем модальное окно формы (поверх модального окна продукта)
+  contactModal.setAttribute('aria-hidden', 'false');
+  contactModal.setAttribute('aria-modal', 'true');
+  contactModal.classList.add('is-open');
+  
+  // Устанавливаем focus trap для формы
+  setupContactFocusTrap();
+  
+  // Фокус на первое поле или кнопку закрытия
+  const firstInput = contactFormModal?.querySelector('input, textarea, button');
+  if (firstInput) {
+    setTimeout(() => firstInput.focus(), 100);
+  } else {
+    contactModalClose?.focus();
+  }
+  
+  // Инициализируем маску телефона для модальной формы
+  if (phoneInputModal) {
+    if (!phoneInputModal.value.trim()) {
+      phoneInputModal.value = '+7 ';
+    }
+  }
+}
+
+function closeContactModal() {
+  if (!contactModal) return;
+  
+  contactModal.setAttribute('aria-hidden', 'true');
+  contactModal.removeAttribute('aria-modal');
+  contactModal.classList.remove('is-open');
+  
+  // Удаляем focus trap
+  removeContactFocusTrap();
+  
+  // Возвращаем фокус на элемент, который открыл модальное окно
+  if (previousContactFocusElement) {
+    previousContactFocusElement.focus();
+    previousContactFocusElement = null;
+  }
+}
+
+function setupContactFocusTrap() {
+  const focusableElements = contactModal.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  const handleTabKey = (event) => {
+    if (event.key !== 'Tab') return;
+    
+    if (event.shiftKey) {
+      if (document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement?.focus();
+      }
+    } else {
+      if (document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement?.focus();
+      }
+    }
+  };
+
+  contactModal.addEventListener('keydown', handleTabKey);
+  contactModal._focusTrapHandler = handleTabKey;
+}
+
+function removeContactFocusTrap() {
+  if (contactModal._focusTrapHandler) {
+    contactModal.removeEventListener('keydown', contactModal._focusTrapHandler);
+    contactModal._focusTrapHandler = null;
   }
 }
 
@@ -475,8 +605,25 @@ async function handleSubmit(event) {
     }
 
     showToast(result.message || 'Заявка отправлена', 'success');
+    
+    // Закрываем модальное окно формы, если оно открыто
+    if (contactModal && contactModal.classList.contains('is-open')) {
+      closeContactModal();
+    }
+    
+    // Сбрасываем форму
     form.reset();
-    selectedProductInput.value = payload.productId;
+    if (contactFormModal) {
+      contactFormModal.reset();
+    }
+    
+    // Восстанавливаем выбранный продукт
+    if (payload.productId) {
+      selectedProductInput.value = payload.productId;
+      if (document.querySelector('#productId-modal')) {
+        document.querySelector('#productId-modal').value = payload.productId;
+      }
+    }
   } catch (error) {
     showToast(
       error.message || 'Произошла техническая ошибка. Попробуйте повторить попытку позже.',
@@ -509,6 +656,24 @@ function setupNavbar() {
   if (!navbarToggle || !navbarLinks) {
     return;
   }
+
+  // Функция для обновления aria-hidden в зависимости от размера экрана
+  const updateNavbarAccessibility = () => {
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (isMobile) {
+      // На мобильных: aria-hidden зависит от состояния меню
+      if (!navbarLinks.classList.contains('is-open')) {
+        navbarLinks.setAttribute('aria-hidden', 'true');
+      }
+    } else {
+      // На десктопе: меню всегда видимо для скринридеров
+      navbarLinks.removeAttribute('aria-hidden');
+    }
+  };
+
+  // Обновляем при загрузке и изменении размера окна
+  updateNavbarAccessibility();
+  window.addEventListener('resize', updateNavbarAccessibility);
 
   const firstMenuLink = navbarLinks.querySelector('a');
   const closeMenu = () => {
@@ -649,10 +814,148 @@ function init() {
 
   // Закрытие по Escape
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && productModal?.classList.contains('is-open')) {
-      closeProductModal();
+    if (event.key === 'Escape') {
+      // Закрываем сначала модальное окно формы, если оно открыто
+      if (contactModal?.classList.contains('is-open')) {
+        closeContactModal();
+      } else if (productModal?.classList.contains('is-open')) {
+        closeProductModal();
+      }
     }
   });
+
+  // Кнопка "Оставить заявку" в модальном окне продукта
+  if (modalContactBtn) {
+    modalContactBtn.addEventListener('click', () => {
+      openContactModal();
+    });
+  }
+
+  // Модальное окно формы
+  if (contactModalClose) {
+    contactModalClose.addEventListener('click', closeContactModal);
+  }
+  if (contactModalOverlay) {
+    contactModalOverlay.addEventListener('click', closeContactModal);
+  }
+
+  // Обработчик формы в модальном окне
+  if (contactFormModal) {
+    contactFormModal.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      
+      const formData = new FormData(contactFormModal);
+      
+      // Honeypot: silently drop
+      if (formData.get('website')) {
+        return;
+      }
+
+      if (consentModal && !consentModal.checked) {
+        showToast('Подтвердите согласие на обработку персональных данных.', 'error');
+        consentModal.focus();
+        return;
+      }
+
+      // Проверка обязательных полей
+      const name = formData.get('name')?.trim() || '';
+      if (!name || name.length < 2) {
+        showToast('Укажите имя и компанию (не менее 2 символов).', 'error');
+        document.querySelector('#name-modal')?.focus();
+        return;
+      }
+
+      const rawPhone = String(formData.get('phone') || '').trim();
+      const phoneDigits = rawPhone.replace(/\D+/g, '');
+      const isValidPhone = phoneDigits.length >= 11 && (phoneDigits.startsWith('7') || phoneDigits.startsWith('8'));
+
+      const payload = {
+        name: name,
+        phone: rawPhone,
+        email: formData.get('email')?.trim(),
+        productId: formData.get('productId')?.trim(),
+        message: formData.get('message')?.trim()
+      };
+
+      if (!payload.productId) {
+        showToast('Выберите комплекс в каталоге перед отправкой заявки.', 'error');
+        return;
+      }
+
+      if (!isValidPhone) {
+        showToast('Введите корректный телефон в формате +7 (___) ___-__-__', 'error');
+        phoneInputModal?.focus();
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/inquiry', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || 'Не удалось отправить заявку');
+        }
+
+        showToast(result.message || 'Заявка отправлена', 'success');
+        
+        // Закрываем модальное окно формы
+        closeContactModal();
+        
+        // Сбрасываем форму
+        contactFormModal.reset();
+        
+        // Восстанавливаем выбранный продукт
+        if (payload.productId) {
+          if (document.querySelector('#productId-modal')) {
+            document.querySelector('#productId-modal').value = payload.productId;
+          }
+        }
+      } catch (error) {
+        showToast(
+          error.message || 'Произошла техническая ошибка. Попробуйте повторить попытку позже.',
+          'error'
+        );
+      }
+    });
+  }
+
+  // Маска телефона для модальной формы
+  if (phoneInputModal) {
+    if (!phoneInputModal.value.trim()) {
+      phoneInputModal.value = '+7 ';
+    }
+
+    phoneInputModal.addEventListener('focus', () => {
+      if (!phoneInputModal.value.trim() || !phoneInputModal.value.trim().startsWith('+7')) {
+        phoneInputModal.value = '+7 ';
+      }
+    });
+
+    phoneInputModal.addEventListener('input', () => {
+      let digits = phoneInputModal.value.replace(/\D+/g, '');
+      if (digits.startsWith('8')) digits = '7' + digits.slice(1);
+      if (!digits.startsWith('7')) digits = '7' + digits;
+      const parts = ['+7'];
+      if (digits.length > 1) {
+        const a = digits.slice(1, 4);
+        if (a) parts.push(` (${a}`);
+        const b = digits.slice(4, 7);
+        if (b) parts.push(`) ${b}`);
+        const c = digits.slice(7, 9);
+        if (c) parts.push(`-${c}`);
+        const d = digits.slice(9, 11);
+        if (d) parts.push(`-${d}`);
+      }
+      phoneInputModal.value = parts.join('');
+    });
+  }
 
 }
 
