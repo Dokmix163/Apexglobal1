@@ -170,20 +170,33 @@ function createProductCard(product) {
   const card = document.createElement('article');
   card.className = 'product-card';
   card.dataset.productId = product.id;
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('role', 'button');
+  card.setAttribute('aria-label', `Открыть подробную информацию о ${product.name}`);
+  card.setAttribute('aria-describedby', `product-${product.id}-desc`);
 
   const title = document.createElement('h3');
   title.textContent = product.name;
 
   const description = document.createElement('p');
   description.textContent = product.description;
+  description.id = `product-${product.id}-desc`;
 
   card.appendChild(title);
   card.appendChild(createMetaRow(product));
   card.appendChild(description);
   card.appendChild(createFeatureList(product.features));
 
-  card.addEventListener('click', () => {
+  const handleActivate = () => {
     openProductModal(product.id);
+  };
+
+  card.addEventListener('click', handleActivate);
+  card.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleActivate();
+    }
   });
 
   return card;
@@ -256,9 +269,14 @@ function showToast(message, type = 'success') {
 }
 
 // Функции для модального окна
+let previousFocusElement = null;
+
 function openProductModal(productId) {
   const product = products.find((p) => p.id === productId);
   if (!product || !productModal) return;
+
+  // Сохраняем элемент, который открыл модальное окно
+  previousFocusElement = document.activeElement;
 
   currentProductImages = product.images || [];
   currentGalleryIndex = 0;
@@ -286,8 +304,12 @@ function openProductModal(productId) {
 
   // Открываем модальное окно
   productModal.setAttribute('aria-hidden', 'false');
+  productModal.setAttribute('aria-modal', 'true');
   productModal.classList.add('is-open');
   document.body.style.overflow = 'hidden';
+
+  // Устанавливаем focus trap
+  setupFocusTrap();
 
   // Фокус на кнопку закрытия для доступности
   modalClose?.focus();
@@ -296,8 +318,52 @@ function openProductModal(productId) {
 function closeProductModal() {
   if (!productModal) return;
   productModal.setAttribute('aria-hidden', 'true');
+  productModal.removeAttribute('aria-modal');
   productModal.classList.remove('is-open');
   document.body.style.overflow = '';
+  
+  // Удаляем focus trap
+  removeFocusTrap();
+
+  // Возвращаем фокус на элемент, который открыл модальное окно
+  if (previousFocusElement) {
+    previousFocusElement.focus();
+    previousFocusElement = null;
+  }
+}
+
+function setupFocusTrap() {
+  const focusableElements = productModal.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  const handleTabKey = (event) => {
+    if (event.key !== 'Tab') return;
+    
+    if (event.shiftKey) {
+      if (document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement?.focus();
+      }
+    } else {
+      if (document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement?.focus();
+      }
+    }
+  };
+
+  productModal.addEventListener('keydown', handleTabKey);
+  productModal._focusTrapHandler = handleTabKey;
+}
+
+function removeFocusTrap() {
+  if (productModal._focusTrapHandler) {
+    productModal.removeEventListener('keydown', productModal._focusTrapHandler);
+    productModal._focusTrapHandler = null;
+  }
 }
 
 function updateGallery() {
@@ -362,12 +428,20 @@ async function handleSubmit(event) {
     return;
   }
 
+  // Проверка обязательных полей
+  const name = formData.get('name')?.trim() || '';
+  if (!name || name.length < 2) {
+    showToast('Укажите имя и компанию (не менее 2 символов).', 'error');
+    document.querySelector('#name')?.focus();
+    return;
+  }
+
   const rawPhone = String(formData.get('phone') || '').trim();
   const phoneDigits = rawPhone.replace(/\D+/g, '');
   const isValidPhone = phoneDigits.length >= 11 && (phoneDigits.startsWith('7') || phoneDigits.startsWith('8'));
 
   const payload = {
-    name: formData.get('name')?.trim(),
+    name: name,
     phone: rawPhone,
     email: formData.get('email')?.trim(),
     productId: formData.get('productId')?.trim(),
@@ -439,6 +513,7 @@ function setupNavbar() {
   const firstMenuLink = navbarLinks.querySelector('a');
   const closeMenu = () => {
     navbarLinks.classList.remove('is-open');
+    navbarLinks.setAttribute('aria-hidden', 'true');
     navbarToggle.setAttribute('aria-expanded', 'false');
     navbarToggle.focus();
     document.removeEventListener('keydown', onKeydown);
@@ -447,6 +522,7 @@ function setupNavbar() {
 
   const openMenu = () => {
     navbarLinks.classList.add('is-open');
+    navbarLinks.setAttribute('aria-hidden', 'false');
     navbarToggle.setAttribute('aria-expanded', 'true');
     if (firstMenuLink) {
       firstMenuLink.focus();
@@ -486,6 +562,20 @@ function setupNavbar() {
 function setupSmoothAnchors() {
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener('click', (event) => {
+      // Пропускаем skip-link - разрешаем стандартное поведение для доступности
+      if (anchor.classList.contains('skip-link')) {
+        const target = document.querySelector(anchor.getAttribute('href'));
+        if (target) {
+          // Переводим фокус на цель после перехода
+          setTimeout(() => {
+            target.setAttribute('tabindex', '-1');
+            target.focus();
+            target.removeAttribute('tabindex');
+          }, 100);
+        }
+        return; // Разрешаем стандартное поведение браузера
+      }
+      
       const target = document.querySelector(anchor.getAttribute('href'));
       if (!target) {
         return;
@@ -498,7 +588,8 @@ function setupSmoothAnchors() {
 
 function init() {
   renderProducts();
-  selectProduct(products[0].id);
+  // Не выбираем продукт автоматически - пользователь должен сделать выбор явно
+  // selectProduct(products[0].id);
   setupRevealAnimations();
   setupNavbar();
   setupSmoothAnchors();

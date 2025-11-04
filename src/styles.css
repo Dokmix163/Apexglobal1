@@ -854,8 +854,9 @@ video, iframe {
 .form-footnote {
   margin: 0;
   color: var(--text-muted);
-  font-size: 0.7rem;
+  font-size: 0.875rem;
   text-align: center;
+  line-height: 1.5;
 }
 
 /* Нижний колонтитул */
@@ -1097,12 +1098,13 @@ video, iframe {
     border-radius: 16px;
     transform: scale(0.98);
     transform-origin: top right;
-    opacity: 0;
-    pointer-events: none;
+    display: none;
     transition: opacity var(--transition), transform var(--transition);
   }
 
+  .navbar-links[aria-hidden="false"],
   .navbar-links.is-open {
+    display: flex;
     opacity: 1;
     pointer-events: auto;
     transform: scale(1);
