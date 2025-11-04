@@ -212,9 +212,25 @@ function createProductCard(product) {
   card.appendChild(description);
   card.appendChild(createFeatureList(product.features));
 
-  card.addEventListener('click', () => {
+  // Обработка клика и touch для мобильных
+  const handleCardClick = (e) => {
+    // Предотвращаем открытие модалки если клик по ссылке внутри карточки
+    if (e.target.tagName === 'A') {
+      return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
     openProductModal(product.id);
-  });
+  };
+
+  card.addEventListener('click', handleCardClick);
+  card.addEventListener('touchend', (e) => {
+    // Для touch событий предотвращаем двойное срабатывание
+    if (e.cancelable) {
+      e.preventDefault();
+    }
+    handleCardClick(e);
+  }, { passive: false });
 
   return card;
 }
