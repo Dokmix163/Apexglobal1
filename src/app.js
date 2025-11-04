@@ -1257,6 +1257,15 @@ function setupEngagementFeatures() {
     });
   }
 
+  const consultationBannerBtn = document.querySelector('#consultation-banner-btn');
+  if (consultationBannerBtn) {
+    consultationBannerBtn.addEventListener('click', () => {
+      consultationBanner.setAttribute('aria-hidden', 'true');
+      consultationBanner.classList.remove('is-visible');
+      openContactModal();
+    });
+  }
+
   // Кнопка "Наверх"
   const backToTop = document.querySelector('#back-to-top');
   if (backToTop) {
