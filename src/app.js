@@ -1234,4 +1234,58 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', init);
+// Функции для повышения вовлеченности
+function setupEngagementFeatures() {
+  // Баннер консультации
+  const consultationBanner = document.querySelector('#consultation-banner');
+  const consultationBannerClose = document.querySelector('.consultation-banner-close');
+  
+  // Показываем баннер через 5 секунд после загрузки страницы
+  setTimeout(() => {
+    const wasShown = sessionStorage.getItem('consultation-banner-shown');
+    if (!wasShown && consultationBanner) {
+      consultationBanner.setAttribute('aria-hidden', 'false');
+      consultationBanner.classList.add('is-visible');
+      sessionStorage.setItem('consultation-banner-shown', 'true');
+    }
+  }, 5000);
+
+  if (consultationBannerClose) {
+    consultationBannerClose.addEventListener('click', () => {
+      consultationBanner.setAttribute('aria-hidden', 'true');
+      consultationBanner.classList.remove('is-visible');
+    });
+  }
+
+  // Кнопка "Наверх"
+  const backToTop = document.querySelector('#back-to-top');
+  if (backToTop) {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        backToTop.style.display = 'flex';
+      } else {
+        backToTop.style.display = 'none';
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Инициализация
+
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // Чат-виджет
+  const chatWidget = document.querySelector('#chat-widget');
+  if (chatWidget) {
+    chatWidget.addEventListener('click', () => {
+      openContactModal();
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+  setupEngagementFeatures();
+});
