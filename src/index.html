@@ -435,5 +435,11 @@
     </div>
 
     <script src="./app.js" type="module"></script>
+    <script type="module">
+      // Vercel Analytics для обычного HTML проекта
+      // Используем npm пакет через import map
+      import { inject } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@latest/dist/index.mjs';
+      inject();
+    </script>
   </body>
 </html>
