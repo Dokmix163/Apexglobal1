@@ -1494,3 +1494,387 @@ video, iframe {
     font-size: clamp(1.2rem, 5vw, 1.5rem);
   }
 }
+
+/* Модальное окно деталей продукта */
+.product-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.product-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.modal-container {
+  position: relative;
+  z-index: 1001;
+  width: min(95vw, 1200px);
+  max-height: 90vh;
+  background: var(--surface);
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+.product-modal.is-open .modal-container {
+  transform: scale(1);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1002;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(7, 12, 18, 0.9);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.modal-close:hover {
+  background: rgba(7, 12, 18, 1);
+  border-color: var(--gold);
+  transform: rotate(90deg);
+}
+
+.modal-close:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.modal-close span {
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+}
+
+.modal-close span:first-child {
+  transform: rotate(45deg);
+}
+
+.modal-close span:last-child {
+  transform: rotate(-45deg);
+}
+
+.modal-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.modal-gallery {
+  position: relative;
+  background: #000;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.gallery-viewport {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.gallery-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+}
+
+.gallery-slide {
+  min-width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.gallery-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.gallery-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(7, 12, 18, 0.85);
+  border: 1px solid var(--border);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.gallery-nav:hover {
+  background: rgba(201, 168, 87, 0.2);
+  border-color: var(--gold);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.gallery-nav:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.gallery-prev {
+  left: 20px;
+}
+
+.gallery-next {
+  right: 20px;
+}
+
+.gallery-indicators {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.gallery-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.gallery-indicator.active {
+  background: var(--gold);
+  width: 24px;
+  border-radius: 5px;
+}
+
+.gallery-indicator:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.modal-info {
+  padding: 40px;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.modal-header {
+  margin-bottom: 24px;
+}
+
+.modal-title {
+  margin: 0 0 12px;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  color: var(--text);
+}
+
+.modal-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.meta-tag {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(201, 168, 87, 0.15);
+  border: 1px solid var(--gold-soft);
+  color: var(--gold);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.modal-description {
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 32px;
+  font-size: 1rem;
+}
+
+.modal-specs,
+.modal-features {
+  margin-bottom: 32px;
+}
+
+.modal-specs h3,
+.modal-features h3 {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+.specs-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 24px;
+  margin: 0;
+  padding: 0;
+}
+
+.specs-list dt {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.specs-list dd {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.features-list-modal {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.features-list-modal li {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.features-list-modal li::before {
+  content: '✓';
+  color: var(--gold);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.modal-actions {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.modal-actions .btn {
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .modal-content {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-gallery {
+    min-height: 400px;
+    max-height: 50vh;
+  }
+
+  .modal-info {
+    padding: 32px 24px;
+  }
+
+  .specs-list {
+    grid-template-columns: 1fr;
+    gap: 8px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-container {
+    width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+    height: 100vh;
+  }
+
+  .modal-content {
+    grid-template-columns: 1fr;
+    max-height: 100vh;
+  }
+
+  .modal-gallery {
+    min-height: 300px;
+    max-height: 40vh;
+  }
+
+  .gallery-nav {
+    width: 40px;
+    height: 40px;
+  }
+
+  .gallery-prev {
+    left: 12px;
+  }
+
+  .gallery-next {
+    right: 12px;
+  }
+
+  .modal-info {
+    padding: 24px 20px;
+    max-height: 60vh;
+  }
+
+  .modal-close {
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .specs-list {
+    grid-template-columns: 1fr;
+  }
+}
