@@ -5,6 +5,7 @@ const products = [
     capacity: 320,
     capacityCategory: 'high',
     type: 'Стационарный комплекс',
+    badges: [{ type: 'top', text: 'Топ продажа' }],
     description:
       'Флагманская линия с высокой долей автоматизации, подходит для магистральных проектов и городских программ.',
     fullDescription:
@@ -23,6 +24,7 @@ const products = [
     capacity: 210,
     capacityCategory: 'medium',
     type: 'Модульный комплекс',
+    badges: [{ type: 'new', text: 'Новинка' }],
     description:
       'Быстровозводимая модульная конструкция для региональных проектов. Легко масштабируется и транспортируется.',
     fullDescription:
@@ -95,6 +97,7 @@ const products = [
     capacity: 400,
     capacityCategory: 'high',
     type: 'Высокопроизводительный комплекс',
+    badges: [{ type: 'top', text: 'Топ продажа' }, { type: 'new', text: 'Новинка' }],
     description:
       'Максимальная производительность для федеральных проектов, резервирование ключевых узлов и двойные циклы.',
     fullDescription:
@@ -185,6 +188,31 @@ function createProductCard(product) {
   card.setAttribute('aria-label', `Открыть подробную информацию о ${product.name}`);
   card.setAttribute('aria-describedby', `product-${product.id}-desc`);
 
+  // Бейджи
+  if (product.badges && product.badges.length > 0) {
+    const badgesContainer = document.createElement('div');
+    badgesContainer.className = 'product-badges';
+    product.badges.forEach((badge) => {
+      const badgeEl = document.createElement('span');
+      badgeEl.className = `product-badge product-badge-${badge.type}`;
+      badgeEl.textContent = badge.text;
+      badgesContainer.appendChild(badgeEl);
+    });
+    card.appendChild(badgesContainer);
+  }
+
+  // Превью изображения
+  if (product.images && product.images.length > 0) {
+    const previewWrapper = document.createElement('div');
+    previewWrapper.className = 'product-preview';
+    const previewImg = document.createElement('img');
+    previewImg.src = product.images[0];
+    previewImg.alt = `${product.name} - превью`;
+    previewImg.loading = 'lazy';
+    previewWrapper.appendChild(previewImg);
+    card.appendChild(previewWrapper);
+  }
+
   const title = document.createElement('h3');
   title.textContent = product.name;
 
@@ -197,11 +225,38 @@ function createProductCard(product) {
   card.appendChild(description);
   card.appendChild(createFeatureList(product.features));
 
+  // CTA кнопка
+  const ctaButton = document.createElement('button');
+  ctaButton.className = 'product-card-cta';
+  ctaButton.type = 'button';
+  ctaButton.textContent = 'Подробнее';
+  ctaButton.setAttribute('aria-label', `Подробнее о ${product.name}`);
+  card.appendChild(ctaButton);
+
+  // Индикатор "Выбрано"
+  const selectedIndicator = document.createElement('div');
+  selectedIndicator.className = 'product-selected-indicator';
+  selectedIndicator.textContent = 'Выбрано';
+  selectedIndicator.setAttribute('aria-hidden', 'true');
+  card.appendChild(selectedIndicator);
+
   const handleActivate = () => {
     openProductModal(product.id);
   };
 
-  card.addEventListener('click', handleActivate);
+  card.addEventListener('click', (event) => {
+    // Не открываем модальное окно при клике на CTA, чтобы избежать двойного клика
+    if (event.target === ctaButton || ctaButton.contains(event.target)) {
+      return;
+    }
+    handleActivate();
+  });
+
+  ctaButton.addEventListener('click', (event) => {
+    event.stopPropagation();
+    handleActivate();
+  });
+
   card.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -256,6 +311,11 @@ function selectProduct(productId, options = {}) {
       document.querySelector('#selected-product-capacity-modal').textContent = '';
       document.querySelector('#productId-modal').value = '';
     }
+    
+    // Убираем индикатор "Выбрано" со всех карточек
+    document.querySelectorAll('.product-selected-indicator').forEach((indicator) => {
+      indicator.style.display = 'none';
+    });
     return;
   }
   const { scroll = false } = options;
@@ -264,6 +324,13 @@ function selectProduct(productId, options = {}) {
   document.querySelectorAll('.product-card').forEach((card) => {
     const isActive = card.dataset.productId === productId;
     card.classList.toggle('active', isActive);
+    
+    // Показываем/скрываем индикатор "Выбрано"
+    const selectedIndicator = card.querySelector('.product-selected-indicator');
+    if (selectedIndicator) {
+      selectedIndicator.style.display = isActive ? 'flex' : 'none';
+    }
+    
     if (isActive && scroll) {
       card.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -725,6 +792,30 @@ function setupNavbar() {
 }
 
 function setupSmoothAnchors() {
+  // Обновление активного раздела при скролле
+  const updateActiveSection = () => {
+    const sections = document.querySelectorAll('section[id], header[id]');
+    const navLinks = document.querySelectorAll('.navbar-links a[href^="#"]');
+    
+    let currentSection = '';
+    sections.forEach((section) => {
+      const sectionTop = section.offsetTop - 100;
+      const sectionHeight = section.offsetHeight;
+      if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+        currentSection = section.getAttribute('id');
+      }
+    });
+
+    navLinks.forEach((link) => {
+      const href = link.getAttribute('href').replace('#', '');
+      link.classList.toggle('active', href === currentSection);
+    });
+  };
+
+  // Обновляем при скролле
+  window.addEventListener('scroll', updateActiveSection);
+  updateActiveSection(); // Инициализация
+
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener('click', (event) => {
       // Пропускаем skip-link - разрешаем стандартное поведение для доступности
@@ -747,6 +838,9 @@ function setupSmoothAnchors() {
       }
       event.preventDefault();
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      
+      // Обновляем активный раздел после скролла
+      setTimeout(updateActiveSection, 300);
     });
   });
 }
@@ -760,8 +854,27 @@ function init() {
   setupSmoothAnchors();
 
   capacityFilter?.addEventListener('change', (event) => {
-    renderProducts(event.target.value);
+    const value = event.target.value;
+    renderProducts(value);
+    
+    // Подсветка активного фильтра
+    capacityFilter?.querySelectorAll('option').forEach((option) => {
+      option.classList.remove('selected');
+    });
+    const selectedOption = capacityFilter?.querySelector(`option[value="${value}"]`);
+    if (selectedOption) {
+      selectedOption.classList.add('selected');
+    }
   });
+  
+  // Инициализация подсветки фильтра
+  if (capacityFilter) {
+    const initialValue = capacityFilter.value || 'all';
+    const initialOption = capacityFilter.querySelector(`option[value="${initialValue}"]`);
+    if (initialOption) {
+      initialOption.classList.add('selected');
+    }
+  }
 
   form?.addEventListener('submit', handleSubmit);
 
