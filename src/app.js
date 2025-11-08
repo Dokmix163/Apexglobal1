@@ -632,19 +632,9 @@ function openContactModal() {
   // Сохраняем элемент, который открыл модальное окно
   previousContactFocusElement = document.activeElement;
   
-  // Обновляем информацию о выбранном продукте в модальной форме
-  if (state.selectedProductId) {
-    const product = products.find((p) => p.id === state.selectedProductId);
-    if (product) {
-      const selectedProductNameModal = document.querySelector('#selected-product-name-modal');
-      const selectedProductCapacityModal = document.querySelector('#selected-product-capacity-modal');
-      const selectedProductInputModal = document.querySelector('#productId-modal');
-      if (selectedProductNameModal) {
-        selectedProductNameModal.textContent = product.name;
-        selectedProductCapacityModal.textContent = `${product.capacity} т/ч • ${product.type}`;
-        selectedProductInputModal.value = product.id;
-      }
-    }
+  // Обновляем select в модальной форме, если продукт уже выбран
+  if (state.selectedProductId && selectedProductInputModal) {
+    selectedProductInputModal.value = state.selectedProductId;
   }
   
   // Открываем модальное окно формы (поверх модального окна продукта)
