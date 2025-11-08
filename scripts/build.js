@@ -60,13 +60,6 @@ async function copyDir(src, dest) {
 }
 
 async function updateHTMLWithVersions() {
-  const htmlPath = path.join(DIST_DIR, 'index.html');
-  if (!fs.existsSync(htmlPath)) {
-    return;
-  }
-
-  let html = await fsp.readFile(htmlPath, 'utf8');
-  
   // Читаем файлы и генерируем хэши
   const cssPath = path.join(DIST_DIR, 'styles.css');
   const jsPath = path.join(DIST_DIR, 'app.js');
@@ -84,19 +77,65 @@ async function updateHTMLWithVersions() {
     jsHash = getFileHash(jsContent);
   }
   
-  // Обновляем ссылки в HTML
-  if (cssHash) {
-    html = html.replace(/styles\.css(\?v=[^"']*)?/g, `styles.css?v=${cssHash}`);
+  if (!cssHash && !jsHash) {
+    return;
   }
   
-  if (jsHash) {
-    html = html.replace(/app\.js(\?v=[^"']*)?/g, `app.js?v=${jsHash}`);
+  // Находим все HTML файлы
+  const htmlFiles = [];
+  async function findHTMLFiles(dir) {
+    const entries = await fsp.readdir(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        await findHTMLFiles(fullPath);
+      } else if (entry.isFile() && entry.name.endsWith('.html')) {
+        htmlFiles.push(fullPath);
+      }
+    }
   }
   
-  await fsp.writeFile(htmlPath, html, 'utf8');
+  await findHTMLFiles(DIST_DIR);
+  
+  // Обновляем все HTML файлы
+  for (const htmlPath of htmlFiles) {
+    let html = await fsp.readFile(htmlPath, 'utf8');
+    let updated = false;
+    
+    // Обновляем ссылки на CSS
+    if (cssHash) {
+      const newHtml = html.replace(/styles\.css(\?v=[^"']*)?/g, `styles.css?v=${cssHash}`);
+      if (newHtml !== html) {
+        html = newHtml;
+        updated = true;
+      }
+    }
+    
+    // Обновляем ссылки на JS (только для index.html или если есть app.js)
+    if (jsHash && (htmlPath.includes('index.html') || html.includes('app.js'))) {
+      const newHtml = html.replace(/app\.js(\?v=[^"']*)?/g, `app.js?v=${jsHash}`);
+      if (newHtml !== html) {
+        html = newHtml;
+        updated = true;
+      }
+    }
+    
+    // Добавляем meta теги для предотвращения кеширования HTML
+    if (!html.includes('Cache-Control') && html.includes('<head>')) {
+      html = html.replace(
+        '<head>',
+        `<head>\n    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />\n    <meta http-equiv="Pragma" content="no-cache" />\n    <meta http-equiv="Expires" content="0" />`
+      );
+      updated = true;
+    }
+    
+    if (updated) {
+      await fsp.writeFile(htmlPath, html, 'utf8');
+    }
+  }
   
   if (cssHash || jsHash) {
-    console.log(`• Версии файлов обновлены: CSS=${cssHash}, JS=${jsHash}`);
+    console.log(`• Версии файлов обновлены во всех HTML: CSS=${cssHash}, JS=${jsHash}`);
   }
 }
 
