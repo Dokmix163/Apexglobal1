@@ -1,0 +1,101 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Асфальтовый завод с закатным освещением">
+  <defs>
+    <linearGradient id="emberBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#06060D" />
+      <stop offset="45%" stop-color="#1A0F1D" />
+      <stop offset="100%" stop-color="#1E1E2F" />
+    </linearGradient>
+    <linearGradient id="emberGlow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#F5B467" stop-opacity="0" />
+      <stop offset="50%" stop-color="#F5B467" stop-opacity="0.65" />
+      <stop offset="100%" stop-color="#F5B467" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="emberBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2C1E32" />
+      <stop offset="100%" stop-color="#0D0D18" />
+    </linearGradient>
+    <linearGradient id="emberAccent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFDFAE" />
+      <stop offset="100%" stop-color="#C98C3D" />
+    </linearGradient>
+    <filter id="emberNoise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="2" seed="18" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0" />
+    </filter>
+  </defs>
+
+  <rect width="1200" height="720" fill="url(#emberBg)" />
+  <rect y="500" width="1200" height="220" fill="#05040A" />
+  <rect y="470" width="1200" height="90" fill="url(#emberGlow)" />
+  <g opacity="0.3" filter="url(#emberNoise)">
+    <rect width="1200" height="720" fill="#000" />
+  </g>
+
+  <path d="M0 490 L130 460 L280 485 L420 455 L560 475 L700 450 L840 470 L1000 440 L1120 460 L1200 430 L1200 540 L0 540 Z" fill="#110A17" />
+
+  <!-- корпуса -->
+  <g>
+    <rect x="110" y="300" width="110" height="210" rx="18" fill="#160F1B" stroke="#2E1E33" stroke-width="2" />
+    <rect x="240" y="270" width="130" height="240" rx="20" fill="#1C1422" stroke="#36243C" stroke-width="2" />
+    <rect x="390" y="240" width="140" height="270" rx="22" fill="#24182A" stroke="#3B2A42" stroke-width="2" />
+    <rect x="560" y="245" width="150" height="265" rx="24" fill="#2A1D30" stroke="#3F2E46" stroke-width="2" />
+    <rect x="740" y="260" width="170" height="250" rx="26" fill="#1D1422" stroke="#35243B" stroke-width="2" />
+    <rect x="940" y="290" width="140" height="200" rx="22" fill="#1A131F" stroke="#332238" stroke-width="2" />
+  </g>
+
+  <!-- окна -->
+  <g fill="#0B0912" opacity="0.65">
+    <rect x="140" y="330" width="70" height="60" rx="10" />
+    <rect x="270" y="310" width="90" height="50" rx="10" />
+    <rect x="270" y="370" width="90" height="50" rx="10" />
+    <rect x="410" y="300" width="100" height="60" rx="12" />
+    <rect x="410" y="380" width="100" height="60" rx="12" />
+    <rect x="580" y="300" width="110" height="60" rx="12" />
+    <rect x="580" y="380" width="110" height="60" rx="12" />
+    <rect x="760" y="310" width="120" height="55" rx="12" />
+    <rect x="760" y="380" width="120" height="55" rx="12" />
+  </g>
+
+  <!-- галереи -->
+  <g fill="#120B17">
+    <rect x="160" y="360" width="260" height="16" rx="8" />
+    <rect x="160" y="380" width="16" height="140" rx="8" />
+    <rect x="360" y="340" width="310" height="16" rx="8" />
+    <rect x="360" y="360" width="18" height="160" rx="9" />
+    <rect x="620" y="320" width="300" height="18" rx="9" />
+    <rect x="620" y="340" width="18" height="160" rx="9" />
+    <rect x="880" y="350" width="220" height="16" rx="8" />
+  </g>
+
+  <!-- транспортёр -->
+  <g>
+    <path d="M50 520 L270 440 L520 500 L780 450 L1000 480 L1200 430 L1200 560 L50 560 Z" fill="#08050D" />
+    <path d="M70 520 L270 445 L520 505 L780 455 L1000 485 L1200 440" stroke="#2C1D32" stroke-width="6" stroke-linecap="round" />
+    <path d="M90 530 L290 455 L540 510 L800 460 L1020 490 L1200 450" stroke="#150E1A" stroke-width="3" stroke-linecap="round" />
+  </g>
+
+  <!-- акценты -->
+  <g fill="url(#emberAccent)">
+    <rect x="280" y="330" width="18" height="80" rx="6" />
+    <rect x="450" y="300" width="20" height="110" rx="6" />
+    <rect x="610" y="320" width="20" height="90" rx="6" />
+    <rect x="790" y="340" width="18" height="70" rx="6" />
+    <rect x="960" y="350" width="14" height="60" rx="6" />
+    <circle cx="1020" cy="360" r="5" />
+    <circle cx="700" cy="320" r="6" />
+  </g>
+
+  <!-- дым -->
+  <g opacity="0.35">
+    <path d="M200 210 C220 180 260 180 280 210 C300 240 270 255 255 235 C240 215 225 245 205 235 C185 225 185 205 195 200" fill="#E4C6B4" fill-opacity="0.18" />
+    <path d="M520 200 C540 170 580 175 595 205 C610 235 580 250 565 230 C550 210 535 240 510 230 C485 220 490 200 505 195" fill="#F0D4C3" fill-opacity="0.16" />
+  </g>
+
+  <g fill="#F8DEB1">
+    <circle cx="140" cy="560" r="3" />
+    <circle cx="360" cy="560" r="3" />
+    <circle cx="600" cy="560" r="3" />
+    <circle cx="840" cy="560" r="3" />
+    <circle cx="1080" cy="560" r="3" />
+  </g>
+</svg>

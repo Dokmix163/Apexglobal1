@@ -1,0 +1,114 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Производственный комплекс ApexGlobal">
+  <defs>
+    <linearGradient id="foundryBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#04060C" />
+      <stop offset="50%" stop-color="#0B131F" />
+      <stop offset="100%" stop-color="#141E2C" />
+    </linearGradient>
+    <linearGradient id="foundryGlow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#F2D38A" stop-opacity="0" />
+      <stop offset="50%" stop-color="#F2D38A" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#F2D38A" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="foundryBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#273246" />
+      <stop offset="100%" stop-color="#131A27" />
+    </linearGradient>
+    <linearGradient id="foundryAccent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F8E0B3" />
+      <stop offset="100%" stop-color="#BF8E3A" />
+    </linearGradient>
+    <filter id="foundryNoise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" seed="25" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.08 0" />
+    </filter>
+  </defs>
+
+  <rect width="1200" height="720" fill="url(#foundryBg)" />
+  <rect y="500" width="1200" height="220" fill="#05070E" />
+  <rect y="470" width="1200" height="90" fill="url(#foundryGlow)" />
+  <g opacity="0.25" filter="url(#foundryNoise)">
+    <rect width="1200" height="720" fill="#000" />
+  </g>
+
+  <path d="M0 490 L150 465 L320 485 L500 455 L700 480 L900 450 L1100 470 L1200 440 L1200 560 L0 560 Z" fill="#0D121D" />
+
+  <!-- корпуса -->
+  <g>
+    <rect x="130" y="300" width="90" height="210" rx="16" fill="#141B29" stroke="#253046" stroke-width="2" />
+    <rect x="240" y="260" width="110" height="250" rx="18" fill="#192232" stroke="#29364D" stroke-width="2" />
+    <rect x="360" y="240" width="130" height="270" rx="20" fill="#1F293B" stroke="#2F3D53" stroke-width="2" />
+    <rect x="500" y="250" width="140" height="260" rx="22" fill="#232E40" stroke="#354358" stroke-width="2" />
+    <rect x="650" y="230" width="160" height="280" rx="24" fill="#273247" stroke="#39455D" stroke-width="2" />
+    <rect x="830" y="250" width="170" height="260" rx="24" fill="#1A2232" stroke="#2B364B" stroke-width="2" />
+    <rect x="1020" y="280" width="120" height="220" rx="20" fill="#151D2B" stroke="#263249" stroke-width="2" />
+  </g>
+
+  <!-- окна -->
+  <g fill="#0A111D" opacity="0.75">
+    <rect x="150" y="330" width="60" height="55" rx="10" />
+    <rect x="260" y="310" width="80" height="50" rx="10" />
+    <rect x="260" y="370" width="80" height="50" rx="10" />
+    <rect x="380" y="300" width="100" height="55" rx="12" />
+    <rect x="380" y="365" width="100" height="55" rx="12" />
+    <rect x="520" y="310" width="100" height="50" rx="12" />
+    <rect x="520" y="370" width="100" height="50" rx="12" />
+    <rect x="690" y="300" width="120" height="60" rx="12" />
+    <rect x="690" y="380" width="120" height="60" rx="12" />
+    <rect x="870" y="300" width="120" height="60" rx="12" />
+    <rect x="870" y="380" width="120" height="60" rx="12" />
+  </g>
+
+  <!-- галереи -->
+  <g fill="#0B111B">
+    <rect x="190" y="360" width="220" height="14" rx="7" />
+    <rect x="190" y="380" width="14" height="140" rx="7" />
+    <rect x="360" y="340" width="280" height="16" rx="8" />
+    <rect x="360" y="360" width="16" height="160" rx="8" />
+    <rect x="600" y="320" width="300" height="16" rx="8" />
+    <rect x="600" y="340" width="16" height="160" rx="8" />
+    <rect x="860" y="340" width="200" height="16" rx="8" />
+  </g>
+
+  <!-- краны и трубы -->
+  <g stroke="#2D3B52" stroke-width="6" stroke-linecap="round">
+    <line x1="250" y1="260" x2="250" y2="220" />
+    <line x1="250" y1="220" x2="320" y2="190" />
+    <line x1="480" y1="240" x2="480" y2="200" />
+    <line x1="480" y1="200" x2="560" y2="170" />
+    <line x1="780" y1="230" x2="780" y2="190" />
+    <line x1="780" y1="190" x2="870" y2="170" />
+  </g>
+
+  <!-- транспортёр -->
+  <g>
+    <path d="M40 540 L260 470 L520 520 L800 480 L1040 500 L1200 470 L1200 590 L40 590 Z" fill="#070A12" />
+    <path d="M60 540 L260 475 L520 525 L800 485 L1040 505 L1200 480" stroke="#272F42" stroke-width="6" stroke-linecap="round" />
+    <path d="M85 550 L280 485 L540 530 L820 490 L1060 510 L1200 490" stroke="#141B2A" stroke-width="3" stroke-linecap="round" />
+  </g>
+
+  <!-- акценты -->
+  <g fill="url(#foundryAccent)">
+    <rect x="290" y="330" width="16" height="90" rx="6" />
+    <rect x="450" y="300" width="18" height="110" rx="6" />
+    <rect x="620" y="320" width="18" height="95" rx="6" />
+    <rect x="800" y="340" width="16" height="80" rx="6" />
+    <rect x="980" y="350" width="14" height="70" rx="6" />
+    <circle cx="1040" cy="360" r="5" />
+    <circle cx="720" cy="330" r="6" />
+  </g>
+
+  <!-- дым -->
+  <g opacity="0.35">
+    <path d="M220 210 C240 180 280 185 295 215 C310 245 280 255 265 235 C250 215 235 245 215 235 C195 225 200 205 210 200" fill="#D2DDE8" fill-opacity="0.18" />
+    <path d="M550 210 C570 180 610 185 625 215 C640 245 610 255 595 235 C580 215 565 245 540 235 C515 225 520 205 535 200" fill="#E0E8F1" fill-opacity="0.16" />
+  </g>
+
+  <g fill="#F6E3B7">
+    <circle cx="130" cy="590" r="3" />
+    <circle cx="350" cy="590" r="3" />
+    <circle cx="600" cy="590" r="3" />
+    <circle cx="860" cy="590" r="3" />
+    <circle cx="1100" cy="590" r="3" />
+  </g>
+</svg>

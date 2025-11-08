@@ -1,3 +1,13 @@
+const plantArt = {
+  hero: './assets/hero-asphalt-plant.svg',
+  aurum: './assets/asphalt-plant-aurum.svg',
+  cobalt: './assets/asphalt-plant-cobalt.svg',
+  ember: './assets/asphalt-plant-ember.svg',
+  mist: './assets/asphalt-plant-mist.svg',
+  lumen: './assets/asphalt-plant-lumen.svg',
+  foundry: './assets/asphalt-plant-foundry.svg'
+};
+
 const products = [
   {
     id: 'apexcore-320',
@@ -33,11 +43,7 @@ const products = [
       { label: 'Вес', value: '280 т' }
     ],
     pdfSpec: '#',
-    images: [
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop'
-    ]
+    images: [plantArt.hero, plantArt.foundry, plantArt.cobalt]
   },
   {
     id: 'apexflex-210',
@@ -56,11 +62,7 @@ const products = [
       'Опциональные силосы минерального порошка до 80 т',
       'Удалённая диагностика и поддержка 24/7'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop'
-    ]
+    images: [plantArt.aurum, plantArt.lumen, plantArt.mist]
   },
   {
     id: 'apexmobile-160',
@@ -95,11 +97,7 @@ const products = [
       { label: 'Вес', value: '180 т' }
     ],
     pdfSpec: '#',
-    images: [
-      'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop'
-    ]
+    images: [plantArt.ember, plantArt.aurum, plantArt.lumen]
   },
   {
     id: 'apexeco-260',
@@ -134,11 +132,7 @@ const products = [
       { label: 'Вес', value: '250 т' }
     ],
     pdfSpec: '#',
-    images: [
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop'
-    ]
+    images: [plantArt.mist, plantArt.foundry, plantArt.cobalt]
   },
   {
     id: 'apexmicro-140',
@@ -173,11 +167,7 @@ const products = [
       { label: 'Вес', value: '150 т' }
     ],
     pdfSpec: '#',
-    images: [
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=800&fit=crop'
-    ]
+    images: [plantArt.aurum, plantArt.ember, plantArt.hero]
   },
   {
     id: 'apexpro-400',
@@ -196,11 +186,7 @@ const products = [
       'Непрерывный контроль качества смеси',
       'Встроенный центр диагностики и аналитики'
     ],
-    images: [
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop'
-    ]
+    images: [plantArt.cobalt, plantArt.hero, plantArt.lumen]
   }
 ];
 
