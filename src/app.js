@@ -217,9 +217,8 @@ const phoneInput = document.querySelector('#phone');
 const navbarToggle = document.querySelector('.navbar-toggle');
 const navbarLinks = document.querySelector('.navbar-links');
 
-const selectedProductName = document.querySelector('#selected-product-name');
-const selectedProductCapacity = document.querySelector('#selected-product-capacity');
 const selectedProductInput = document.querySelector('#productId');
+const selectedProductInputModal = document.querySelector('#productId-modal');
 
 // Модальное окно продукта
 const productModal = document.querySelector('#product-modal');
@@ -391,25 +390,52 @@ function renderProducts(filterValue = 'all') {
   }
 }
 
+function populateProductSelects() {
+  // Заполняем основной select
+  if (selectedProductInput && selectedProductInput.tagName === 'SELECT') {
+    products.forEach((product) => {
+      const option = document.createElement('option');
+      option.value = product.id;
+      option.textContent = `${product.name} (${product.capacity} т/ч)`;
+      selectedProductInput.appendChild(option);
+    });
+  }
+
+  // Заполняем модальный select
+  if (selectedProductInputModal && selectedProductInputModal.tagName === 'SELECT') {
+    products.forEach((product) => {
+      const option = document.createElement('option');
+      option.value = product.id;
+      option.textContent = `${product.name} (${product.capacity} т/ч)`;
+      selectedProductInputModal.appendChild(option);
+    });
+  }
+}
+
 function selectProduct(productId, options = {}) {
   if (!productId) {
     // Сбрасываем выбор в обеих формах
-    selectedProductName.textContent = 'Не выбран';
-    selectedProductCapacity.textContent = '';
-    selectedProductInput.value = '';
+    if (selectedProductInput) {
+      selectedProductInput.value = '';
+    }
     
-    if (document.querySelector('#selected-product-name-modal')) {
-      document.querySelector('#selected-product-name-modal').textContent = 'Не выбран';
-      document.querySelector('#selected-product-capacity-modal').textContent = '';
-      document.querySelector('#productId-modal').value = '';
+    if (selectedProductInputModal) {
+      selectedProductInputModal.value = '';
     }
     
     // Убираем индикатор "Выбрано" со всех карточек
     document.querySelectorAll('.product-selected-indicator').forEach((indicator) => {
       indicator.style.display = 'none';
     });
+    
+    document.querySelectorAll('.product-card').forEach((card) => {
+      card.classList.remove('active');
+    });
+    
+    state.selectedProductId = null;
     return;
   }
+  
   const { scroll = false } = options;
   state.selectedProductId = productId;
 
@@ -433,18 +459,13 @@ function selectProduct(productId, options = {}) {
     return;
   }
 
-  // Обновляем основную форму
-  selectedProductName.textContent = product.name;
-  selectedProductCapacity.textContent = `${product.capacity} т/ч • ${product.type}`;
-  selectedProductInput.value = product.id;
+  // Обновляем select в основной форме
+  if (selectedProductInput) {
+    selectedProductInput.value = product.id;
+  }
 
-  // Обновляем модальную форму, если она существует
-  const selectedProductNameModal = document.querySelector('#selected-product-name-modal');
-  const selectedProductCapacityModal = document.querySelector('#selected-product-capacity-modal');
-  const selectedProductInputModal = document.querySelector('#productId-modal');
-  if (selectedProductNameModal) {
-    selectedProductNameModal.textContent = product.name;
-    selectedProductCapacityModal.textContent = `${product.capacity} т/ч • ${product.type}`;
+  // Обновляем select в модальной форме
+  if (selectedProductInputModal) {
     selectedProductInputModal.value = product.id;
   }
 }
@@ -1003,6 +1024,7 @@ function setupSmoothAnchors() {
 
 function init() {
   renderProducts();
+  populateProductSelects(); // Заполняем select списки продуктами
   // Не выбираем продукт автоматически - пользователь должен сделать выбор явно
   // selectProduct(products[0].id);
   setupRevealAnimations();
@@ -1030,6 +1052,30 @@ function init() {
     if (initialOption) {
       initialOption.classList.add('selected');
     }
+  }
+
+  // Обработчик изменения select в основной форме
+  if (selectedProductInput && selectedProductInput.tagName === 'SELECT') {
+    selectedProductInput.addEventListener('change', (event) => {
+      const productId = event.target.value;
+      if (productId) {
+        selectProduct(productId, { scroll: true });
+      } else {
+        selectProduct(null);
+      }
+    });
+  }
+
+  // Обработчик изменения select в модальной форме
+  if (selectedProductInputModal && selectedProductInputModal.tagName === 'SELECT') {
+    selectedProductInputModal.addEventListener('change', (event) => {
+      const productId = event.target.value;
+      if (productId) {
+        selectProduct(productId);
+      } else {
+        selectProduct(null);
+      }
+    });
   }
 
   form?.addEventListener('submit', handleSubmit);
