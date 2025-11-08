@@ -474,8 +474,6 @@ function selectProduct(productId, options = {}) {
   if (selectedProductInput) {
     if (selectedProductInput.tagName === 'SELECT') {
       selectedProductInput.value = product.id;
-      // Принудительно обновляем визуальное состояние
-      selectedProductInput.dispatchEvent(new Event('change', { bubbles: true }));
     } else {
       selectedProductInput.value = product.id;
     }
