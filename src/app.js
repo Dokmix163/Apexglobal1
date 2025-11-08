@@ -795,12 +795,24 @@ async function handleSubmit(event) {
 
   // Honeypot: silently drop
   if (formData.get('website')) {
+    // Восстанавливаем состояние кнопки перед выходом
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      if (submitText) submitText.style.display = 'inline';
+      if (submitSpinner) submitSpinner.style.display = 'none';
+    }
     return;
   }
 
   if (consent && !consent.checked) {
     showToast('Подтвердите согласие на обработку персональных данных.', 'error');
     consent.focus();
+    // Восстанавливаем состояние кнопки
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      if (submitText) submitText.style.display = 'inline';
+      if (submitSpinner) submitSpinner.style.display = 'none';
+    }
     return;
   }
 
@@ -809,6 +821,12 @@ async function handleSubmit(event) {
   if (!name || name.length < 2) {
     showToast('Укажите имя и компанию (не менее 2 символов).', 'error');
     document.querySelector('#name')?.focus();
+    // Восстанавливаем состояние кнопки
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      if (submitText) submitText.style.display = 'inline';
+      if (submitSpinner) submitSpinner.style.display = 'none';
+    }
     return;
   }
 
@@ -826,12 +844,24 @@ async function handleSubmit(event) {
 
   if (!payload.productId) {
     showToast('Выберите комплекс в каталоге перед отправкой заявки.', 'error');
+    // Восстанавливаем состояние кнопки
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      if (submitText) submitText.style.display = 'inline';
+      if (submitSpinner) submitSpinner.style.display = 'none';
+    }
     return;
   }
 
   if (!isValidPhone) {
     showToast('Введите корректный телефон в формате +7 (___) ___-__-__', 'error');
     phoneInput?.focus();
+    // Восстанавливаем состояние кнопки
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      if (submitText) submitText.style.display = 'inline';
+      if (submitSpinner) submitSpinner.style.display = 'none';
+    }
     return;
   }
 
@@ -843,6 +873,12 @@ async function handleSubmit(event) {
       },
       body: JSON.stringify(payload)
     });
+
+    // Проверяем, что ответ не пустой
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Сервер вернул неверный формат ответа');
+    }
 
     const result = await response.json();
 
@@ -857,24 +893,32 @@ async function handleSubmit(event) {
       closeContactModal();
     }
     
-    // Сбрасываем форму
+    // Сбрасываем форму и выбор продукта
     form.reset();
     if (contactFormModal) {
       contactFormModal.reset();
     }
     
-    // Восстанавливаем выбранный продукт
-    if (payload.productId) {
-      selectedProductInput.value = payload.productId;
-      if (document.querySelector('#productId-modal')) {
-        document.querySelector('#productId-modal').value = payload.productId;
-      }
+    // Сбрасываем выбранный продукт после успешной отправки
+    selectProduct(null);
+    
+    // Восстанавливаем маску телефона
+    if (phoneInput && !phoneInput.value.trim()) {
+      phoneInput.value = '+7 ';
     }
   } catch (error) {
-    showToast(
-      error.message || 'Произошла техническая ошибка. Попробуйте повторить попытку позже.',
-      'error'
-    );
+    // Обрабатываем разные типы ошибок
+    let errorMessage = 'Произошла техническая ошибка. Попробуйте повторить попытку позже.';
+    
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      errorMessage = 'Проблема с подключением к интернету. Проверьте соединение и попробуйте снова.';
+    } else if (error instanceof SyntaxError) {
+      errorMessage = 'Ошибка обработки ответа сервера. Попробуйте позже.';
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
+    showToast(errorMessage, 'error');
   } finally {
     // Убираем индикатор отправки
     if (submitBtn) {
@@ -1172,12 +1216,35 @@ function init() {
       
       // Honeypot: silently drop
       if (formData.get('website')) {
+        // Восстанавливаем состояние кнопки перед выходом
+        if (submitBtnModal) {
+          submitBtnModal.disabled = false;
+          if (submitTextModal) submitTextModal.style.display = 'inline';
+          if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
+        }
         return;
+      }
+
+      const submitBtnModal = contactFormModal.querySelector('button[type="submit"]');
+      const submitTextModal = submitBtnModal?.querySelector('.submit-text');
+      const submitSpinnerModal = submitBtnModal?.querySelector('.submit-spinner');
+      
+      // Показываем индикатор отправки
+      if (submitBtnModal) {
+        submitBtnModal.disabled = true;
+        if (submitTextModal) submitTextModal.style.display = 'none';
+        if (submitSpinnerModal) submitSpinnerModal.style.display = 'inline-flex';
       }
 
       if (consentModal && !consentModal.checked) {
         showToast('Подтвердите согласие на обработку персональных данных.', 'error');
         consentModal.focus();
+        // Восстанавливаем состояние кнопки
+        if (submitBtnModal) {
+          submitBtnModal.disabled = false;
+          if (submitTextModal) submitTextModal.style.display = 'inline';
+          if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
+        }
         return;
       }
 
@@ -1186,6 +1253,12 @@ function init() {
       if (!name || name.length < 2) {
         showToast('Укажите имя и компанию (не менее 2 символов).', 'error');
         document.querySelector('#name-modal')?.focus();
+        // Восстанавливаем состояние кнопки
+        if (submitBtnModal) {
+          submitBtnModal.disabled = false;
+          if (submitTextModal) submitTextModal.style.display = 'inline';
+          if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
+        }
         return;
       }
 
@@ -1203,12 +1276,24 @@ function init() {
 
       if (!payload.productId) {
         showToast('Выберите комплекс в каталоге перед отправкой заявки.', 'error');
+        // Восстанавливаем состояние кнопки
+        if (submitBtnModal) {
+          submitBtnModal.disabled = false;
+          if (submitTextModal) submitTextModal.style.display = 'inline';
+          if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
+        }
         return;
       }
 
       if (!isValidPhone) {
         showToast('Введите корректный телефон в формате +7 (___) ___-__-__', 'error');
         phoneInputModal?.focus();
+        // Восстанавливаем состояние кнопки
+        if (submitBtnModal) {
+          submitBtnModal.disabled = false;
+          if (submitTextModal) submitTextModal.style.display = 'inline';
+          if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
+        }
         return;
       }
 
@@ -1221,6 +1306,12 @@ function init() {
           body: JSON.stringify(payload)
         });
 
+        // Проверяем, что ответ не пустой
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Сервер вернул неверный формат ответа');
+        }
+
         const result = await response.json();
 
         if (!response.ok) {
@@ -1232,20 +1323,34 @@ function init() {
         // Закрываем модальное окно формы
         closeContactModal();
         
-        // Сбрасываем форму
+        // Сбрасываем форму и выбор продукта
         contactFormModal.reset();
+        selectProduct(null);
         
-        // Восстанавливаем выбранный продукт
-        if (payload.productId) {
-          if (document.querySelector('#productId-modal')) {
-            document.querySelector('#productId-modal').value = payload.productId;
-          }
+        // Восстанавливаем маску телефона
+        if (phoneInputModal && !phoneInputModal.value.trim()) {
+          phoneInputModal.value = '+7 ';
         }
       } catch (error) {
-        showToast(
-          error.message || 'Произошла техническая ошибка. Попробуйте повторить попытку позже.',
-          'error'
-        );
+        // Обрабатываем разные типы ошибок
+        let errorMessage = 'Произошла техническая ошибка. Попробуйте повторить попытку позже.';
+        
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          errorMessage = 'Проблема с подключением к интернету. Проверьте соединение и попробуйте снова.';
+        } else if (error instanceof SyntaxError) {
+          errorMessage = 'Ошибка обработки ответа сервера. Попробуйте позже.';
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        showToast(errorMessage, 'error');
+      } finally {
+        // Убираем индикатор отправки
+        if (submitBtnModal) {
+          submitBtnModal.disabled = false;
+          if (submitTextModal) submitTextModal.style.display = 'inline';
+          if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
+        }
       }
     });
   }
