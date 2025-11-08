@@ -18,7 +18,9 @@
   "license": "MIT",
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
-    "@vercel/speed-insights": "^1.2.0"
+    "@vercel/speed-insights": "^1.2.0",
+    "dotenv": "^17.2.3",
+    "nodemailer": "^7.0.10"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",

@@ -2,6 +2,12 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
+const nodemailer = require('nodemailer');
+
+// Загружаем переменные окружения в development режиме
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const fsp = fs.promises;
 
@@ -97,6 +103,150 @@ function sendJson(res, status, data) {
     'Content-Length': Buffer.byteLength(payload)
   });
   res.end(payload);
+}
+
+// Маппинг ID продуктов на названия
+const PRODUCT_NAMES = {
+  'apexcore-320': 'ApexCore 320',
+  'apexflex-210': 'ApexFlex 210',
+  'apexmobile-160': 'ApexMobile 160',
+  'apexcompact-120': 'ApexCompact 120',
+  'apexpro-400': 'ApexPro 400'
+};
+
+// Настройка nodemailer
+function createTransporter() {
+  const smtpHost = process.env.SMTP_HOST;
+  const smtpPort = process.env.SMTP_PORT || 587;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+  const smtpSecure = process.env.SMTP_SECURE === 'true';
+
+  if (!smtpHost || !smtpUser || !smtpPass) {
+    console.warn('⚠️  SMTP настройки не заданы. Email отправка отключена.');
+    return null;
+  }
+
+  return nodemailer.createTransport({
+    host: smtpHost,
+    port: parseInt(smtpPort, 10),
+    secure: smtpSecure, // true для 465, false для других портов
+    auth: {
+      user: smtpUser,
+      pass: smtpPass
+    }
+  });
+}
+
+// Функция отправки email
+async function sendInquiryEmail(inquiryData) {
+  const transporter = createTransporter();
+  if (!transporter) {
+    console.warn('Email не отправлен: SMTP не настроен');
+    return;
+  }
+
+  const emailTo = process.env.EMAIL_TO || 'sales@apexglobals.ru';
+  const emailFrom = process.env.EMAIL_FROM || process.env.SMTP_USER;
+  const productName = PRODUCT_NAMES[inquiryData.productId] || inquiryData.productId;
+
+  const subject = `Новая заявка с сайта ApexGlobal: ${productName}`;
+
+  const htmlBody = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #c9a857; color: #070b10; padding: 20px; text-align: center; }
+        .content { background: #f9f9f9; padding: 20px; }
+        .field { margin-bottom: 15px; }
+        .label { font-weight: bold; color: #555; }
+        .value { margin-top: 5px; color: #333; }
+        .footer { margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h2>Новая заявка с сайта ApexGlobal</h2>
+        </div>
+        <div class="content">
+          <div class="field">
+            <div class="label">Имя и компания:</div>
+            <div class="value">${escapeHtml(inquiryData.name)}</div>
+          </div>
+          <div class="field">
+            <div class="label">Телефон:</div>
+            <div class="value"><a href="tel:${escapeHtml(inquiryData.phone)}">${escapeHtml(inquiryData.phone)}</a></div>
+          </div>
+          ${inquiryData.email ? `
+          <div class="field">
+            <div class="label">Email:</div>
+            <div class="value"><a href="mailto:${escapeHtml(inquiryData.email)}">${escapeHtml(inquiryData.email)}</a></div>
+          </div>
+          ` : ''}
+          <div class="field">
+            <div class="label">Выбранный комплекс:</div>
+            <div class="value">${escapeHtml(productName)}</div>
+          </div>
+          ${inquiryData.message ? `
+          <div class="field">
+            <div class="label">Комментарий:</div>
+            <div class="value">${escapeHtml(inquiryData.message).replace(/\n/g, '<br>')}</div>
+          </div>
+          ` : ''}
+          <div class="field">
+            <div class="label">Дата и время:</div>
+            <div class="value">${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}</div>
+          </div>
+        </div>
+        <div class="footer">
+          <p>Это автоматическое уведомление с сайта <a href="https://apexglobals.ru">apexglobals.ru</a></p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  const textBody = `
+Новая заявка с сайта ApexGlobal
+
+Имя и компания: ${inquiryData.name}
+Телефон: ${inquiryData.phone}
+${inquiryData.email ? `Email: ${inquiryData.email}` : ''}
+Выбранный комплекс: ${productName}
+${inquiryData.message ? `Комментарий: ${inquiryData.message}` : ''}
+
+Дата и время: ${new Date().toLocaleString('ru-RU', { timeZone: 'Europe/Moscow' })}
+  `;
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"ApexGlobal Site" <${emailFrom}>`,
+      to: emailTo,
+      subject: subject,
+      text: textBody,
+      html: htmlBody
+    });
+
+    console.log('✅ Email отправлен:', info.messageId);
+  } catch (error) {
+    console.error('❌ Ошибка отправки email:', error);
+    throw error;
+  }
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 async function appendInquiry(payload) {
@@ -211,7 +361,13 @@ const server = http.createServer(async (req, res) => {
         });
       }
 
+      // Сохраняем заявку в файл
       await appendInquiry(data);
+
+      // Отправляем email (не блокируем ответ, если email не отправится)
+      sendInquiryEmail(data).catch((emailError) => {
+        console.error('Не удалось отправить email (заявка сохранена):', emailError);
+      });
 
       return sendJson(res, 200, {
         status: 'ok',

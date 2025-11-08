@@ -21,7 +21,58 @@ npm run build
 npm start
 ```
 
-После отправки формы заявки данные сохраняются в `data/inquiries.json`. Файл добавлен в `.gitignore`, но создаётся автоматически при первой заявке.
+После отправки формы заявки данные сохраняются в `data/inquiries.json` и отправляются на email (если настроен SMTP).
+
+## Настройка отправки email
+
+Для настройки отправки заявок на email создайте файл `.env` в корне проекта на основе `.env.example`:
+
+```bash
+cp .env.example .env
+```
+
+Заполните переменные окружения в `.env`:
+
+```env
+SMTP_HOST=smtp.yandex.ru
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=your-email@yandex.ru
+SMTP_PASS=your-password
+EMAIL_TO=sales@apexglobals.ru
+EMAIL_FROM=noreply@apexglobals.ru
+```
+
+### Примеры настроек для популярных почтовых сервисов:
+
+**Yandex Mail:**
+```env
+SMTP_HOST=smtp.yandex.ru
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=your-email@yandex.ru
+SMTP_PASS=your-password
+```
+
+**Gmail / Google Workspace:**
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password  # Используйте пароль приложения, не обычный пароль
+```
+
+**Mail.ru:**
+```env
+SMTP_HOST=smtp.mail.ru
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=your-email@mail.ru
+SMTP_PASS=your-password
+```
+
+**Примечание:** Если SMTP настройки не заданы, заявки будут сохраняться только в файл `data/inquiries.json`, но email отправляться не будет.
 
 ## Структура проекта
 ```
@@ -41,5 +92,6 @@ npm start
 
 ## Дополнительные замечания
 - В каталоге реализован выбор продукта с фильтром по производительности и последующей привязкой к заявке.
-- API `/api/inquiry` возвращает JSON-ответы и может быть интегрировано с внешними CRM или почтовыми сервисами.
+- API `/api/inquiry` возвращает JSON-ответы и отправляет заявки на email (если настроен SMTP).
 - Для локальной проверки формы убедитесь, что сервер запущен (`npm run dev` или `npm start`), чтобы запросы уходили на backend.
+- Переменные окружения для SMTP можно также настроить в панели управления вашего хостинга (Vercel, Heroku и т.д.).

@@ -8,6 +8,10 @@ pnpm-debug.log*
 # Build output
 dist
 
+# Environment variables
+.env
+.env.local
+
 # Runtime data
 data/inquiries.json
 

@@ -87,6 +87,12 @@ ApexGlobal landing showcases products and captures inquiries. Mobile responsiven
   - Обновлены: canonical URL, Open Graph URL, JSON-LD schema, email адреса, robots.txt, sitemap.xml
   - Исправлена конфигурация vercel.json (убран placeholder API)
   - Исправлена ссылка на иконку в JSON-LD (теперь указывает на logo.png вместо несуществующего icon-512.png)
+- **Email отправка заявок**: Реализована отправка заявок на email через SMTP.
+  - Установлены зависимости: nodemailer, dotenv
+  - Добавлена функция отправки HTML-писем с данными заявки
+  - Настройки SMTP через переменные окружения (см. .env.example)
+  - Email отправляется асинхронно, не блокируя ответ пользователю
+  - Заявки продолжают сохраняться в JSON файл даже если email не отправился
 
 # Executor's Feedback or Assistance Requests
 - Confirm preferred analytics platform and whether to include Yandex.Metrica.
