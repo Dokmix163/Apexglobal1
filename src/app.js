@@ -8,6 +8,31 @@ const plantArt = {
   foundry: './assets/asphalt-plant-foundry.svg'
 };
 
+const heroHotspots = [
+  {
+    id: 'dryer',
+    label: 'Сушильный барабан',
+    description:
+      'Высокотемпературный барабан с интеллектуальной модуляцией пламени поддерживает стабильную влажность смеси.',
+    x: 32,
+    y: 64
+  },
+  {
+    id: 'silo',
+    label: 'Силос минерального порошка',
+    description: 'Двухконтурное хранение с дегазацией и подогревом предотвращает слёживание заполнителей.',
+    x: 57,
+    y: 28
+  },
+  {
+    id: 'mix',
+    label: 'Узел смешения',
+    description: 'Двойная мешалка ApexMix контролирует модификаторы и отдаёт телеметрию в SCADA.',
+    x: 78,
+    y: 55
+  }
+];
+
 const bitumenTanks = [
   {
     id: 'bitumen-tank-50',
@@ -1284,7 +1309,109 @@ function setupSmoothAnchors() {
   });
 }
 
+let activeHeroHotspot = null;
+
+function initHeroHotspots() {
+  const heroVisual = document.querySelector('[data-hero-visual]');
+  if (!heroVisual || !heroHotspots.length) {
+    return;
+  }
+
+  const layer = document.createElement('div');
+  layer.className = 'hero-hotspots';
+  heroVisual.appendChild(layer);
+
+  heroHotspots.forEach((spot, index) => {
+    const hotspot = document.createElement('button');
+    hotspot.type = 'button';
+    hotspot.className = 'hero-hotspot';
+    hotspot.style.setProperty('--hotspot-x', `${spot.x}%`);
+    hotspot.style.setProperty('--hotspot-y', `${spot.y}%`);
+    hotspot.setAttribute('aria-label', `${spot.label}. ${spot.description}`);
+    hotspot.dataset.hotspotId = spot.id;
+
+    const core = document.createElement('span');
+    core.className = 'hero-hotspot-core';
+    hotspot.appendChild(core);
+
+    const tooltip = document.createElement('div');
+    tooltip.className = 'hero-hotspot-tooltip';
+    tooltip.innerHTML = `<strong>${spot.label}</strong><p>${spot.description}</p>`;
+    hotspot.appendChild(tooltip);
+
+    layer.appendChild(hotspot);
+    attachHeroHotspotEvents(hotspot);
+
+    // Лёгкое смещение по времени, чтобы точки появлялись каскадом
+    hotspot.style.animationDelay = `${index * 120}ms`;
+  });
+}
+
+function attachHeroHotspotEvents(hotspot) {
+  const show = () => showHeroHotspot(hotspot);
+  const hide = () => hideHeroHotspot(hotspot);
+
+  hotspot.addEventListener('pointerenter', show);
+  hotspot.addEventListener('pointerleave', hide);
+  hotspot.addEventListener('focus', show);
+  hotspot.addEventListener('blur', hide);
+  hotspot.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (activeHeroHotspot === hotspot) {
+      hideHeroHotspot(hotspot);
+    } else {
+      showHeroHotspot(hotspot);
+    }
+  });
+}
+
+function showHeroHotspot(hotspot) {
+  if (!hotspot) {
+    return;
+  }
+  if (activeHeroHotspot && activeHeroHotspot !== hotspot) {
+    hideHeroHotspot(activeHeroHotspot);
+  }
+  hotspot.classList.add('active');
+  const tooltip = hotspot.querySelector('.hero-hotspot-tooltip');
+  animateHeroTooltip(tooltip, 'in');
+  activeHeroHotspot = hotspot;
+}
+
+function hideHeroHotspot(hotspot) {
+  if (!hotspot) {
+    return;
+  }
+  hotspot.classList.remove('active');
+  const tooltip = hotspot.querySelector('.hero-hotspot-tooltip');
+  animateHeroTooltip(tooltip, 'out');
+  if (activeHeroHotspot === hotspot) {
+    activeHeroHotspot = null;
+  }
+}
+
+function animateHeroTooltip(tooltip, direction = 'in') {
+  if (!tooltip || typeof tooltip.animate !== 'function') {
+    return;
+  }
+  const frames =
+    direction === 'in'
+      ? [
+          { opacity: 0, transform: 'translate(-50%, 12px) scale(0.92)' },
+          { opacity: 1, transform: 'translate(-50%, 0) scale(1)' }
+        ]
+      : [
+          { opacity: 1, transform: 'translate(-50%, 0) scale(1)' },
+          { opacity: 0, transform: 'translate(-50%, 12px) scale(0.94)' }
+        ];
+  tooltip.animate(frames, {
+    duration: 420,
+    easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+  });
+}
+
 function init() {
+  initHeroHotspots();
   renderProducts();
   renderBitumenTanks();
   populateProductSelects(); // Заполняем select списки продуктами

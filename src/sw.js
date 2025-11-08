@@ -1,9 +1,10 @@
-const CACHE_NAME = 'apexglobal-v2';
+const CACHE_NAME = 'apexglobal-v3';
 const urlsToCache = [
   '/',
   '/styles.css',
   '/app.js',
   '/logo.png',
+  '/zavod_1.png',
   '/manifest.webmanifest'
 ];
 
@@ -62,4 +63,3 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-
