@@ -94,8 +94,19 @@ function createTransporter() {
   const smtpPass = process.env.SMTP_PASS;
   const smtpSecure = process.env.SMTP_SECURE === 'true';
 
+  console.log('🔍 Проверка SMTP настроек:');
+  console.log('  SMTP_HOST:', smtpHost ? '✅ задан' : '❌ не задан');
+  console.log('  SMTP_PORT:', smtpPort);
+  console.log('  SMTP_USER:', smtpUser ? '✅ задан' : '❌ не задан');
+  console.log('  SMTP_PASS:', smtpPass ? '✅ задан (скрыт)' : '❌ не задан');
+  console.log('  SMTP_SECURE:', smtpSecure);
+
   if (!smtpHost || !smtpUser || !smtpPass) {
-    console.warn('⚠️  SMTP настройки не заданы. Email отправка отключена.');
+    console.error('⚠️  SMTP настройки не заданы. Email отправка отключена.');
+    console.error('   Убедитесь, что в Vercel настроены переменные окружения:');
+    console.error('   - SMTP_HOST');
+    console.error('   - SMTP_USER');
+    console.error('   - SMTP_PASS');
     return null;
   }
 
@@ -196,6 +207,11 @@ ${inquiryData.message ? `Комментарий: ${inquiryData.message}` : ''}
   `;
 
   try {
+    console.log('📤 Отправка email...');
+    console.log('   От:', emailFrom);
+    console.log('   Кому:', emailTo);
+    console.log('   Тема:', subject);
+    
     const info = await transporter.sendMail({
       from: `"ApexGlobal Site" <${emailFrom}>`,
       to: emailTo,
@@ -204,9 +220,16 @@ ${inquiryData.message ? `Комментарий: ${inquiryData.message}` : ''}
       html: htmlBody
     });
 
-    console.log('✅ Email отправлен:', info.messageId);
+    console.log('✅ Email успешно отправлен!');
+    console.log('   Message ID:', info.messageId);
+    console.log('   Response:', info.response);
+    return info;
   } catch (error) {
-    console.error('❌ Ошибка отправки email:', error);
+    console.error('❌ Ошибка отправки email:');
+    console.error('   Сообщение:', error.message);
+    console.error('   Код:', error.code);
+    console.error('   Команда:', error.command);
+    console.error('   Ответ сервера:', error.response);
     throw error;
   }
 }
@@ -257,10 +280,30 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Отправляем email (не блокируем ответ, если email не отправится)
-    sendInquiryEmail(data).catch((emailError) => {
-      console.error('Не удалось отправить email (заявка сохранена):', emailError);
-    });
+    // Проверяем настройки SMTP перед отправкой
+    const emailTo = process.env.EMAIL_TO || 'sales@apexglobals.ru';
+    console.log('📧 Попытка отправить email на:', emailTo);
+
+    // Отправляем email и ждем результата
+    try {
+      await sendInquiryEmail(data);
+      console.log('✅ Email успешно отправлен');
+    } catch (emailError) {
+      console.error('❌ Ошибка отправки email:', emailError);
+      console.error('   Детали ошибки:', {
+        message: emailError.message,
+        code: emailError.code,
+        command: emailError.command,
+        response: emailError.response
+      });
+      
+      // Возвращаем ошибку пользователю, чтобы он знал о проблеме
+      return res.status(500).json({
+        status: 'error',
+        message: 'Заявка получена, но не удалось отправить уведомление на email. Пожалуйста, свяжитесь с нами напрямую.',
+        debug: process.env.NODE_ENV === 'development' ? emailError.message : undefined
+      });
+    }
 
     return res.status(200).json({
       status: 'ok',
