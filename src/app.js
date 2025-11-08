@@ -1244,17 +1244,41 @@ window.addEventListener('unhandledrejection', (event) => {
   }
 });
 
-// Регистрация Service Worker для PWA
+// Регистрация Service Worker для PWA (с поддержкой Safari)
 if ('serviceWorker' in navigator) {
+  // Safari требует полной загрузки страницы перед регистрацией SW
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register('./sw.js')
+      .register('./sw.js', {
+        scope: './'
+      })
       .then((registration) => {
         console.log('SW registered:', registration);
+        // Проверка обновлений для Safari
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                console.log('New SW available');
+              }
+            });
+          }
+        });
       })
       .catch((error) => {
+        // Safari может блокировать SW в некоторых случаях
         console.log('SW registration failed:', error);
       });
+  });
+  
+  // Обработка обновлений для Safari
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
   });
 }
 
