@@ -8,6 +8,161 @@ const plantArt = {
   foundry: './assets/asphalt-plant-foundry.svg'
 };
 
+const bitumenTanks = [
+  {
+    id: 'bitumen-tank-50',
+    name: 'Битумная ёмкость 50 м³',
+    capacity: 50,
+    capacityCategory: 'small',
+    type: 'Горизонтальная ёмкость',
+    badges: [],
+    description: 'Компактная битумная ёмкость для небольших производств и региональных проектов.',
+    fullDescription: 'Битумная ёмкость объёмом 50 м³ предназначена для хранения и подогрева битума на небольших асфальтобетонных заводах. Горизонтальная конструкция обеспечивает удобство обслуживания и транспортировки.',
+    features: [
+      'Теплоизоляция 100 мм минеральной ватой',
+      'Электрический подогрев с автоматическим контролем температуры',
+      'Система перемешивания битума',
+      'Контроль уровня и температуры'
+    ],
+    includes: [
+      { icon: '🛢️', text: 'Горизонтальная ёмкость 50 м³' },
+      { icon: '🔥', text: 'Система электрического подогрева' },
+      { icon: '🌡️', text: 'Автоматический контроль температуры' },
+      { icon: '🔄', text: 'Система перемешивания' },
+      { icon: '📊', text: 'Датчики уровня и температуры' },
+      { icon: '🛡️', text: 'Теплоизоляция 100 мм' }
+    ],
+    specs: [
+      { label: 'Объём', value: '50 м³' },
+      { label: 'Диаметр', value: '2.8 м' },
+      { label: 'Длина', value: '8.5 м' },
+      { label: 'Мощность подогрева', value: '60 кВт' },
+      { label: 'Температура подогрева', value: 'до 180°C' },
+      { label: 'Вес', value: '8.5 т' }
+    ],
+    pdfSpec: '#',
+    images: [
+      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop'
+    ]
+  },
+  {
+    id: 'bitumen-tank-100',
+    name: 'Битумная ёмкость 100 м³',
+    capacity: 100,
+    capacityCategory: 'medium',
+    type: 'Горизонтальная ёмкость',
+    badges: [{ type: 'top', text: 'Топ продажа' }],
+    description: 'Оптимальное решение для средних производств с высокой производительностью.',
+    fullDescription: 'Битумная ёмкость объёмом 100 м³ — наиболее популярная модель для средних асфальтобетонных заводов. Обеспечивает стабильное снабжение битумом при производительности до 250 т/ч.',
+    features: [
+      'Усиленная теплоизоляция 120 мм',
+      'Двухконтурная система подогрева',
+      'Автоматическая система перемешивания',
+      'Удалённый мониторинг параметров'
+    ],
+    includes: [
+      { icon: '🛢️', text: 'Горизонтальная ёмкость 100 м³' },
+      { icon: '🔥', text: 'Двухконтурная система подогрева' },
+      { icon: '🌡️', text: 'Терморегулятор с ПИД-регулированием' },
+      { icon: '🔄', text: 'Автоматическое перемешивание' },
+      { icon: '📊', text: 'Система мониторинга' },
+      { icon: '🛡️', text: 'Теплоизоляция 120 мм' }
+    ],
+    specs: [
+      { label: 'Объём', value: '100 м³' },
+      { label: 'Диаметр', value: '3.2 м' },
+      { label: 'Длина', value: '13.5 м' },
+      { label: 'Мощность подогрева', value: '120 кВт' },
+      { label: 'Температура подогрева', value: 'до 200°C' },
+      { label: 'Вес', value: '15 т' }
+    ],
+    pdfSpec: '#',
+    images: [
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop'
+    ]
+  },
+  {
+    id: 'bitumen-tank-150',
+    name: 'Битумная ёмкость 150 м³',
+    capacity: 150,
+    capacityCategory: 'large',
+    type: 'Горизонтальная ёмкость',
+    badges: [],
+    description: 'Крупногабаритная ёмкость для высокопроизводительных заводов и крупных проектов.',
+    fullDescription: 'Битумная ёмкость объёмом 150 м³ предназначена для крупных асфальтобетонных заводов с производительностью свыше 300 т/ч. Обеспечивает длительную автономную работу без дозаправки.',
+    features: [
+      'Максимальная теплоизоляция 150 мм',
+      'Трёхконтурная система подогрева',
+      'Несколько зон подогрева для равномерного прогрева',
+      'Интеграция с системой управления заводом'
+    ],
+    includes: [
+      { icon: '🛢️', text: 'Горизонтальная ёмкость 150 м³' },
+      { icon: '🔥', text: 'Трёхконтурная система подогрева' },
+      { icon: '🌡️', text: 'Многоточечный контроль температуры' },
+      { icon: '🔄', text: 'Мощная система перемешивания' },
+      { icon: '📊', text: 'SCADA интеграция' },
+      { icon: '🛡️', text: 'Теплоизоляция 150 мм' }
+    ],
+    specs: [
+      { label: 'Объём', value: '150 м³' },
+      { label: 'Диаметр', value: '3.6 м' },
+      { label: 'Длина', value: '16 м' },
+      { label: 'Мощность подогрева', value: '180 кВт' },
+      { label: 'Температура подогрева', value: 'до 200°C' },
+      { label: 'Вес', value: '22 т' }
+    ],
+    pdfSpec: '#',
+    images: [
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop'
+    ]
+  },
+  {
+    id: 'bitumen-tank-200',
+    name: 'Битумная ёмкость 200 м³',
+    capacity: 200,
+    capacityCategory: 'large',
+    type: 'Горизонтальная ёмкость',
+    badges: [{ type: 'new', text: 'Новинка' }],
+    description: 'Максимальная ёмкость для крупнейших производств и федеральных проектов.',
+    fullDescription: 'Битумная ёмкость объёмом 200 м³ — флагманская модель для крупнейших асфальтобетонных заводов. Обеспечивает максимальную автономность работы и стабильное снабжение битумом при максимальных нагрузках.',
+    features: [
+      'Премиальная теплоизоляция 200 мм',
+      'Четырёхконтурная система подогрева',
+      'Зонный контроль температуры',
+      'Полная автоматизация и интеграция с ERP'
+    ],
+    includes: [
+      { icon: '🛢️', text: 'Горизонтальная ёмкость 200 м³' },
+      { icon: '🔥', text: 'Четырёхконтурная система подогрева' },
+      { icon: '🌡️', text: 'Зонный контроль температуры' },
+      { icon: '🔄', text: 'Промышленная система перемешивания' },
+      { icon: '📊', text: 'ERP интеграция' },
+      { icon: '🛡️', text: 'Теплоизоляция 200 мм' }
+    ],
+    specs: [
+      { label: 'Объём', value: '200 м³' },
+      { label: 'Диаметр', value: '4 м' },
+      { label: 'Длина', value: '18 м' },
+      { label: 'Мощность подогрева', value: '240 кВт' },
+      { label: 'Температура подогрева', value: 'до 200°C' },
+      { label: 'Вес', value: '28 т' }
+    ],
+    pdfSpec: '#',
+    images: [
+      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop',
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop'
+    ]
+  }
+];
+
 const products = [
   {
     id: 'apexcore-320',
@@ -195,7 +350,9 @@ const state = {
 };
 
 const catalogGrid = document.querySelector('[data-catalog-grid]');
+const bitumenTanksGrid = document.querySelector('[data-bitumen-tanks-grid]');
 const capacityFilter = document.querySelector('#capacity-filter');
+const tankCapacityFilter = document.querySelector('#tank-capacity-filter');
 const toast = document.querySelector('#toast');
 const form = document.querySelector('#inquiry-form');
 const consent = document.querySelector('#consent');
@@ -246,7 +403,9 @@ function createMetaRow(product) {
   wrapper.className = 'product-meta';
 
   const capacityTag = document.createElement('span');
-  capacityTag.textContent = `${product.capacity} т/ч`;
+  // Определяем единицы измерения: м³ для битумных ёмкостей, т/ч для заводов
+  const unit = product.id && product.id.includes('bitumen-tank') ? 'м³' : 'т/ч';
+  capacityTag.textContent = `${product.capacity} ${unit}`;
   wrapper.appendChild(capacityTag);
 
   const typeTag = document.createElement('span');
@@ -348,6 +507,8 @@ function createProductCard(product) {
 }
 
 function renderProducts(filterValue = 'all') {
+  if (!catalogGrid) return;
+  
   catalogGrid.innerHTML = '';
 
   const filteredProducts =
@@ -379,6 +540,37 @@ function renderProducts(filterValue = 'all') {
   }
 }
 
+function renderBitumenTanks(filterValue = 'all') {
+  if (!bitumenTanksGrid) return;
+  
+  bitumenTanksGrid.innerHTML = '';
+
+  const filteredTanks =
+    filterValue === 'all'
+      ? bitumenTanks
+      : bitumenTanks.filter((tank) => tank.capacityCategory === filterValue);
+
+  filteredTanks.forEach((tank) => {
+    const card = createProductCard(tank);
+    bitumenTanksGrid.appendChild(card);
+  });
+
+  // Выбираем продукт только если он был явно выбран пользователем
+  if (state.selectedProductId) {
+    const selectedTank = filteredTanks.find((t) => t.id === state.selectedProductId);
+    if (selectedTank) {
+      selectProduct(state.selectedProductId);
+    }
+  }
+
+  if (!filteredTanks.length) {
+    const empty = document.createElement('div');
+    empty.className = 'product-empty';
+    empty.textContent = 'Нет решений под выбранные параметры. Попробуйте изменить фильтр.';
+    bitumenTanksGrid.appendChild(empty);
+  }
+}
+
 function populateProductSelects() {
   // Заполняем основной select
   if (selectedProductInput && selectedProductInput.tagName === 'SELECT') {
@@ -386,10 +578,20 @@ function populateProductSelects() {
     while (selectedProductInput.options.length > 1) {
       selectedProductInput.remove(1);
     }
+    
+    // Добавляем асфальтобетонные заводы
     products.forEach((product) => {
       const option = document.createElement('option');
       option.value = product.id;
       option.textContent = `${product.name} (${product.capacity} т/ч)`;
+      selectedProductInput.appendChild(option);
+    });
+    
+    // Добавляем битумные ёмкости
+    bitumenTanks.forEach((tank) => {
+      const option = document.createElement('option');
+      option.value = tank.id;
+      option.textContent = `${tank.name} (${tank.capacity} м³)`;
       selectedProductInput.appendChild(option);
     });
   }
@@ -400,10 +602,20 @@ function populateProductSelects() {
     while (selectedProductInputModal.options.length > 1) {
       selectedProductInputModal.remove(1);
     }
+    
+    // Добавляем асфальтобетонные заводы
     products.forEach((product) => {
       const option = document.createElement('option');
       option.value = product.id;
       option.textContent = `${product.name} (${product.capacity} т/ч)`;
+      selectedProductInputModal.appendChild(option);
+    });
+    
+    // Добавляем битумные ёмкости
+    bitumenTanks.forEach((tank) => {
+      const option = document.createElement('option');
+      option.value = tank.id;
+      option.textContent = `${tank.name} (${tank.capacity} м³)`;
       selectedProductInputModal.appendChild(option);
     });
   }
@@ -420,7 +632,7 @@ function selectProduct(productId, options = {}) {
       selectedProductInputModal.value = '';
     }
     
-    // Убираем индикатор "Выбрано" со всех карточек
+    // Убираем индикатор "Выбрано" со всех карточек (в обоих каталогах)
     document.querySelectorAll('.product-selected-indicator').forEach((indicator) => {
       indicator.style.display = 'none';
     });
@@ -436,6 +648,7 @@ function selectProduct(productId, options = {}) {
   const { scroll = false } = options;
   state.selectedProductId = productId;
 
+  // Обновляем карточки в обоих каталогах
   document.querySelectorAll('.product-card').forEach((card) => {
     const isActive = card.dataset.productId === productId;
     card.classList.toggle('active', isActive);
@@ -451,7 +664,12 @@ function selectProduct(productId, options = {}) {
     }
   });
 
-  const product = products.find((item) => item.id === productId);
+  // Ищем продукт в обоих массивах
+  let product = products.find((item) => item.id === productId);
+  if (!product) {
+    product = bitumenTanks.find((item) => item.id === productId);
+  }
+  
   if (!product) {
     return;
   }
@@ -490,7 +708,12 @@ function showToast(message, type = 'success') {
 let previousFocusElement = null;
 
 function openProductModal(productId) {
-  const product = products.find((p) => p.id === productId);
+  // Ищем продукт в обоих массивах
+  let product = products.find((p) => p.id === productId);
+  if (!product) {
+    product = bitumenTanks.find((t) => t.id === productId);
+  }
+  
   if (!product || !productModal) return;
 
   // Сохраняем элемент, который открыл модальное окно
@@ -1063,6 +1286,7 @@ function setupSmoothAnchors() {
 
 function init() {
   renderProducts();
+  renderBitumenTanks();
   populateProductSelects(); // Заполняем select списки продуктами
   // Не выбираем продукт автоматически - пользователь должен сделать выбор явно
   // selectProduct(products[0].id);
@@ -1088,6 +1312,30 @@ function init() {
   if (capacityFilter) {
     const initialValue = capacityFilter.value || 'all';
     const initialOption = capacityFilter.querySelector(`option[value="${initialValue}"]`);
+    if (initialOption) {
+      initialOption.classList.add('selected');
+    }
+  }
+
+  // Обработчик фильтра битумных ёмкостей
+  tankCapacityFilter?.addEventListener('change', (event) => {
+    const value = event.target.value;
+    renderBitumenTanks(value);
+    
+    // Подсветка активного фильтра
+    tankCapacityFilter?.querySelectorAll('option').forEach((option) => {
+      option.classList.remove('selected');
+    });
+    const selectedOption = tankCapacityFilter?.querySelector(`option[value="${value}"]`);
+    if (selectedOption) {
+      selectedOption.classList.add('selected');
+    }
+  });
+  
+  // Инициализация подсветки фильтра битумных ёмкостей
+  if (tankCapacityFilter) {
+    const initialValue = tankCapacityFilter.value || 'all';
+    const initialOption = tankCapacityFilter.querySelector(`option[value="${initialValue}"]`);
     if (initialOption) {
       initialOption.classList.add('selected');
     }

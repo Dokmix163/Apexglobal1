@@ -201,17 +201,29 @@
           </div>
         </section>
 
-        <section class="section contrast cta" id="cta">
-          <div class="container cta-content" data-animate>
-            <div class="cta-text">
-              <h2>Получите технико-экономическое обоснование проекта</h2>
-              <p>
-                Отправьте исходные данные — подготовим расчёт производительности, окупаемости и график
-                развертывания мощностей.
-              </p>
-            </div>
-            <a href="#contact" class="btn btn-primary">Запросить расчёт</a>
+        <section class="section contrast" id="bitumen-tanks">
+          <div class="container section-heading" data-animate>
+            <span class="tagline">Битумные ёмкости</span>
+            <h2>Каталог битумных ёмкостей</h2>
+            <p>Горизонтальные битумные ёмкости для хранения и подогрева битума объёмом от 50 до 200 м³.</p>
           </div>
+
+          <div class="container catalog-controls" data-animate>
+            <div class="filter-group">
+              <label for="tank-capacity-filter">Объём</label>
+              <select id="tank-capacity-filter">
+                <option value="all">Все</option>
+                <option value="small">до 75 м³</option>
+                <option value="medium">75—125 м³</option>
+                <option value="large">свыше 125 м³</option>
+              </select>
+            </div>
+            <div class="filter-hint">
+              Выберите битумную ёмкость, чтобы прикрепить её к заявке. В каталоге доступны расширенные спецификации.
+            </div>
+          </div>
+
+          <div class="container catalog-grid" data-bitumen-tanks-grid></div>
         </section>
 
         <section class="section" id="contact">
@@ -509,7 +521,7 @@
       </div>
     </div>
 
-    <script src="./app.js?v=1.0.0" type="module"></script>
+    <script src="./app.js" type="module"></script>
     <script type="module">
       // Vercel Analytics для обычного HTML проекта
       import { inject } from 'https://cdn.jsdelivr.net/npm/@vercel/analytics@latest/dist/index.mjs';
