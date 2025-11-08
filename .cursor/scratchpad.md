@@ -83,6 +83,10 @@ ApexGlobal landing showcases products and captures inquiries. Mobile responsiven
 
 # Current Status / Progress Tracking
 - Mobile typography/buttons adjusted and deployed. Awaiting real-device verification after cache busting.
+- **Domain updated**: Все упоминания домена обновлены с `apexglobal.ru` на `apexglobals.ru` (приобретенный домен).
+  - Обновлены: canonical URL, Open Graph URL, JSON-LD schema, email адреса, robots.txt, sitemap.xml
+  - Исправлена конфигурация vercel.json (убран placeholder API)
+  - Исправлена ссылка на иконку в JSON-LD (теперь указывает на logo.png вместо несуществующего icon-512.png)
 
 # Executor's Feedback or Assistance Requests
 - Confirm preferred analytics platform and whether to include Yandex.Metrica.

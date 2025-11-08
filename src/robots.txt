@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://apexglobal.ru/sitemap.xml
+Sitemap: https://apexglobals.ru/sitemap.xml
