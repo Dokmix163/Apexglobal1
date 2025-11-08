@@ -332,6 +332,9 @@ function createProductCard(product) {
   card.appendChild(selectedIndicator);
 
   const handleActivate = () => {
+    // Сначала выбираем продукт в форме
+    selectProduct(product.id);
+    // Затем открываем модальное окно
     openProductModal(product.id);
   };
 
@@ -393,6 +396,10 @@ function renderProducts(filterValue = 'all') {
 function populateProductSelects() {
   // Заполняем основной select
   if (selectedProductInput && selectedProductInput.tagName === 'SELECT') {
+    // Очищаем существующие опции (кроме первой пустой)
+    while (selectedProductInput.options.length > 1) {
+      selectedProductInput.remove(1);
+    }
     products.forEach((product) => {
       const option = document.createElement('option');
       option.value = product.id;
@@ -403,6 +410,10 @@ function populateProductSelects() {
 
   // Заполняем модальный select
   if (selectedProductInputModal && selectedProductInputModal.tagName === 'SELECT') {
+    // Очищаем существующие опции (кроме первой пустой)
+    while (selectedProductInputModal.options.length > 1) {
+      selectedProductInputModal.remove(1);
+    }
     products.forEach((product) => {
       const option = document.createElement('option');
       option.value = product.id;
@@ -461,12 +472,22 @@ function selectProduct(productId, options = {}) {
 
   // Обновляем select в основной форме
   if (selectedProductInput) {
-    selectedProductInput.value = product.id;
+    if (selectedProductInput.tagName === 'SELECT') {
+      selectedProductInput.value = product.id;
+      // Принудительно обновляем визуальное состояние
+      selectedProductInput.dispatchEvent(new Event('change', { bubbles: true }));
+    } else {
+      selectedProductInput.value = product.id;
+    }
   }
 
   // Обновляем select в модальной форме
   if (selectedProductInputModal) {
-    selectedProductInputModal.value = product.id;
+    if (selectedProductInputModal.tagName === 'SELECT') {
+      selectedProductInputModal.value = product.id;
+    } else {
+      selectedProductInputModal.value = product.id;
+    }
   }
 }
 
