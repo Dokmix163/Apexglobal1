@@ -551,12 +551,8 @@ async function generateCommercialProposalPDF(productId) {
     // Определяем единицы измерения
     const unit = product.id && product.id.includes('bitumen-tank') ? 'м³' : 'т/ч';
 
-    // Создаем HTML-шаблон для PDF
+    // Создаем HTML-шаблон для PDF (без DOCTYPE, так как это будет внутри div)
     const pdfHTML = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="UTF-8">
         <style>
           @page {
             margin: 0;
@@ -720,8 +716,6 @@ async function generateCommercialProposalPDF(productId) {
             margin-top: 10mm;
           }
         </style>
-      </head>
-      <body>
         <div class="pdf-container">
           <div class="pdf-header">
             <div class="pdf-header-left">
@@ -805,36 +799,57 @@ async function generateCommercialProposalPDF(productId) {
             </div>
           </div>
         </div>
-      </body>
-      </html>
     `;
 
     // Создаем временный элемент для конвертации
     const element = document.createElement('div');
     element.innerHTML = pdfHTML;
-    element.style.position = 'absolute';
-    element.style.left = '-9999px';
+    // Делаем элемент видимым, но вне экрана для правильного рендеринга
+    element.style.position = 'fixed';
+    element.style.top = '0';
+    element.style.left = '0';
     element.style.width = '210mm';
+    element.style.minHeight = '297mm';
     element.style.background = '#ffffff';
+    element.style.zIndex = '9999';
+    element.style.opacity = '0';
+    element.style.pointerEvents = 'none';
+    element.style.overflow = 'hidden';
     document.body.appendChild(element);
+    
+    // Принудительно применяем стили
+    element.offsetHeight;
 
     // Ждем загрузки изображений
     const images = element.querySelectorAll('img');
     const imagePromises = Array.from(images).map(img => {
       return new Promise((resolve) => {
-        if (img.complete) {
+        if (img.complete && img.naturalWidth > 0) {
           resolve();
         } else {
-          img.onload = resolve;
-          img.onerror = resolve; // Продолжаем даже если изображение не загрузилось
+          const timeout = setTimeout(() => resolve(), 3000);
+          img.onload = () => {
+            clearTimeout(timeout);
+            resolve();
+          };
+          img.onerror = () => {
+            clearTimeout(timeout);
+            resolve(); // Продолжаем даже если изображение не загрузилось
+          };
         }
       });
     });
     
     await Promise.all(imagePromises);
     
-    // Небольшая задержка для рендеринга
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Увеличиваем задержку для рендеринга и применения стилей
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Проверяем, что элемент действительно отрендерился
+    const pdfContainer = element.querySelector('.pdf-container');
+    if (!pdfContainer || pdfContainer.offsetHeight === 0) {
+      throw new Error('Элемент не отрендерился');
+    }
 
     // Конвертируем в PDF
     const opt = {
@@ -844,10 +859,14 @@ async function generateCommercialProposalPDF(productId) {
       html2canvas: { 
         scale: 2,
         useCORS: true,
-        logging: false,
+        logging: true, // Включаем логирование для отладки
         letterRendering: true,
         allowTaint: true,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        width: 794, // 210mm в пикселях при 96 DPI
+        height: 1123, // 297mm в пикселях при 96 DPI
+        windowWidth: 794,
+        windowHeight: 1123
       },
       jsPDF: { 
         unit: 'mm', 
@@ -858,7 +877,8 @@ async function generateCommercialProposalPDF(productId) {
       pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
-    await html2pdf().set(opt).from(element).save();
+    // Используем контейнер вместо всего элемента
+    await html2pdf().set(opt).from(pdfContainer).save();
     
     // Удаляем временный элемент
     document.body.removeChild(element);
