@@ -390,6 +390,267 @@ function showToast(message, type = 'success') {
   }, 4200);
 }
 
+// Функция генерации PDF коммерческого предложения
+function generateCommercialProposalPDF(productId) {
+  // Проверяем наличие jsPDF
+  if (typeof window.jspdf === 'undefined') {
+    showToast('Библиотека для генерации PDF не загружена. Обновите страницу.', 'error');
+    return;
+  }
+
+  // Ищем продукт в обоих массивах
+  let product = products.find((p) => p.id === productId);
+  if (!product) {
+    product = bitumenTanks.find((t) => t.id === productId);
+  }
+  
+  if (!product) {
+    showToast('Продукт не найден.', 'error');
+    return;
+  }
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const contentWidth = pageWidth - (margin * 2);
+    let yPosition = margin;
+
+    // Цвета для стилизации
+    const primaryColor = [30, 30, 30]; // Темный цвет
+    const accentColor = [212, 175, 55]; // Золотой цвет
+    const lightGray = [245, 245, 245];
+    const darkGray = [100, 100, 100];
+
+    // Заголовок документа
+    doc.setFillColor(...primaryColor);
+    doc.rect(0, 0, pageWidth, 50, 'F');
+    
+    // Логотип/Название компании
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
+    doc.text('ApexGlobal', margin, 25);
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Коммерческое предложение', margin, 35);
+    
+    // Дата
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('ru-RU', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    doc.text(`Дата: ${dateStr}`, pageWidth - margin, 35, { align: 'right' });
+    
+    yPosition = 60;
+
+    // Название продукта
+    doc.setTextColor(...primaryColor);
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    const productNameLines = doc.splitTextToSize(product.name, contentWidth);
+    doc.text(productNameLines, margin, yPosition);
+    yPosition += productNameLines.length * 8 + 5;
+
+    // Мета-информация (тип и производительность)
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...darkGray);
+    const unit = product.id && product.id.includes('bitumen-tank') ? 'м³' : 'т/ч';
+    doc.text(`${product.type} • Производительность: ${product.capacity} ${unit}`, margin, yPosition);
+    yPosition += 10;
+
+    // Разделительная линия
+    doc.setDrawColor(...accentColor);
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPosition, pageWidth - margin, yPosition);
+    yPosition += 10;
+
+    // Описание продукта
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...primaryColor);
+    doc.text('Описание', margin, yPosition);
+    yPosition += 8;
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0, 0, 0);
+    const description = product.fullDescription || product.description;
+    const descriptionLines = doc.splitTextToSize(description, contentWidth);
+    doc.text(descriptionLines, margin, yPosition);
+    yPosition += descriptionLines.length * 5 + 10;
+
+    // Проверка, нужна ли новая страница
+    if (yPosition > pageHeight - 80) {
+      doc.addPage();
+      yPosition = margin;
+    }
+
+    // Что входит в комплекс
+    if (product.includes && product.includes.length > 0) {
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryColor);
+      doc.text('Что входит в комплекс', margin, yPosition);
+      yPosition += 8;
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(0, 0, 0);
+      
+      product.includes.forEach((item, index) => {
+        if (yPosition > pageHeight - 40) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        
+        // Маркер списка
+        doc.setFillColor(...accentColor);
+        doc.circle(margin + 2, yPosition - 2, 1.5, 'F');
+        
+        // Текст элемента
+        const itemText = item.text.replace(/[⚙️📊🔥🌿💻📦🛢️🌡️🔄🛡️🚚♻️]/g, '').trim();
+        const itemLines = doc.splitTextToSize(itemText, contentWidth - 10);
+        doc.text(itemLines, margin + 8, yPosition);
+        yPosition += itemLines.length * 5 + 3;
+      });
+      
+      yPosition += 5;
+    }
+
+    // Проверка, нужна ли новая страница
+    if (yPosition > pageHeight - 100) {
+      doc.addPage();
+      yPosition = margin;
+    }
+
+    // Технические характеристики
+    if (product.specs && product.specs.length > 0) {
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryColor);
+      doc.text('Технические характеристики', margin, yPosition);
+      yPosition += 10;
+
+      // Таблица характеристик
+      const tableData = product.specs.map(spec => [spec.label, spec.value]);
+      
+      doc.autoTable({
+        startY: yPosition,
+        head: [['Параметр', 'Значение']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: {
+          fillColor: primaryColor,
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 10
+        },
+        bodyStyles: {
+          fontSize: 9,
+          textColor: [0, 0, 0]
+        },
+        alternateRowStyles: {
+          fillColor: lightGray
+        },
+        margin: { left: margin, right: margin },
+        styles: {
+          cellPadding: 5,
+          lineWidth: 0.1,
+          lineColor: darkGray
+        }
+      });
+
+      yPosition = doc.lastAutoTable.finalY + 15;
+    }
+
+    // Проверка, нужна ли новая страница
+    if (yPosition > pageHeight - 80) {
+      doc.addPage();
+      yPosition = margin;
+    }
+
+    // Ключевые особенности
+    if (product.features && product.features.length > 0) {
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryColor);
+      doc.text('Ключевые особенности', margin, yPosition);
+      yPosition += 8;
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(0, 0, 0);
+      
+      product.features.forEach((feature) => {
+        if (yPosition > pageHeight - 40) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        
+        // Маркер списка
+        doc.setFillColor(...accentColor);
+        doc.circle(margin + 2, yPosition - 2, 1.5, 'F');
+        
+        // Текст особенности
+        const featureLines = doc.splitTextToSize(feature, contentWidth - 10);
+        doc.text(featureLines, margin + 8, yPosition);
+        yPosition += featureLines.length * 5 + 3;
+      });
+      
+      yPosition += 5;
+    }
+
+    // Контактная информация в футере
+    const footerY = pageHeight - 30;
+    doc.setDrawColor(...accentColor);
+    doc.setLineWidth(0.5);
+    doc.line(margin, footerY, pageWidth - margin, footerY);
+    
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...darkGray);
+    doc.text('Контакты:', margin, footerY + 8);
+    doc.text('Телефон: +7 (800) 123-45-67', margin, footerY + 13);
+    doc.text('E-mail: sales@apexglobals.ru', margin, footerY + 18);
+    doc.text('www.apexglobals.ru', pageWidth - margin, footerY + 13, { align: 'right' });
+
+    // Номера страниц
+    const totalPages = doc.internal.pages.length - 1;
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(9);
+      doc.setTextColor(...darkGray);
+      doc.text(
+        `Страница ${i} из ${totalPages}`,
+        pageWidth / 2,
+        pageHeight - 10,
+        { align: 'center' }
+      );
+    }
+
+    // Сохранение PDF
+    const fileName = `КП_${product.name.replace(/\s+/g, '_')}_${today.toISOString().split('T')[0]}.pdf`;
+    doc.save(fileName);
+    
+    showToast('Коммерческое предложение успешно сгенерировано!', 'success');
+  } catch (error) {
+    console.error('Ошибка при генерации PDF:', error);
+    showToast('Произошла ошибка при генерации PDF. Попробуйте позже.', 'error');
+  }
+}
+
 // Функции для модального окна
 let previousFocusElement = null;
 
@@ -472,13 +733,12 @@ function openProductModal(productId) {
     modalSpecs.style.display = 'none';
   }
 
-  // Ссылка на PDF
+  // Кнопка генерации PDF коммерческого предложения
   const pdfLink = document.querySelector('#modal-pdf-link');
-  if (product.pdfSpec && product.pdfSpec !== '#') {
-    pdfLink.href = product.pdfSpec;
+  if (pdfLink) {
     pdfLink.style.display = 'inline-flex';
-  } else {
-    pdfLink.style.display = 'none';
+    // Сохраняем ID продукта для генерации PDF
+    pdfLink.dataset.productId = productId;
   }
 
   const modalFeatures = document.querySelector('#modal-features');
@@ -1421,6 +1681,19 @@ function init() {
   if (modalContactBtn) {
     modalContactBtn.addEventListener('click', () => {
       openContactModal();
+    });
+  }
+
+  // Кнопка генерации PDF коммерческого предложения
+  const pdfLinkBtn = document.querySelector('#modal-pdf-link');
+  if (pdfLinkBtn) {
+    pdfLinkBtn.addEventListener('click', () => {
+      const productId = pdfLinkBtn.dataset.productId;
+      if (productId) {
+        generateCommercialProposalPDF(productId);
+      } else {
+        showToast('Продукт не выбран.', 'error');
+      }
     });
   }
 
