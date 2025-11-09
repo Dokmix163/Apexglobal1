@@ -390,107 +390,29 @@ function showToast(message, type = 'success') {
   }, 4200);
 }
 
-// Функция для рендеринга текста с кириллицей на canvas
-function renderTextToCanvas(text, options = {}) {
+// Вспомогательная функция для добавления текста с правильным переносом строк и единым шрифтом
+function addText(doc, text, x, y, maxWidth, options = {}) {
   const {
-    fontSize = 12,
-    fontFamily = 'Arial, sans-serif',
-    fontWeight = 'normal',
-    color = '#000000',
-    maxWidth = 200,
-    lineHeight = 1.5
-  } = options;
-
-  // Создаем временный canvas для измерения текста
-  const measureCanvas = document.createElement('canvas');
-  const measureCtx = measureCanvas.getContext('2d');
-  measureCtx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-  
-  // Разбиваем текст на строки
-  const words = text.split(' ');
-  const lines = [];
-  let currentLine = '';
-  
-  words.forEach(word => {
-    const testLine = currentLine + (currentLine ? ' ' : '') + word;
-    const metrics = measureCtx.measureText(testLine);
-    if (metrics.width > maxWidth && currentLine) {
-      lines.push(currentLine);
-      currentLine = word;
-    } else {
-      currentLine = testLine;
-    }
-  });
-  if (currentLine) {
-    lines.push(currentLine);
-  }
-  
-  // Вычисляем размеры canvas
-  const textHeight = lines.length * fontSize * lineHeight;
-  const canvas = document.createElement('canvas');
-  canvas.width = maxWidth + 20; // Небольшой отступ
-  canvas.height = textHeight + 20;
-  const ctx = canvas.getContext('2d');
-  
-  // Настройка рендеринга
-  ctx.fillStyle = color;
-  ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
-  ctx.textBaseline = 'top';
-  ctx.textAlign = 'left';
-  
-  // Рендерим текст
-  lines.forEach((line, index) => {
-    ctx.fillText(line, 10, 10 + index * fontSize * lineHeight);
-  });
-  
-  return canvas.toDataURL('image/png');
-}
-
-// Функция для добавления текста с кириллицей в PDF через canvas
-function addCyrillicText(doc, text, x, y, options = {}) {
-  const {
-    fontSize = 12,
-    maxWidth = 170, // мм
-    lineHeight = 1.5
+    fontSize = 10,
+    fontStyle = 'normal',
+    align = 'left',
+    lineHeight = 1.2,
+    color = [0, 0, 0]
   } = options;
   
-  // Конвертируем мм в пиксели (примерно 3.78 пикселя на мм при 96 DPI)
-  const maxWidthPx = maxWidth * 3.78;
-  const fontSizePx = fontSize * 3.78;
+  doc.setFontSize(fontSize);
+  doc.setFont('helvetica', fontStyle);
+  doc.setTextColor(...color);
   
-  const canvasData = renderTextToCanvas(text, {
-    fontSize: fontSizePx,
-    maxWidth: maxWidthPx,
-    lineHeight: lineHeight,
-    color: options.color || '#000000',
-    fontWeight: options.fontWeight || 'normal'
+  const lines = doc.splitTextToSize(text, maxWidth);
+  let currentY = y;
+  
+  lines.forEach((line) => {
+    doc.text(line, x, currentY, { align });
+    currentY += fontSize * lineHeight;
   });
   
-  // Вычисляем высоту текста
-  const words = text.split(' ');
-  const measureCanvas = document.createElement('canvas');
-  const measureCtx = measureCanvas.getContext('2d');
-  measureCtx.font = `${options.fontWeight || 'normal'} ${fontSizePx}px Arial, sans-serif`;
-  
-  let currentLine = '';
-  let lineCount = 1;
-  words.forEach(word => {
-    const testLine = currentLine + (currentLine ? ' ' : '') + word;
-    const metrics = measureCtx.measureText(testLine);
-    if (metrics.width > maxWidthPx && currentLine) {
-      lineCount++;
-      currentLine = word;
-    } else {
-      currentLine = testLine;
-    }
-  });
-  
-  const textHeight = lineCount * fontSize * lineHeight;
-  
-  // Добавляем изображение текста в PDF
-  doc.addImage(canvasData, 'PNG', x, y, maxWidth, textHeight);
-  
-  return textHeight;
+  return currentY - y;
 }
 
 // Функция для конвертации изображения в base64
@@ -601,15 +523,13 @@ function hidePDFLoadingIndicator() {
   }
 }
 
-// Функция генерации PDF коммерческого предложения
+// Функция генерации PDF коммерческого предложения с правильным UX
 async function generateCommercialProposalPDF(productId) {
-  // Проверяем наличие jsPDF
   if (typeof window.jspdf === 'undefined') {
     showToast('Библиотека для генерации PDF не загружена. Обновите страницу.', 'error');
     return;
   }
 
-  // Ищем продукт в обоих массивах
   let product = products.find((p) => p.id === productId);
   if (!product) {
     product = bitumenTanks.find((t) => t.id === productId);
@@ -623,7 +543,6 @@ async function generateCommercialProposalPDF(productId) {
   const loadingOverlay = showPDFLoadingIndicator();
 
   try {
-    // Получаем путь к логотипу и конвертируем в base64
     const logoPath = './logo.png';
     let logoBase64 = null;
     try {
@@ -632,7 +551,6 @@ async function generateCommercialProposalPDF(productId) {
       console.warn('Не удалось загрузить логотип:', error);
     }
     
-    // Получаем первую фотографию продукта и конвертируем в base64
     const productImageUrl = product.images && product.images.length > 0 ? product.images[0] : null;
     let productImageBase64 = null;
     if (productImageUrl) {
@@ -643,7 +561,6 @@ async function generateCommercialProposalPDF(productId) {
       }
     }
     
-    // Форматируем дату
     const today = new Date();
     const dateStr = today.toLocaleDateString('ru-RU', { 
       year: 'numeric', 
@@ -651,14 +568,14 @@ async function generateCommercialProposalPDF(productId) {
       day: 'numeric' 
     });
     
-    // Определяем единицы измерения
     const unit = product.id && product.id.includes('bitumen-tank') ? 'м³' : 'т/ч';
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
-      format: 'a4'
+      format: 'a4',
+      compress: true
     });
 
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -667,153 +584,137 @@ async function generateCommercialProposalPDF(productId) {
     const contentWidth = pageWidth - (margin * 2);
     let yPosition = margin;
 
-    // Цвета для стилизации
+    // Единая цветовая схема
     const primaryColor = [30, 30, 30];
     const accentColor = [201, 168, 87];
     const lightGray = [245, 245, 245];
     const darkGray = [100, 100, 100];
+    const white = [255, 255, 255];
 
     // Заголовок документа
     doc.setFillColor(...primaryColor);
-    doc.rect(0, 0, pageWidth, 50, 'F');
+    doc.rect(0, 0, pageWidth, 55, 'F');
     
     // Логотип
     if (logoBase64) {
       try {
-        // Получаем размеры изображения для правильного масштабирования
         const img = new Image();
         img.src = logoBase64;
         await new Promise((resolve) => {
           if (img.complete) resolve();
           else img.onload = resolve;
         });
-        const logoHeight = (40 * img.height) / img.width;
-        doc.addImage(logoBase64, 'JPEG', margin, 10, 40, logoHeight);
+        const logoHeight = (35 * img.height) / img.width;
+        doc.addImage(logoBase64, 'JPEG', margin, 12, 35, logoHeight);
       } catch (error) {
         console.warn('Не удалось добавить логотип:', error);
       }
     }
     
-    // Название компании (латиница - можно использовать doc.text)
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
+    // Название компании
+    doc.setTextColor(...white);
+    doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
-    doc.text('ApexGlobal', margin, 30);
+    doc.text('ApexGlobal', margin + 40, 28);
     
-    // Коммерческое предложение (кириллица - используем canvas)
-    const titleHeight = addCyrillicText(doc, 'Коммерческое предложение', margin, 35, {
-      fontSize: 12,
-      maxWidth: contentWidth,
-      color: '#ffffff',
-      fontWeight: 'normal'
-    });
+    // Подзаголовок
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Коммерческое предложение', margin + 40, 35);
     
-    // Дата (кириллица - используем canvas)
-    const dateText = `Дата: ${dateStr}`;
-    const dateCanvas = renderTextToCanvas(dateText, {
-      fontSize: 10 * 3.78,
-      maxWidth: 100 * 3.78,
-      color: '#cccccc',
-      fontWeight: 'normal'
-    });
-    const dateImg = new Image();
-    dateImg.src = dateCanvas;
-    await new Promise((resolve) => {
-      if (dateImg.complete) resolve();
-      else dateImg.onload = resolve;
-    });
-    const dateHeight = (dateText.split(' ').length * 10 * 1.5) / 3.78;
-    doc.addImage(dateCanvas, 'PNG', pageWidth - margin - 100, 35, 100, dateHeight);
+    // Дата справа
+    doc.setFontSize(9);
+    doc.text(`Дата: ${dateStr}`, pageWidth - margin, 35, { align: 'right' });
     
-    yPosition = 60;
+    yPosition = 65;
 
-    // Название продукта (кириллица)
-    const productNameHeight = addCyrillicText(doc, product.name, margin, yPosition, {
-      fontSize: 20,
-      maxWidth: contentWidth,
-      color: '#1e1e1e',
-      fontWeight: 'bold'
+    // Название продукта
+    doc.setTextColor(...primaryColor);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    const productNameHeight = addText(doc, product.name, margin, yPosition, contentWidth, {
+      fontSize: 18,
+      fontStyle: 'bold',
+      lineHeight: 1.3,
+      color: primaryColor
     });
-    yPosition += productNameHeight + 5;
+    yPosition += productNameHeight + 6;
 
-    // Мета-информация (кириллица)
+    // Мета-информация
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...darkGray);
     const metaText = `${product.type} • Производительность: ${product.capacity} ${unit}`;
-    const metaHeight = addCyrillicText(doc, metaText, margin, yPosition, {
-      fontSize: 11,
-      maxWidth: contentWidth,
-      color: '#666666',
-      fontWeight: 'normal'
+    const metaHeight = addText(doc, metaText, margin, yPosition, contentWidth, {
+      fontSize: 10,
+      fontStyle: 'normal',
+      lineHeight: 1.2,
+      color: darkGray
     });
-    yPosition += metaHeight + 10;
+    yPosition += metaHeight + 12;
 
     // Разделительная линия
     doc.setDrawColor(...accentColor);
-    doc.setLineWidth(0.5);
+    doc.setLineWidth(0.8);
     doc.line(margin, yPosition, pageWidth - margin, yPosition);
-    yPosition += 10;
+    yPosition += 12;
 
     // Изображение продукта
     if (productImageBase64) {
       try {
         const imgWidth = contentWidth;
-        const imgHeight = (imgWidth * 0.6); // Соотношение сторон
-        if (yPosition + imgHeight > pageHeight - 40) {
+        const imgHeight = Math.min(imgWidth * 0.55, 80);
+        if (yPosition + imgHeight > pageHeight - 50) {
           doc.addPage();
           yPosition = margin;
         }
         doc.addImage(productImageBase64, 'JPEG', margin, yPosition, imgWidth, imgHeight);
-        yPosition += imgHeight + 10;
+        yPosition += imgHeight + 15;
       } catch (error) {
         console.warn('Не удалось добавить изображение продукта:', error);
       }
     }
 
     // Описание продукта
-    if (yPosition > pageHeight - 80) {
+    if (yPosition > pageHeight - 70) {
       doc.addPage();
       yPosition = margin;
     }
     
-    // Заголовок "Описание" (кириллица)
-    const descTitleHeight = addCyrillicText(doc, 'Описание', margin, yPosition, {
-      fontSize: 12,
-      maxWidth: contentWidth,
-      color: '#1e1e1e',
-      fontWeight: 'bold'
-    });
-    yPosition += descTitleHeight + 8;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...primaryColor);
+    doc.text('Описание', margin, yPosition);
+    yPosition += 8;
 
-    // Текст описания (кириллица)
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...primaryColor);
     const description = product.fullDescription || product.description;
-    const descHeight = addCyrillicText(doc, description, margin, yPosition, {
+    const descHeight = addText(doc, description, margin, yPosition, contentWidth, {
       fontSize: 10,
-      maxWidth: contentWidth,
-      color: '#000000',
-      fontWeight: 'normal',
-      lineHeight: 1.6
+      fontStyle: 'normal',
+      lineHeight: 1.5,
+      color: primaryColor
     });
-    yPosition += descHeight + 10;
+    yPosition += descHeight + 15;
 
     // Что входит в комплекс
     if (product.includes && product.includes.length > 0) {
-      if (yPosition > pageHeight - 80) {
+      if (yPosition > pageHeight - 70) {
         doc.addPage();
         yPosition = margin;
       }
       
-      // Заголовок "Что входит в комплекс" (кириллица)
-      const includesTitleHeight = addCyrillicText(doc, 'Что входит в комплекс', margin, yPosition, {
-        fontSize: 12,
-        maxWidth: contentWidth,
-        color: '#1e1e1e',
-        fontWeight: 'bold'
-      });
-      yPosition += includesTitleHeight + 8;
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryColor);
+      doc.text('Что входит в комплекс', margin, yPosition);
+      yPosition += 10;
 
-      // Элементы списка (кириллица)
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
-      doc.setTextColor(0, 0, 0);
+      doc.setTextColor(...primaryColor);
       
       product.includes.forEach((item) => {
         if (yPosition > pageHeight - 40) {
@@ -823,20 +724,20 @@ async function generateCommercialProposalPDF(productId) {
         
         // Маркер списка
         doc.setFillColor(...accentColor);
-        doc.circle(margin + 2, yPosition - 2, 1.5, 'F');
+        doc.circle(margin + 2, yPosition - 1, 1.8, 'F');
         
-        // Текст элемента (кириллица)
+        // Текст элемента
         const itemText = item.text.replace(/[⚙️📊🔥🌿💻📦🛢️🌡️🔄🛡️🚚♻️]/g, '').trim();
-        const itemHeight = addCyrillicText(doc, itemText, margin + 8, yPosition - 2, {
+        const itemHeight = addText(doc, itemText, margin + 8, yPosition - 1, contentWidth - 10, {
           fontSize: 10,
-          maxWidth: contentWidth - 10,
-          color: '#000000',
-          fontWeight: 'normal'
+          fontStyle: 'normal',
+          lineHeight: 1.4,
+          color: primaryColor
         });
-        yPosition += itemHeight + 3;
+        yPosition += Math.max(itemHeight, 6) + 2;
       });
       
-      yPosition += 5;
+      yPosition += 8;
     }
 
     // Технические характеристики
@@ -846,119 +747,66 @@ async function generateCommercialProposalPDF(productId) {
         yPosition = margin;
       }
       
-      // Заголовок "Технические характеристики" (кириллица)
-      const specsTitleHeight = addCyrillicText(doc, 'Технические характеристики', margin, yPosition, {
-        fontSize: 12,
-        maxWidth: contentWidth,
-        color: '#1e1e1e',
-        fontWeight: 'bold'
-      });
-      yPosition += specsTitleHeight + 10;
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryColor);
+      doc.text('Технические характеристики', margin, yPosition);
+      yPosition += 12;
 
-      // Таблица характеристик (используем canvas для заголовков с кириллицей)
-      // Создаем данные таблицы с кириллицей через canvas
-      const tableData = product.specs.map(spec => {
-        // Рендерим каждую ячейку через canvas
-        const labelCanvas = renderTextToCanvas(spec.label, {
-          fontSize: 9 * 3.78,
-          maxWidth: 80 * 3.78,
-          color: '#000000',
-          fontWeight: 'normal'
-        });
-        const valueCanvas = renderTextToCanvas(spec.value, {
-          fontSize: 9 * 3.78,
-          maxWidth: 80 * 3.78,
-          color: '#000000',
-          fontWeight: 'normal'
-        });
-        return [labelCanvas, valueCanvas];
-      });
+      // Таблица характеристик через autoTable
+      const tableData = product.specs.map(spec => [spec.label, spec.value]);
       
-      // Для таблицы используем стандартный autoTable, но с кастомными стилями
-      // К сожалению, autoTable не поддерживает изображения напрямую
-      // Поэтому рендерим таблицу вручную
-      const rowHeight = 8;
-      const col1Width = contentWidth * 0.4;
-      const col2Width = contentWidth * 0.6;
-      
-      // Заголовок таблицы
-      doc.setFillColor(...primaryColor);
-      doc.rect(margin, yPosition, contentWidth, rowHeight, 'F');
-      
-      const headerParamCanvas = renderTextToCanvas('Параметр', {
-        fontSize: 10 * 3.78,
-        maxWidth: col1Width * 3.78,
-        color: '#ffffff',
-        fontWeight: 'bold'
-      });
-      const headerValueCanvas = renderTextToCanvas('Значение', {
-        fontSize: 10 * 3.78,
-        maxWidth: col2Width * 3.78,
-        color: '#ffffff',
-        fontWeight: 'bold'
-      });
-      
-      doc.addImage(headerParamCanvas, 'PNG', margin + 2, yPosition + 1, col1Width - 4, rowHeight - 2);
-      doc.addImage(headerValueCanvas, 'PNG', margin + col1Width + 2, yPosition + 1, col2Width - 4, rowHeight - 2);
-      yPosition += rowHeight;
-      
-      // Строки таблицы
-      product.specs.forEach((spec, index) => {
-        if (yPosition > pageHeight - 40) {
-          doc.addPage();
-          yPosition = margin;
+      doc.autoTable({
+        startY: yPosition,
+        head: [['Параметр', 'Значение']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: {
+          fillColor: primaryColor,
+          textColor: white,
+          fontStyle: 'bold',
+          fontSize: 10
+        },
+        bodyStyles: {
+          fontSize: 9,
+          textColor: primaryColor,
+          fontStyle: 'normal'
+        },
+        alternateRowStyles: {
+          fillColor: lightGray
+        },
+        margin: { left: margin, right: margin },
+        styles: {
+          cellPadding: 6,
+          lineWidth: 0.1,
+          lineColor: darkGray
+        },
+        columnStyles: {
+          0: { cellWidth: contentWidth * 0.45 },
+          1: { cellWidth: contentWidth * 0.55 }
         }
-        
-        // Фон для четных строк
-        if (index % 2 === 1) {
-          doc.setFillColor(...lightGray);
-          doc.rect(margin, yPosition, contentWidth, rowHeight, 'F');
-        }
-        
-        // Граница строки
-        doc.setDrawColor(...darkGray);
-        doc.setLineWidth(0.1);
-        doc.line(margin, yPosition + rowHeight, margin + contentWidth, yPosition + rowHeight);
-        
-        // Текст ячеек
-        const labelCanvas = renderTextToCanvas(spec.label, {
-          fontSize: 9 * 3.78,
-          maxWidth: (col1Width - 4) * 3.78,
-          color: '#000000',
-          fontWeight: 'normal'
-        });
-        const valueCanvas = renderTextToCanvas(spec.value, {
-          fontSize: 9 * 3.78,
-          maxWidth: (col2Width - 4) * 3.78,
-          color: '#000000',
-          fontWeight: 'normal'
-        });
-        
-        doc.addImage(labelCanvas, 'PNG', margin + 2, yPosition + 1, col1Width - 4, rowHeight - 2);
-        doc.addImage(valueCanvas, 'PNG', margin + col1Width + 2, yPosition + 1, col2Width - 4, rowHeight - 2);
-        yPosition += rowHeight;
       });
-      
-      yPosition += 5;
+
+      yPosition = doc.lastAutoTable.finalY + 15;
     }
 
     // Ключевые особенности
     if (product.features && product.features.length > 0) {
-      if (yPosition > pageHeight - 80) {
+      if (yPosition > pageHeight - 70) {
         doc.addPage();
         yPosition = margin;
       }
       
-      // Заголовок "Ключевые особенности" (кириллица)
-      const featuresTitleHeight = addCyrillicText(doc, 'Ключевые особенности', margin, yPosition, {
-        fontSize: 12,
-        maxWidth: contentWidth,
-        color: '#1e1e1e',
-        fontWeight: 'bold'
-      });
-      yPosition += featuresTitleHeight + 8;
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(...primaryColor);
+      doc.text('Ключевые особенности', margin, yPosition);
+      yPosition += 10;
 
-      // Элементы списка (кириллица)
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...primaryColor);
+      
       product.features.forEach((feature) => {
         if (yPosition > pageHeight - 40) {
           doc.addPage();
@@ -967,76 +815,45 @@ async function generateCommercialProposalPDF(productId) {
         
         // Маркер списка
         doc.setFillColor(...accentColor);
-        doc.circle(margin + 2, yPosition - 2, 1.5, 'F');
+        doc.circle(margin + 2, yPosition - 1, 1.8, 'F');
         
-        // Текст особенности (кириллица)
-        const featureHeight = addCyrillicText(doc, feature, margin + 8, yPosition - 2, {
+        // Текст особенности
+        const featureHeight = addText(doc, feature, margin + 8, yPosition - 1, contentWidth - 10, {
           fontSize: 10,
-          maxWidth: contentWidth - 10,
-          color: '#000000',
-          fontWeight: 'normal'
+          fontStyle: 'normal',
+          lineHeight: 1.4,
+          color: primaryColor
         });
-        yPosition += featureHeight + 3;
+        yPosition += Math.max(featureHeight, 6) + 2;
       });
       
-      yPosition += 5;
+      yPosition += 8;
     }
 
-    // Контактная информация в футере
-    const footerY = pageHeight - 30;
-    doc.setDrawColor(...accentColor);
-    doc.setLineWidth(0.5);
-    doc.line(margin, footerY, pageWidth - margin, footerY);
-    
-    // Контакты (кириллица)
-    const contactsTitleHeight = addCyrillicText(doc, 'Контакты:', margin, footerY + 8, {
-      fontSize: 9,
-      maxWidth: 50,
-      color: '#666666',
-      fontWeight: 'bold'
-    });
-    
-    const phoneText = 'Телефон: +7 (800) 123-45-67';
-    const phoneHeight = addCyrillicText(doc, phoneText, margin, footerY + 13, {
-      fontSize: 9,
-      maxWidth: contentWidth * 0.5,
-      color: '#666666',
-      fontWeight: 'normal'
-    });
-    
-    const emailText = 'E-mail: sales@apexglobals.ru';
-    const emailHeight = addCyrillicText(doc, emailText, margin, footerY + 18, {
-      fontSize: 9,
-      maxWidth: contentWidth * 0.5,
-      color: '#666666',
-      fontWeight: 'normal'
-    });
-    
-    // Сайт (латиница - можно использовать doc.text)
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...darkGray);
-    doc.text('www.apexglobals.ru', pageWidth - margin, footerY + 13, { align: 'right' });
-
-    // Номера страниц (кириллица)
+    // Футер на каждой странице
     const totalPages = doc.internal.pages.length - 1;
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i);
-      const pageText = `Страница ${i} из ${totalPages}`;
-      const pageCanvas = renderTextToCanvas(pageText, {
-        fontSize: 9 * 3.78,
-        maxWidth: 50 * 3.78,
-        color: '#666666',
-        fontWeight: 'normal'
-      });
-      const pageImg = new Image();
-      pageImg.src = pageCanvas;
-      await new Promise((resolve) => {
-        if (pageImg.complete) resolve();
-        else pageImg.onload = resolve;
-      });
-      const pageHeight_mm = (pageText.split(' ').length * 9 * 1.5) / 3.78;
-      doc.addImage(pageCanvas, 'PNG', (pageWidth - 50) / 2, pageHeight - 10, 50, pageHeight_mm);
+      
+      const footerY = pageHeight - 20;
+      
+      // Разделительная линия
+      doc.setDrawColor(...accentColor);
+      doc.setLineWidth(0.5);
+      doc.line(margin, footerY, pageWidth - margin, footerY);
+      
+      // Контактная информация
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(...darkGray);
+      doc.text('Контакты:', margin, footerY + 6);
+      doc.text('Телефон: +7 (800) 123-45-67', margin, footerY + 10);
+      doc.text('E-mail: sales@apexglobals.ru', margin, footerY + 14);
+      doc.text('www.apexglobals.ru', pageWidth - margin, footerY + 10, { align: 'right' });
+      
+      // Номер страницы
+      doc.setFontSize(8);
+      doc.text(`Страница ${i} из ${totalPages}`, pageWidth / 2, footerY + 14, { align: 'center' });
     }
 
     // Сохранение PDF
