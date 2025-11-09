@@ -1,374 +1,9 @@
-const plantArt = {
-  hero: './assets/hero-asphalt-plant.svg',
-  aurum: './assets/asphalt-plant-aurum.svg',
-  cobalt: './assets/asphalt-plant-cobalt.svg',
-  ember: './assets/asphalt-plant-ember.svg',
-  mist: './assets/asphalt-plant-mist.svg',
-  lumen: './assets/asphalt-plant-lumen.svg',
-  foundry: './assets/asphalt-plant-foundry.svg'
-};
+// Импорт данных о продуктах из отдельного файла
+import { plantArt, heroHotspots, bitumenTanks as allBitumenTanks, products as allProducts } from './data/products.js';
 
-const heroHotspots = [
-  {
-    id: 'dryer',
-    label: 'Сушильный барабан',
-    description:
-      'Высокотемпературный барабан с интеллектуальной модуляцией пламени поддерживает стабильную влажность смеси.',
-    x: 32,
-    y: 64
-  },
-  {
-    id: 'silo',
-    label: 'Силос минерального порошка',
-    description: 'Двухконтурное хранение с дегазацией и подогревом предотвращает слёживание заполнителей.',
-    x: 57,
-    y: 28
-  },
-  {
-    id: 'mix',
-    label: 'Узел смешения',
-    description: 'Двойная мешалка ApexMix контролирует модификаторы и отдаёт телеметрию в SCADA.',
-    x: 78,
-    y: 55
-  }
-];
-
-const bitumenTanks = [
-  {
-    id: 'bitumen-tank-50',
-    name: 'Битумная ёмкость 50 м³',
-    capacity: 50,
-    capacityCategory: 'small',
-    type: 'Горизонтальная ёмкость',
-    badges: [],
-    description: 'Компактная битумная ёмкость для небольших производств и региональных проектов.',
-    fullDescription: 'Битумная ёмкость объёмом 50 м³ предназначена для хранения и подогрева битума на небольших асфальтобетонных заводах. Горизонтальная конструкция обеспечивает удобство обслуживания и транспортировки.',
-    features: [
-      'Теплоизоляция 100 мм минеральной ватой',
-      'Электрический подогрев с автоматическим контролем температуры',
-      'Система перемешивания битума',
-      'Контроль уровня и температуры'
-    ],
-    includes: [
-      { icon: '🛢️', text: 'Горизонтальная ёмкость 50 м³' },
-      { icon: '🔥', text: 'Система электрического подогрева' },
-      { icon: '🌡️', text: 'Автоматический контроль температуры' },
-      { icon: '🔄', text: 'Система перемешивания' },
-      { icon: '📊', text: 'Датчики уровня и температуры' },
-      { icon: '🛡️', text: 'Теплоизоляция 100 мм' }
-    ],
-    specs: [
-      { label: 'Объём', value: '50 м³' },
-      { label: 'Диаметр', value: '2.8 м' },
-      { label: 'Длина', value: '8.5 м' },
-      { label: 'Мощность подогрева', value: '60 кВт' },
-      { label: 'Температура подогрева', value: 'до 180°C' },
-      { label: 'Вес', value: '8.5 т' }
-    ],
-    pdfSpec: '#',
-    images: [
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop'
-    ]
-  },
-  {
-    id: 'bitumen-tank-100',
-    name: 'Битумная ёмкость 100 м³',
-    capacity: 100,
-    capacityCategory: 'medium',
-    type: 'Горизонтальная ёмкость',
-    badges: [{ type: 'top', text: 'Топ продажа' }],
-    description: 'Оптимальное решение для средних производств с высокой производительностью.',
-    fullDescription: 'Битумная ёмкость объёмом 100 м³ — наиболее популярная модель для средних асфальтобетонных заводов. Обеспечивает стабильное снабжение битумом при производительности до 250 т/ч.',
-    features: [
-      'Усиленная теплоизоляция 120 мм',
-      'Двухконтурная система подогрева',
-      'Автоматическая система перемешивания',
-      'Удалённый мониторинг параметров'
-    ],
-    includes: [
-      { icon: '🛢️', text: 'Горизонтальная ёмкость 100 м³' },
-      { icon: '🔥', text: 'Двухконтурная система подогрева' },
-      { icon: '🌡️', text: 'Терморегулятор с ПИД-регулированием' },
-      { icon: '🔄', text: 'Автоматическое перемешивание' },
-      { icon: '📊', text: 'Система мониторинга' },
-      { icon: '🛡️', text: 'Теплоизоляция 120 мм' }
-    ],
-    specs: [
-      { label: 'Объём', value: '100 м³' },
-      { label: 'Диаметр', value: '3.2 м' },
-      { label: 'Длина', value: '13.5 м' },
-      { label: 'Мощность подогрева', value: '120 кВт' },
-      { label: 'Температура подогрева', value: 'до 200°C' },
-      { label: 'Вес', value: '15 т' }
-    ],
-    pdfSpec: '#',
-    images: [
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop'
-    ]
-  },
-  {
-    id: 'bitumen-tank-150',
-    name: 'Битумная ёмкость 150 м³',
-    capacity: 150,
-    capacityCategory: 'large',
-    type: 'Горизонтальная ёмкость',
-    badges: [],
-    description: 'Крупногабаритная ёмкость для высокопроизводительных заводов и крупных проектов.',
-    fullDescription: 'Битумная ёмкость объёмом 150 м³ предназначена для крупных асфальтобетонных заводов с производительностью свыше 300 т/ч. Обеспечивает длительную автономную работу без дозаправки.',
-    features: [
-      'Максимальная теплоизоляция 150 мм',
-      'Трёхконтурная система подогрева',
-      'Несколько зон подогрева для равномерного прогрева',
-      'Интеграция с системой управления заводом'
-    ],
-    includes: [
-      { icon: '🛢️', text: 'Горизонтальная ёмкость 150 м³' },
-      { icon: '🔥', text: 'Трёхконтурная система подогрева' },
-      { icon: '🌡️', text: 'Многоточечный контроль температуры' },
-      { icon: '🔄', text: 'Мощная система перемешивания' },
-      { icon: '📊', text: 'SCADA интеграция' },
-      { icon: '🛡️', text: 'Теплоизоляция 150 мм' }
-    ],
-    specs: [
-      { label: 'Объём', value: '150 м³' },
-      { label: 'Диаметр', value: '3.6 м' },
-      { label: 'Длина', value: '16 м' },
-      { label: 'Мощность подогрева', value: '180 кВт' },
-      { label: 'Температура подогрева', value: 'до 200°C' },
-      { label: 'Вес', value: '22 т' }
-    ],
-    pdfSpec: '#',
-    images: [
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop'
-    ]
-  },
-  {
-    id: 'bitumen-tank-200',
-    name: 'Битумная ёмкость 200 м³',
-    capacity: 200,
-    capacityCategory: 'large',
-    type: 'Горизонтальная ёмкость',
-    badges: [{ type: 'new', text: 'Новинка' }],
-    description: 'Максимальная ёмкость для крупнейших производств и федеральных проектов.',
-    fullDescription: 'Битумная ёмкость объёмом 200 м³ — флагманская модель для крупнейших асфальтобетонных заводов. Обеспечивает максимальную автономность работы и стабильное снабжение битумом при максимальных нагрузках.',
-    features: [
-      'Премиальная теплоизоляция 200 мм',
-      'Четырёхконтурная система подогрева',
-      'Зонный контроль температуры',
-      'Полная автоматизация и интеграция с ERP'
-    ],
-    includes: [
-      { icon: '🛢️', text: 'Горизонтальная ёмкость 200 м³' },
-      { icon: '🔥', text: 'Четырёхконтурная система подогрева' },
-      { icon: '🌡️', text: 'Зонный контроль температуры' },
-      { icon: '🔄', text: 'Промышленная система перемешивания' },
-      { icon: '📊', text: 'ERP интеграция' },
-      { icon: '🛡️', text: 'Теплоизоляция 200 мм' }
-    ],
-    specs: [
-      { label: 'Объём', value: '200 м³' },
-      { label: 'Диаметр', value: '4 м' },
-      { label: 'Длина', value: '18 м' },
-      { label: 'Мощность подогрева', value: '240 кВт' },
-      { label: 'Температура подогрева', value: 'до 200°C' },
-      { label: 'Вес', value: '28 т' }
-    ],
-    pdfSpec: '#',
-    images: [
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop',
-      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop'
-    ]
-  }
-];
-
-const products = [
-  {
-    id: 'apexcore-320',
-    name: 'ApexCore 320',
-    capacity: 320,
-    capacityCategory: 'high',
-    type: 'Стационарный комплекс',
-    badges: [{ type: 'top', text: 'Топ продажа' }],
-    description:
-      'Флагманская линия с высокой долей автоматизации, подходит для магистральных проектов и городских программ.',
-    fullDescription:
-      'ApexCore 320 — это флагманский комплекс для производства асфальтобетона с производительностью 320 тонн в час. Идеально подходит для крупных магистральных проектов и городских программ ремонта дорог. Комплекс включает прецизионную систему дозирования, интеллектуальную горелку с модуляцией пламени и экологическую фильтрацию.',
-    features: [
-      'Прецизионная система дозирования и контроля влажности',
-      'Интеллектуальная горелка с модуляцией пламени',
-      'Экологическая фильтрация с автоматической регенерацией рукавов',
-      'Интеграция с ERP и системами мониторинга'
-    ],
-    includes: [
-      { icon: '⚙️', text: 'Сушильный барабан с системой рекуперации' },
-      { icon: '📊', text: 'Система дозирования компонентов' },
-      { icon: '🔥', text: 'Интеллектуальная горелка' },
-      { icon: '🌿', text: 'Система фильтрации пыли' },
-      { icon: '💻', text: 'Система управления и контроля' },
-      { icon: '📦', text: 'Силосы для минерального порошка' }
-    ],
-    specs: [
-      { label: 'Производительность', value: '320 т/ч' },
-      { label: 'Мощность горелки', value: '25 МВт' },
-      { label: 'Температура сушки', value: 'до 180°C' },
-      { label: 'Энергопотребление', value: '450 кВт' },
-      { label: 'Площадь установки', value: '45×25 м' },
-      { label: 'Вес', value: '280 т' }
-    ],
-    pdfSpec: '#',
-    images: [plantArt.hero, plantArt.foundry, plantArt.cobalt]
-  },
-  {
-    id: 'apexflex-210',
-    name: 'ApexFlex 210',
-    capacity: 210,
-    capacityCategory: 'medium',
-    type: 'Модульный комплекс',
-    badges: [{ type: 'new', text: 'Новинка' }],
-    description:
-      'Быстровозводимая модульная конструкция для региональных проектов. Легко масштабируется и транспортируется.',
-    fullDescription:
-      'ApexFlex 210 — модульный комплекс производительностью 210 тонн в час. Быстровозводимая конструкция идеальна для региональных проектов. Сборка и ввод в эксплуатацию занимают всего 10 дней. Комплекс легко масштабируется и транспортируется благодаря стандартным транспортным габаритам.',
-    features: [
-      'Сборка и ввод в эксплуатацию за 10 дней',
-      'Стандартные транспортные габариты блоков',
-      'Опциональные силосы минерального порошка до 80 т',
-      'Удалённая диагностика и поддержка 24/7'
-    ],
-    images: [plantArt.aurum, plantArt.lumen, plantArt.mist]
-  },
-  {
-    id: 'apexmobile-160',
-    name: 'ApexMobile 160',
-    capacity: 160,
-    capacityCategory: 'low',
-    type: 'Мобильная установка',
-    description:
-      'Компактный мобильный комплекс для строительства и ремонта дорог в труднодоступных регионах.',
-    fullDescription:
-      'ApexMobile 160 — компактный мобильный комплекс производительностью 160 тонн в час. Предназначен для строительства и ремонта дорог в труднодоступных регионах. Развертывание на площадке занимает менее 72 часов. Усиленная рама позволяет эксплуатировать комплекс при температуре до -45°C.',
-    features: [
-      'Развертывание на площадке менее чем за 72 часа',
-      'Энергоэффективная дизельная горелка',
-      'Усиленная рама для эксплуатации в -45 °C',
-      'Комплект телеметрии и удаленного управления'
-    ],
-    includes: [
-      { icon: '🚚', text: 'Мобильная платформа' },
-      { icon: '⚙️', text: 'Сушильный барабан' },
-      { icon: '📊', text: 'Система дозирования' },
-      { icon: '🔥', text: 'Дизельная горелка' },
-      { icon: '🌿', text: 'Система фильтрации' },
-      { icon: '💻', text: 'Система телеметрии' }
-    ],
-    specs: [
-      { label: 'Производительность', value: '160 т/ч' },
-      { label: 'Мощность горелки', value: '12 МВт' },
-      { label: 'Температура сушки', value: 'до 180°C' },
-      { label: 'Энергопотребление', value: '280 кВт' },
-      { label: 'Площадь установки', value: '32×18 м' },
-      { label: 'Вес', value: '180 т' }
-    ],
-    pdfSpec: '#',
-    images: [plantArt.ember, plantArt.aurum, plantArt.lumen]
-  },
-  {
-    id: 'apexeco-260',
-    name: 'ApexEco 260',
-    capacity: 260,
-    capacityCategory: 'medium',
-    type: 'Стационарный комплекс',
-    description:
-      'Энергоэффективная модель с рекуперацией тепла и сниженным потреблением электроэнергии до 18%.',
-    fullDescription:
-      'ApexEco 260 — энергоэффективный комплекс производительностью 260 тонн в час. Модель оснащена системой рекуперации тепла сушильного барабана, что позволяет снизить потребление электроэнергии до 18%. Замкнутый цикл пылеулавливания обеспечивает экологичность производства.',
-    features: [
-      'Замкнутый цикл пылеулавливания',
-      'Рекуперация тепла сушильного барабана',
-      'Автоматизированная система контроля качества',
-      'Опция переработки РАП до 40 %'
-    ],
-    includes: [
-      { icon: '⚙️', text: 'Сушильный барабан с рекуперацией' },
-      { icon: '📊', text: 'Система дозирования' },
-      { icon: '🔥', text: 'Энергоэффективная горелка' },
-      { icon: '🌿', text: 'Замкнутая система фильтрации' },
-      { icon: '💻', text: 'Система контроля качества' },
-      { icon: '♻️', text: 'Система переработки РАП' }
-    ],
-    specs: [
-      { label: 'Производительность', value: '260 т/ч' },
-      { label: 'Мощность горелки', value: '20 МВт' },
-      { label: 'Температура сушки', value: 'до 180°C' },
-      { label: 'Энергопотребление', value: '380 кВт' },
-      { label: 'Площадь установки', value: '42×24 м' },
-      { label: 'Вес', value: '250 т' }
-    ],
-    pdfSpec: '#',
-    images: [plantArt.mist, plantArt.foundry, plantArt.cobalt]
-  },
-  {
-    id: 'apexmicro-140',
-    name: 'ApexMicro 140',
-    capacity: 140,
-    capacityCategory: 'low',
-    type: 'Компактный комплекс',
-    description:
-      'Решение для муниципальных подрядчиков и небольших производств с упором на безостановочный цикл.',
-    fullDescription:
-      'ApexMicro 140 — компактный комплекс производительностью 140 тонн в час. Идеальное решение для муниципальных подрядчиков и небольших производств. Компактная планировка и пониженное энергопотребление делают его экономически выгодным для небольших проектов.',
-    features: [
-      'Компактная планировка и пониженное энергопотребление',
-      'Автоматическое ведение журнальных записей',
-      'Опция комплектования силосом минералов 40 т',
-      'Оптимизированная логистика и монтаж'
-    ],
-    includes: [
-      { icon: '⚙️', text: 'Компактный сушильный барабан' },
-      { icon: '📊', text: 'Система дозирования' },
-      { icon: '🔥', text: 'Газовая горелка' },
-      { icon: '🌿', text: 'Система фильтрации' },
-      { icon: '💻', text: 'Панель управления' },
-      { icon: '📦', text: 'Силос минерального порошка 40 т' }
-    ],
-    specs: [
-      { label: 'Производительность', value: '140 т/ч' },
-      { label: 'Мощность горелки', value: '10 МВт' },
-      { label: 'Температура сушки', value: 'до 180°C' },
-      { label: 'Энергопотребление', value: '240 кВт' },
-      { label: 'Площадь установки', value: '30×16 м' },
-      { label: 'Вес', value: '150 т' }
-    ],
-    pdfSpec: '#',
-    images: [plantArt.aurum, plantArt.ember, plantArt.hero]
-  },
-  {
-    id: 'apexpro-400',
-    name: 'ApexPro 400',
-    capacity: 400,
-    capacityCategory: 'high',
-    type: 'Высокопроизводительный комплекс',
-    badges: [{ type: 'top', text: 'Топ продажа' }, { type: 'new', text: 'Новинка' }],
-    description:
-      'Максимальная производительность для федеральных проектов, резервирование ключевых узлов и двойные циклы.',
-    fullDescription:
-      'ApexPro 400 — высокопроизводительный комплекс с максимальной производительностью 400 тонн в час. Предназначен для федеральных проектов и крупных инфраструктурных объектов. Двойной смесительный узел обеспечивает непрерывное производство, а резервирование ключевых узлов гарантирует надежность работы.',
-    features: [
-      'Двойной смесительный узел',
-      'Система автоматической подачи добавок и модификаторов',
-      'Непрерывный контроль качества смеси',
-      'Встроенный центр диагностики и аналитики'
-    ],
-    images: [plantArt.cobalt, plantArt.hero, plantArt.lumen]
-  }
-];
+// Фильтруем товары по полю enabled (показываем только включенные)
+const bitumenTanks = allBitumenTanks.filter(tank => tank.enabled !== false);
+const products = allProducts.filter(product => product.enabled !== false);
 
 const state = {
   selectedProductId: null
@@ -398,6 +33,13 @@ const galleryPrev = document.querySelector('.gallery-prev');
 const galleryNext = document.querySelector('.gallery-next');
 const modalContactBtn = document.querySelector('#modal-contact-btn');
 
+// Модальное окно комплектации
+const includesModal = document.querySelector('#includes-modal');
+const includesModalOverlay = document.querySelector('.includes-modal-overlay');
+const includesModalClose = document.querySelector('.includes-modal-close');
+const includesModalTitle = document.querySelector('#includes-modal-title');
+const includesModalList = document.querySelector('#includes-modal-list');
+
 // Модальное окно формы
 const contactModal = document.querySelector('#contact-modal');
 const contactModalOverlay = document.querySelector('.contact-modal-overlay');
@@ -409,6 +51,25 @@ const consentModal = document.querySelector('#consent-modal');
 let currentGalleryIndex = 0;
 let currentProductImages = [];
 let previousContactFocusElement = null;
+
+// Функция для получения SVG иконки по типу
+function getIconSVG(iconType) {
+  const icons = {
+    '⚙️': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path></svg>`,
+    '📊': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>`,
+    '🔥': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>`,
+    '🌿': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="M8 12h8"></path><path d="M12 8v8"></path></svg>`,
+    '💻': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`,
+    '📦': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`,
+    '🛢️': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="8" ry="6"></ellipse><path d="M4 12h16"></path><path d="M4 12v-2a10 10 0 0 1 20 0v2"></path></svg>`,
+    '🌡️': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0z"></path></svg>`,
+    '🔄': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>`,
+    '🛡️': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
+    '🚚': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"></path><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>`,
+    '♻️': `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>`
+  };
+  return icons[iconType] || icons['⚙️'];
+}
 
 function createFeatureList(features) {
   const list = document.createElement('ul');
@@ -761,13 +422,31 @@ function openProductModal(productId) {
   const modalIncludes = document.querySelector('#modal-includes');
   if (product.includes && product.includes.length > 0) {
     includesGrid.innerHTML = '';
-    product.includes.forEach((item) => {
-      const includeItem = document.createElement('div');
-      includeItem.className = 'include-item';
-      includeItem.innerHTML = `
-        <span class="include-icon">${item.icon}</span>
-        <span class="include-text">${item.text}</span>
-      `;
+    product.includes.forEach((item, index) => {
+      const includeItem = document.createElement('button');
+      includeItem.className = 'include-item include-item-clickable';
+      includeItem.type = 'button';
+      includeItem.setAttribute('aria-label', `Подробнее о ${item.text}`);
+      includeItem.addEventListener('click', () => {
+        // Открываем модальное окно с детальной информацией
+        openIncludesModal(product.id, index);
+      });
+      
+      const iconWrapper = document.createElement('span');
+      iconWrapper.className = 'include-icon';
+      iconWrapper.innerHTML = getIconSVG(item.icon);
+      const textSpan = document.createElement('span');
+      textSpan.className = 'include-text';
+      textSpan.textContent = item.text;
+      
+      // Добавляем иконку стрелки для индикации кликабельности
+      const arrowIcon = document.createElement('span');
+      arrowIcon.className = 'include-arrow';
+      arrowIcon.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>`;
+      
+      includeItem.appendChild(iconWrapper);
+      includeItem.appendChild(textSpan);
+      includeItem.appendChild(arrowIcon);
       includesGrid.appendChild(includeItem);
     });
     modalIncludes.style.display = 'block';
@@ -875,6 +554,179 @@ function removeFocusTrap() {
   if (productModal._focusTrapHandler) {
     productModal.removeEventListener('keydown', productModal._focusTrapHandler);
     productModal._focusTrapHandler = null;
+  }
+}
+
+// Функции для модального окна комплектации
+let previousIncludesFocusElement = null;
+
+function openIncludesModal(productId, highlightIndex = null) {
+  // Ищем продукт в обоих массивах
+  let product = products.find((p) => p.id === productId);
+  if (!product) {
+    product = bitumenTanks.find((t) => t.id === productId);
+  }
+  
+  // Проверяем наличие элементов модального окна
+  const modal = document.querySelector('#includes-modal');
+  const titleEl = document.querySelector('#includes-modal-title');
+  const listEl = document.querySelector('#includes-modal-list');
+  
+  if (!product || !modal || !titleEl || !listEl || !product.includesDetailed) {
+    console.error('Не удалось открыть модальное окно комплектации:', {
+      product: !!product,
+      modal: !!modal,
+      titleEl: !!titleEl,
+      listEl: !!listEl,
+      hasIncludesDetailed: !!product?.includesDetailed
+    });
+    return;
+  }
+
+  // Сохраняем элемент, который открыл модальное окно
+  previousIncludesFocusElement = document.activeElement;
+
+  // Заполняем заголовок
+  titleEl.textContent = `Что входит в комплекс ${product.name}`;
+
+  // Заполняем список комплектации
+  listEl.innerHTML = '';
+  product.includesDetailed.forEach((item, index) => {
+    const includeCard = document.createElement('div');
+    includeCard.className = 'include-detail-card';
+    includeCard.style.opacity = '0';
+    includeCard.style.transform = 'translateY(20px)';
+    
+    if (highlightIndex !== null && index === highlightIndex) {
+      includeCard.classList.add('highlighted');
+    }
+    
+    // Анимация появления с задержкой
+    setTimeout(() => {
+      includeCard.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      includeCard.style.opacity = '1';
+      includeCard.style.transform = 'translateY(0)';
+      
+      // Прокручиваем к выделенному элементу
+      if (highlightIndex !== null && index === highlightIndex) {
+        setTimeout(() => {
+          includeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 500);
+      }
+    }, index * 80);
+    
+    const imageWrapper = document.createElement('div');
+    imageWrapper.className = 'include-detail-image';
+    
+    // Добавляем градиентный overlay для эффекта глубины
+    const imageOverlay = document.createElement('div');
+    imageOverlay.className = 'include-detail-image-overlay';
+    
+    const img = document.createElement('img');
+    img.src = item.image;
+    img.alt = item.title;
+    img.loading = 'lazy';
+    
+    imageWrapper.appendChild(img);
+    imageWrapper.appendChild(imageOverlay);
+    
+    const contentWrapper = document.createElement('div');
+    contentWrapper.className = 'include-detail-content';
+    
+    // Добавляем номер элемента
+    const numberBadge = document.createElement('div');
+    numberBadge.className = 'include-detail-number';
+    numberBadge.textContent = String(index + 1).padStart(2, '0');
+    
+    const titleWrapper = document.createElement('div');
+    titleWrapper.className = 'include-detail-title-wrapper';
+    
+    const title = document.createElement('h3');
+    title.textContent = item.title;
+    
+    const description = document.createElement('p');
+    description.textContent = item.description;
+    
+    titleWrapper.appendChild(numberBadge);
+    titleWrapper.appendChild(title);
+    
+    contentWrapper.appendChild(titleWrapper);
+    contentWrapper.appendChild(description);
+    
+    includeCard.appendChild(imageWrapper);
+    includeCard.appendChild(contentWrapper);
+    
+    listEl.appendChild(includeCard);
+  });
+
+  // Открываем модальное окно
+  modal.setAttribute('aria-hidden', 'false');
+  modal.setAttribute('aria-modal', 'true');
+  modal.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+
+  // Устанавливаем focus trap
+  setupIncludesFocusTrap();
+
+  // Фокус на кнопку закрытия для доступности
+  const closeBtn = document.querySelector('.includes-modal-close');
+  if (closeBtn) {
+    closeBtn.focus();
+  }
+}
+
+function closeIncludesModal() {
+  const modal = document.querySelector('#includes-modal');
+  if (!modal) return;
+  modal.setAttribute('aria-hidden', 'true');
+  modal.removeAttribute('aria-modal');
+  modal.classList.remove('is-open');
+  document.body.style.overflow = '';
+  
+  // Удаляем focus trap
+  removeIncludesFocusTrap();
+
+  // Возвращаем фокус на элемент, который открыл модальное окно
+  if (previousIncludesFocusElement) {
+    previousIncludesFocusElement.focus();
+    previousIncludesFocusElement = null;
+  }
+}
+
+function setupIncludesFocusTrap() {
+  const modal = document.querySelector('#includes-modal');
+  if (!modal) return;
+  const focusableElements = modal.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  const handleTabKey = (event) => {
+    if (event.key !== 'Tab') return;
+    
+    if (event.shiftKey) {
+      if (document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement?.focus();
+      }
+    } else {
+      if (document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement?.focus();
+      }
+    }
+  };
+
+  modal.addEventListener('keydown', handleTabKey);
+  modal._focusTrapHandler = handleTabKey;
+}
+
+function removeIncludesFocusTrap() {
+  const modal = document.querySelector('#includes-modal');
+  if (modal && modal._focusTrapHandler) {
+    modal.removeEventListener('keydown', modal._focusTrapHandler);
+    modal._focusTrapHandler = null;
   }
 }
 
@@ -1541,12 +1393,24 @@ function init() {
     galleryNext.addEventListener('click', () => navigateGallery('next'));
   }
 
+  // Модальное окно комплектации
+  const includesModalCloseEl = document.querySelector('.includes-modal-close');
+  const includesModalOverlayEl = document.querySelector('.includes-modal-overlay');
+  if (includesModalCloseEl) {
+    includesModalCloseEl.addEventListener('click', closeIncludesModal);
+  }
+  if (includesModalOverlayEl) {
+    includesModalOverlayEl.addEventListener('click', closeIncludesModal);
+  }
+
   // Закрытие по Escape
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       // Закрываем сначала модальное окно формы, если оно открыто
       if (contactModal?.classList.contains('is-open')) {
         closeContactModal();
+      } else if (document.querySelector('#includes-modal')?.classList.contains('is-open')) {
+        closeIncludesModal();
       } else if (productModal?.classList.contains('is-open')) {
         closeProductModal();
       }
