@@ -391,9 +391,9 @@ function showToast(message, type = 'success') {
 }
 
 // Функция генерации PDF коммерческого предложения
-function generateCommercialProposalPDF(productId) {
-  // Проверяем наличие jsPDF
-  if (typeof window.jspdf === 'undefined') {
+async function generateCommercialProposalPDF(productId) {
+  // Проверяем наличие html2pdf
+  if (typeof html2pdf === 'undefined') {
     showToast('Библиотека для генерации PDF не загружена. Обновите страницу.', 'error');
     return;
   }
@@ -410,239 +410,314 @@ function generateCommercialProposalPDF(productId) {
   }
 
   try {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
+    // Показываем индикатор загрузки
+    showToast('Генерация PDF...', 'success');
 
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const margin = 20;
-    const contentWidth = pageWidth - (margin * 2);
-    let yPosition = margin;
-
-    // Цвета для стилизации
-    const primaryColor = [30, 30, 30]; // Темный цвет
-    const accentColor = [212, 175, 55]; // Золотой цвет
-    const lightGray = [245, 245, 245];
-    const darkGray = [100, 100, 100];
-
-    // Заголовок документа
-    doc.setFillColor(...primaryColor);
-    doc.rect(0, 0, pageWidth, 50, 'F');
+    // Получаем путь к логотипу
+    const logoPath = './logo.png';
     
-    // Логотип/Название компании
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(24);
-    doc.setFont('helvetica', 'bold');
-    doc.text('ApexGlobal', margin, 25);
+    // Получаем первую фотографию продукта
+    const productImage = product.images && product.images.length > 0 ? product.images[0] : null;
     
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Коммерческое предложение', margin, 35);
-    
-    // Дата
+    // Форматируем дату
     const today = new Date();
     const dateStr = today.toLocaleDateString('ru-RU', { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric' 
     });
-    doc.text(`Дата: ${dateStr}`, pageWidth - margin, 35, { align: 'right' });
     
-    yPosition = 60;
-
-    // Название продукта
-    doc.setTextColor(...primaryColor);
-    doc.setFontSize(20);
-    doc.setFont('helvetica', 'bold');
-    const productNameLines = doc.splitTextToSize(product.name, contentWidth);
-    doc.text(productNameLines, margin, yPosition);
-    yPosition += productNameLines.length * 8 + 5;
-
-    // Мета-информация (тип и производительность)
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...darkGray);
+    // Определяем единицы измерения
     const unit = product.id && product.id.includes('bitumen-tank') ? 'м³' : 'т/ч';
-    doc.text(`${product.type} • Производительность: ${product.capacity} ${unit}`, margin, yPosition);
-    yPosition += 10;
 
-    // Разделительная линия
-    doc.setDrawColor(...accentColor);
-    doc.setLineWidth(0.5);
-    doc.line(margin, yPosition, pageWidth - margin, yPosition);
-    yPosition += 10;
+    // Создаем HTML-шаблон для PDF
+    const pdfHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          @page {
+            margin: 0;
+            size: A4;
+          }
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          body {
+            font-family: 'Montserrat', 'Arial', sans-serif;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #1e1e1e;
+            padding: 0;
+            margin: 0;
+          }
+          .pdf-container {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 0;
+            margin: 0;
+            background: #ffffff;
+          }
+          .pdf-header {
+            background: #1e1e1e;
+            color: #ffffff;
+            padding: 20mm 20mm 15mm 20mm;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+          }
+          .pdf-header-left {
+            flex: 1;
+          }
+          .pdf-logo {
+            max-width: 60mm;
+            height: auto;
+            margin-bottom: 8mm;
+          }
+          .pdf-header-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4mm;
+          }
+          .pdf-header-subtitle {
+            font-size: 14px;
+            color: #c9a857;
+            font-weight: 500;
+          }
+          .pdf-header-date {
+            font-size: 11px;
+            color: #cccccc;
+            text-align: right;
+            margin-top: 8mm;
+          }
+          .pdf-content {
+            padding: 20mm;
+          }
+          .pdf-product-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e1e1e;
+            margin-bottom: 8mm;
+            line-height: 1.3;
+          }
+          .pdf-product-meta {
+            font-size: 13px;
+            color: #666666;
+            margin-bottom: 12mm;
+            padding-bottom: 8mm;
+            border-bottom: 2px solid #c9a857;
+          }
+          .pdf-section {
+            margin-bottom: 15mm;
+          }
+          .pdf-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e1e1e;
+            margin-bottom: 8mm;
+            padding-bottom: 4mm;
+            border-bottom: 1px solid #e0e0e0;
+          }
+          .pdf-section-content {
+            font-size: 11px;
+            line-height: 1.8;
+            color: #333333;
+          }
+          .pdf-product-image {
+            width: 100%;
+            max-width: 170mm;
+            height: auto;
+            margin: 8mm 0;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          }
+          .pdf-list {
+            list-style: none;
+            padding-left: 0;
+          }
+          .pdf-list-item {
+            padding: 4mm 0 4mm 6mm;
+            position: relative;
+            font-size: 11px;
+            line-height: 1.8;
+          }
+          .pdf-list-item::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #c9a857;
+            font-weight: bold;
+            font-size: 16px;
+          }
+          .pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8mm 0;
+            font-size: 11px;
+          }
+          .pdf-table th {
+            background: #1e1e1e;
+            color: #ffffff;
+            padding: 6mm 4mm;
+            text-align: left;
+            font-weight: 600;
+          }
+          .pdf-table td {
+            padding: 5mm 4mm;
+            border-bottom: 1px solid #e0e0e0;
+          }
+          .pdf-table tr:nth-child(even) {
+            background: #f5f5f5;
+          }
+          .pdf-footer {
+            margin-top: 20mm;
+            padding-top: 8mm;
+            border-top: 2px solid #c9a857;
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #666666;
+          }
+          .pdf-footer-left {
+            flex: 1;
+          }
+          .pdf-footer-right {
+            text-align: right;
+          }
+          .pdf-footer-title {
+            font-weight: 600;
+            color: #1e1e1e;
+            margin-bottom: 2mm;
+          }
+          .pdf-page-number {
+            text-align: center;
+            font-size: 9px;
+            color: #999999;
+            margin-top: 10mm;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="pdf-container">
+          <div class="pdf-header">
+            <div class="pdf-header-left">
+              <img src="${logoPath}" alt="ApexGlobal" class="pdf-logo" />
+              <div class="pdf-header-title">ApexGlobal</div>
+              <div class="pdf-header-subtitle">Коммерческое предложение</div>
+            </div>
+            <div class="pdf-header-date">Дата: ${dateStr}</div>
+          </div>
+          
+          <div class="pdf-content">
+            <h1 class="pdf-product-title">${product.name}</h1>
+            <div class="pdf-product-meta">
+              ${product.type} • Производительность: ${product.capacity} ${unit}
+            </div>
+            
+            ${productImage ? `<img src="${productImage}" alt="${product.name}" class="pdf-product-image" />` : ''}
+            
+            <div class="pdf-section">
+              <h2 class="pdf-section-title">Описание</h2>
+              <div class="pdf-section-content">
+                ${(product.fullDescription || product.description).replace(/\n/g, '<br>')}
+              </div>
+            </div>
+            
+            ${product.includes && product.includes.length > 0 ? `
+            <div class="pdf-section">
+              <h2 class="pdf-section-title">Что входит в комплекс</h2>
+              <ul class="pdf-list">
+                ${product.includes.map(item => {
+                  const cleanText = item.text.replace(/[⚙️📊🔥🌿💻📦🛢️🌡️🔄🛡️🚚♻️]/g, '').trim();
+                  return `<li class="pdf-list-item">${cleanText}</li>`;
+                }).join('')}
+              </ul>
+            </div>
+            ` : ''}
+            
+            ${product.specs && product.specs.length > 0 ? `
+            <div class="pdf-section">
+              <h2 class="pdf-section-title">Технические характеристики</h2>
+              <table class="pdf-table">
+                <thead>
+                  <tr>
+                    <th>Параметр</th>
+                    <th>Значение</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${product.specs.map(spec => `
+                    <tr>
+                      <td>${spec.label}</td>
+                      <td>${spec.value}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+            ` : ''}
+            
+            ${product.features && product.features.length > 0 ? `
+            <div class="pdf-section">
+              <h2 class="pdf-section-title">Ключевые особенности</h2>
+              <ul class="pdf-list">
+                ${product.features.map(feature => `
+                  <li class="pdf-list-item">${feature}</li>
+                `).join('')}
+              </ul>
+            </div>
+            ` : ''}
+            
+            <div class="pdf-footer">
+              <div class="pdf-footer-left">
+                <div class="pdf-footer-title">Контакты</div>
+                <div>Телефон: +7 (800) 123-45-67</div>
+                <div>E-mail: sales@apexglobals.ru</div>
+              </div>
+              <div class="pdf-footer-right">
+                <div class="pdf-footer-title">Сайт</div>
+                <div>www.apexglobals.ru</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
 
-    // Описание продукта
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(...primaryColor);
-    doc.text('Описание', margin, yPosition);
-    yPosition += 8;
+    // Создаем временный элемент для конвертации
+    const element = document.createElement('div');
+    element.innerHTML = pdfHTML;
+    element.style.position = 'absolute';
+    element.style.left = '-9999px';
+    document.body.appendChild(element);
 
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(0, 0, 0);
-    const description = product.fullDescription || product.description;
-    const descriptionLines = doc.splitTextToSize(description, contentWidth);
-    doc.text(descriptionLines, margin, yPosition);
-    yPosition += descriptionLines.length * 5 + 10;
+    // Конвертируем в PDF
+    const opt = {
+      margin: 0,
+      filename: `КП_${product.name.replace(/\s+/g, '_')}_${today.toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { 
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        letterRendering: true
+      },
+      jsPDF: { 
+        unit: 'mm', 
+        format: 'a4', 
+        orientation: 'portrait',
+        compress: true
+      }
+    };
 
-    // Проверка, нужна ли новая страница
-    if (yPosition > pageHeight - 80) {
-      doc.addPage();
-      yPosition = margin;
-    }
-
-    // Что входит в комплекс
-    if (product.includes && product.includes.length > 0) {
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...primaryColor);
-      doc.text('Что входит в комплекс', margin, yPosition);
-      yPosition += 8;
-
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(0, 0, 0);
-      
-      product.includes.forEach((item, index) => {
-        if (yPosition > pageHeight - 40) {
-          doc.addPage();
-          yPosition = margin;
-        }
-        
-        // Маркер списка
-        doc.setFillColor(...accentColor);
-        doc.circle(margin + 2, yPosition - 2, 1.5, 'F');
-        
-        // Текст элемента
-        const itemText = item.text.replace(/[⚙️📊🔥🌿💻📦🛢️🌡️🔄🛡️🚚♻️]/g, '').trim();
-        const itemLines = doc.splitTextToSize(itemText, contentWidth - 10);
-        doc.text(itemLines, margin + 8, yPosition);
-        yPosition += itemLines.length * 5 + 3;
-      });
-      
-      yPosition += 5;
-    }
-
-    // Проверка, нужна ли новая страница
-    if (yPosition > pageHeight - 100) {
-      doc.addPage();
-      yPosition = margin;
-    }
-
-    // Технические характеристики
-    if (product.specs && product.specs.length > 0) {
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...primaryColor);
-      doc.text('Технические характеристики', margin, yPosition);
-      yPosition += 10;
-
-      // Таблица характеристик
-      const tableData = product.specs.map(spec => [spec.label, spec.value]);
-      
-      doc.autoTable({
-        startY: yPosition,
-        head: [['Параметр', 'Значение']],
-        body: tableData,
-        theme: 'striped',
-        headStyles: {
-          fillColor: primaryColor,
-          textColor: [255, 255, 255],
-          fontStyle: 'bold',
-          fontSize: 10
-        },
-        bodyStyles: {
-          fontSize: 9,
-          textColor: [0, 0, 0]
-        },
-        alternateRowStyles: {
-          fillColor: lightGray
-        },
-        margin: { left: margin, right: margin },
-        styles: {
-          cellPadding: 5,
-          lineWidth: 0.1,
-          lineColor: darkGray
-        }
-      });
-
-      yPosition = doc.lastAutoTable.finalY + 15;
-    }
-
-    // Проверка, нужна ли новая страница
-    if (yPosition > pageHeight - 80) {
-      doc.addPage();
-      yPosition = margin;
-    }
-
-    // Ключевые особенности
-    if (product.features && product.features.length > 0) {
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(...primaryColor);
-      doc.text('Ключевые особенности', margin, yPosition);
-      yPosition += 8;
-
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(0, 0, 0);
-      
-      product.features.forEach((feature) => {
-        if (yPosition > pageHeight - 40) {
-          doc.addPage();
-          yPosition = margin;
-        }
-        
-        // Маркер списка
-        doc.setFillColor(...accentColor);
-        doc.circle(margin + 2, yPosition - 2, 1.5, 'F');
-        
-        // Текст особенности
-        const featureLines = doc.splitTextToSize(feature, contentWidth - 10);
-        doc.text(featureLines, margin + 8, yPosition);
-        yPosition += featureLines.length * 5 + 3;
-      });
-      
-      yPosition += 5;
-    }
-
-    // Контактная информация в футере
-    const footerY = pageHeight - 30;
-    doc.setDrawColor(...accentColor);
-    doc.setLineWidth(0.5);
-    doc.line(margin, footerY, pageWidth - margin, footerY);
+    await html2pdf().set(opt).from(element).save();
     
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...darkGray);
-    doc.text('Контакты:', margin, footerY + 8);
-    doc.text('Телефон: +7 (800) 123-45-67', margin, footerY + 13);
-    doc.text('E-mail: sales@apexglobals.ru', margin, footerY + 18);
-    doc.text('www.apexglobals.ru', pageWidth - margin, footerY + 13, { align: 'right' });
-
-    // Номера страниц
-    const totalPages = doc.internal.pages.length - 1;
-    for (let i = 1; i <= totalPages; i++) {
-      doc.setPage(i);
-      doc.setFontSize(9);
-      doc.setTextColor(...darkGray);
-      doc.text(
-        `Страница ${i} из ${totalPages}`,
-        pageWidth / 2,
-        pageHeight - 10,
-        { align: 'center' }
-      );
-    }
-
-    // Сохранение PDF
-    const fileName = `КП_${product.name.replace(/\s+/g, '_')}_${today.toISOString().split('T')[0]}.pdf`;
-    doc.save(fileName);
+    // Удаляем временный элемент
+    document.body.removeChild(element);
     
     showToast('Коммерческое предложение успешно сгенерировано!', 'success');
   } catch (error) {
