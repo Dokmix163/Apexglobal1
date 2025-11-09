@@ -390,6 +390,114 @@ function showToast(message, type = 'success') {
   }, 4200);
 }
 
+// Функция для конвертации изображения в base64
+function imageToBase64(url) {
+  return new Promise((resolve, reject) => {
+    // Если URL уже base64, возвращаем его
+    if (url.startsWith('data:')) {
+      resolve(url);
+      return;
+    }
+    
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL('image/jpeg', 0.95);
+        resolve(dataURL);
+      } catch (error) {
+        console.warn('Ошибка конвертации изображения в base64:', error);
+        // Если не удалось конвертировать, возвращаем оригинальный URL
+        resolve(url);
+      }
+    };
+    
+    img.onerror = () => {
+      console.warn('Не удалось загрузить изображение:', url);
+      // Если изображение не загрузилось, возвращаем null
+      resolve(null);
+    };
+    
+    // Пробуем загрузить изображение
+    img.src = url;
+    
+    // Таймаут на случай, если изображение долго загружается
+    setTimeout(() => {
+      if (!img.complete) {
+        console.warn('Таймаут загрузки изображения:', url);
+        resolve(null);
+      }
+    }, 5000);
+  });
+}
+
+// Функция показа индикатора загрузки PDF
+function showPDFLoadingIndicator() {
+  const loadingOverlay = document.createElement('div');
+  loadingOverlay.id = 'pdf-loading-overlay';
+  loadingOverlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+  `;
+  
+  const spinner = document.createElement('div');
+  spinner.style.cssText = `
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(201, 168, 87, 0.3);
+    border-top-color: #c9a857;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  `;
+  
+  const text = document.createElement('div');
+  text.textContent = 'Генерация PDF...';
+  text.style.cssText = `
+    color: #ffffff;
+    font-size: 18px;
+    margin-top: 20px;
+    font-weight: 500;
+  `;
+  
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  loadingOverlay.appendChild(spinner);
+  loadingOverlay.appendChild(text);
+  document.body.appendChild(loadingOverlay);
+  
+  return loadingOverlay;
+}
+
+// Функция скрытия индикатора загрузки PDF
+function hidePDFLoadingIndicator() {
+  const overlay = document.getElementById('pdf-loading-overlay');
+  if (overlay) {
+    overlay.remove();
+  }
+}
+
 // Функция генерации PDF коммерческого предложения
 async function generateCommercialProposalPDF(productId) {
   // Проверяем наличие html2pdf
@@ -409,15 +517,28 @@ async function generateCommercialProposalPDF(productId) {
     return;
   }
 
-  try {
-    // Показываем индикатор загрузки
-    showToast('Генерация PDF...', 'success');
+  const loadingOverlay = showPDFLoadingIndicator();
 
-    // Получаем путь к логотипу
+  try {
+    // Получаем путь к логотипу и конвертируем в base64
     const logoPath = './logo.png';
+    let logoBase64 = null;
+    try {
+      logoBase64 = await imageToBase64(logoPath);
+    } catch (error) {
+      console.warn('Не удалось загрузить логотип:', error);
+    }
     
-    // Получаем первую фотографию продукта
-    const productImage = product.images && product.images.length > 0 ? product.images[0] : null;
+    // Получаем первую фотографию продукта и конвертируем в base64
+    const productImageUrl = product.images && product.images.length > 0 ? product.images[0] : null;
+    let productImageBase64 = null;
+    if (productImageUrl) {
+      try {
+        productImageBase64 = await imageToBase64(productImageUrl);
+      } catch (error) {
+        console.warn('Не удалось загрузить изображение продукта:', error);
+      }
+    }
     
     // Форматируем дату
     const today = new Date();
@@ -604,7 +725,7 @@ async function generateCommercialProposalPDF(productId) {
         <div class="pdf-container">
           <div class="pdf-header">
             <div class="pdf-header-left">
-              <img src="${logoPath}" alt="ApexGlobal" class="pdf-logo" />
+              ${logoBase64 ? `<img src="${logoBase64}" alt="ApexGlobal" class="pdf-logo" />` : ''}
               <div class="pdf-header-title">ApexGlobal</div>
               <div class="pdf-header-subtitle">Коммерческое предложение</div>
             </div>
@@ -617,7 +738,7 @@ async function generateCommercialProposalPDF(productId) {
               ${product.type} • Производительность: ${product.capacity} ${unit}
             </div>
             
-            ${productImage ? `<img src="${productImage}" alt="${product.name}" class="pdf-product-image" />` : ''}
+            ${productImageBase64 ? `<img src="${productImageBase64}" alt="${product.name}" class="pdf-product-image" />` : ''}
             
             <div class="pdf-section">
               <h2 class="pdf-section-title">Описание</h2>
@@ -693,25 +814,48 @@ async function generateCommercialProposalPDF(productId) {
     element.innerHTML = pdfHTML;
     element.style.position = 'absolute';
     element.style.left = '-9999px';
+    element.style.width = '210mm';
+    element.style.background = '#ffffff';
     document.body.appendChild(element);
+
+    // Ждем загрузки изображений
+    const images = element.querySelectorAll('img');
+    const imagePromises = Array.from(images).map(img => {
+      return new Promise((resolve) => {
+        if (img.complete) {
+          resolve();
+        } else {
+          img.onload = resolve;
+          img.onerror = resolve; // Продолжаем даже если изображение не загрузилось
+        }
+      });
+    });
+    
+    await Promise.all(imagePromises);
+    
+    // Небольшая задержка для рендеринга
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     // Конвертируем в PDF
     const opt = {
-      margin: 0,
+      margin: [0, 0, 0, 0],
       filename: `КП_${product.name.replace(/\s+/g, '_')}_${today.toISOString().split('T')[0]}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { 
         scale: 2,
         useCORS: true,
         logging: false,
-        letterRendering: true
+        letterRendering: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
       },
       jsPDF: { 
         unit: 'mm', 
         format: 'a4', 
         orientation: 'portrait',
         compress: true
-      }
+      },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
     await html2pdf().set(opt).from(element).save();
@@ -719,9 +863,11 @@ async function generateCommercialProposalPDF(productId) {
     // Удаляем временный элемент
     document.body.removeChild(element);
     
+    hidePDFLoadingIndicator();
     showToast('Коммерческое предложение успешно сгенерировано!', 'success');
   } catch (error) {
     console.error('Ошибка при генерации PDF:', error);
+    hidePDFLoadingIndicator();
     showToast('Произошла ошибка при генерации PDF. Попробуйте позже.', 'error');
   }
 }
