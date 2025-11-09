@@ -572,16 +572,18 @@ async function generateCommercialProposalPDF(productId) {
             margin: 0;
           }
           .pdf-container {
-            width: 210mm;
-            min-height: 297mm;
+            width: 794px;
+            min-height: 1123px;
             padding: 0;
             margin: 0;
             background: #ffffff;
+            position: relative;
+            display: block;
           }
           .pdf-header {
             background: #1e1e1e;
             color: #ffffff;
-            padding: 20mm 20mm 15mm 20mm;
+            padding: 76px 76px 57px 76px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
@@ -590,9 +592,9 @@ async function generateCommercialProposalPDF(productId) {
             flex: 1;
           }
           .pdf-logo {
-            max-width: 60mm;
+            max-width: 227px;
             height: auto;
-            margin-bottom: 8mm;
+            margin-bottom: 30px;
           }
           .pdf-header-title {
             font-size: 24px;
@@ -611,7 +613,7 @@ async function generateCommercialProposalPDF(productId) {
             margin-top: 8mm;
           }
           .pdf-content {
-            padding: 20mm;
+            padding: 76px;
           }
           .pdf-product-title {
             font-size: 28px;
@@ -804,21 +806,22 @@ async function generateCommercialProposalPDF(productId) {
     // Создаем временный элемент для конвертации
     const element = document.createElement('div');
     element.innerHTML = pdfHTML;
-    // Делаем элемент видимым, но вне экрана для правильного рендеринга
+    // Делаем элемент видимым, но за пределами экрана для правильного рендеринга
     element.style.position = 'fixed';
     element.style.top = '0';
-    element.style.left = '0';
-    element.style.width = '210mm';
-    element.style.minHeight = '297mm';
+    element.style.left = '-10000px'; // За пределами экрана, но видимый
+    element.style.width = '794px'; // 210mm в пикселях
+    element.style.minHeight = '1123px'; // 297mm в пикселях
     element.style.background = '#ffffff';
     element.style.zIndex = '9999';
-    element.style.opacity = '0';
-    element.style.pointerEvents = 'none';
-    element.style.overflow = 'hidden';
+    element.style.overflow = 'visible';
+    element.style.transform = 'translateX(0)'; // Убеждаемся что элемент видим
     document.body.appendChild(element);
     
-    // Принудительно применяем стили
-    element.offsetHeight;
+    // Принудительно применяем стили и ждем рендеринга
+    const forceReflow = element.offsetHeight;
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await new Promise(resolve => requestAnimationFrame(resolve));
 
     // Ждем загрузки изображений
     const images = element.querySelectorAll('img');
@@ -843,13 +846,38 @@ async function generateCommercialProposalPDF(productId) {
     await Promise.all(imagePromises);
     
     // Увеличиваем задержку для рендеринга и применения стилей
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
     // Проверяем, что элемент действительно отрендерился
     const pdfContainer = element.querySelector('.pdf-container');
-    if (!pdfContainer || pdfContainer.offsetHeight === 0) {
-      throw new Error('Элемент не отрендерился');
+    if (!pdfContainer) {
+      throw new Error('Контейнер PDF не найден');
     }
+    
+    // Проверяем размеры контейнера
+    const containerHeight = pdfContainer.offsetHeight || pdfContainer.scrollHeight;
+    const containerWidth = pdfContainer.offsetWidth || pdfContainer.scrollWidth;
+    
+    // Убеждаемся что элемент видим для html2canvas
+    pdfContainer.style.visibility = 'visible';
+    pdfContainer.style.opacity = '1';
+    pdfContainer.style.display = 'block';
+    pdfContainer.style.position = 'relative';
+    
+    console.log('Размеры контейнера:', containerWidth, 'x', containerHeight);
+    console.log('Стили контейнера:', {
+      visibility: pdfContainer.style.visibility,
+      opacity: pdfContainer.style.opacity,
+      display: pdfContainer.style.display,
+      position: pdfContainer.style.position
+    });
+    
+    if (containerHeight === 0 || containerWidth === 0) {
+      throw new Error(`Элемент не отрендерился. Размеры: ${containerWidth}x${containerHeight}`);
+    }
+    
+    // Дополнительная задержка для применения стилей
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     // Конвертируем в PDF
     const opt = {
@@ -859,14 +887,20 @@ async function generateCommercialProposalPDF(productId) {
       html2canvas: { 
         scale: 2,
         useCORS: true,
-        logging: true, // Включаем логирование для отладки
+        logging: false,
         letterRendering: true,
-        allowTaint: true,
+        allowTaint: false, // Изменим на false для безопасности
         backgroundColor: '#ffffff',
-        width: 794, // 210mm в пикселях при 96 DPI
-        height: 1123, // 297mm в пикселях при 96 DPI
-        windowWidth: 794,
-        windowHeight: 1123
+        removeContainer: false,
+        onclone: (clonedDoc) => {
+          // Убеждаемся что клонированный элемент видим
+          const clonedElement = clonedDoc.querySelector('.pdf-container');
+          if (clonedElement) {
+            clonedElement.style.position = 'relative';
+            clonedElement.style.visibility = 'visible';
+            clonedElement.style.opacity = '1';
+          }
+        }
       },
       jsPDF: { 
         unit: 'mm', 
@@ -878,6 +912,7 @@ async function generateCommercialProposalPDF(productId) {
     };
 
     // Используем контейнер вместо всего элемента
+    console.log('Начинаем генерацию PDF из элемента:', pdfContainer);
     await html2pdf().set(opt).from(pdfContainer).save();
     
     // Удаляем временный элемент
