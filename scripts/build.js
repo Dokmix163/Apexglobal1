@@ -103,7 +103,7 @@ async function updateHTMLWithVersions() {
     let updated = false;
     
     // Обновляем ссылки на CSS
-    if (cssHash) {
+  if (cssHash) {
       const newHtml = html.replace(/styles\.css(\?v=[^"']*)?/g, `styles.css?v=${cssHash}`);
       if (newHtml !== html) {
         html = newHtml;
@@ -130,7 +130,7 @@ async function updateHTMLWithVersions() {
     }
     
     if (updated) {
-      await fsp.writeFile(htmlPath, html, 'utf8');
+  await fsp.writeFile(htmlPath, html, 'utf8');
     }
   }
   
