@@ -129,7 +129,7 @@ export const bitumenTanks = [
     ],
     pdfSpec: '#',
     images: [
-      'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1200&h=800&fit=crop', // Измените URL для замены основного изображения
+      'https://disk.yandex.ru/i/sl3pA36hK5s3bA', // Измените URL для замены основного изображения
       'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop'
     ]
