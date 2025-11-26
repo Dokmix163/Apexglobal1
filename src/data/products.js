@@ -129,7 +129,7 @@ export const bitumenTanks = [
     ],
     pdfSpec: '#',
     images: [
-      'https://disk.yandex.ru/i/sl3pA36hK5s3bA', // Измените URL для замены основного изображения
+      'https://previews.dropbox.com/p/thumb/AC2emRNmwpGkBlCBsfef_7UTRf3m42KY3zw_hl8VXNc-vh-FWnYbnRqtrXfWLt_AzL9FLwagd85UyRgDGzTYngsH-dYat5_JyBD93bDIc771uTvMUoBpaKH_aw0gF9m5kpo6ve-ht03ilqEhHMtN0-Kr8fKNNJ66dDxZONUIowV5lt7H3IU1D37eS_C8T7Sh4MYYtxJKGyc4pKuc20qoM95sNPa9Jup7QHy3-fQCN_A4hMyMcYXV0FYf53p_92Z2WGiJKewpSKx7liNpkhUw3XqgrD1dQ5D-QvXs0ZDnKA5KDmkkmxxUPHZUAJzolT4W2D2DdYRAmuS4cJQp3PYms_cP/p.png?is_prewarmed=true', // Измените URL для замены основного изображения
       'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&h=800&fit=crop',
       'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&h=800&fit=crop'
     ]
