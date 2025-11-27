@@ -420,16 +420,24 @@ function openProductModal(productId) {
   // Заполняем "Что входит в комплекс"
   const includesGrid = document.querySelector('#includes-grid');
   const modalIncludes = document.querySelector('#modal-includes');
-  if (product.includes && product.includes.length > 0) {
+  const includeItems = Array.isArray(product.includes)
+    ? product.includes.filter((item) => item && item.enabled !== false)
+    : [];
+  const detailedActiveItems = Array.isArray(product.includesDetailed)
+    ? product.includesDetailed.filter((item) => item && item.enabled !== false)
+    : [];
+
+  if (includeItems.length > 0) {
     includesGrid.innerHTML = '';
-    product.includes.forEach((item, index) => {
+    includeItems.forEach((item, index) => {
       const includeItem = document.createElement('button');
       includeItem.className = 'include-item include-item-clickable';
       includeItem.type = 'button';
       includeItem.setAttribute('aria-label', `Подробнее о ${item.text}`);
+      const highlightIndex = detailedActiveItems[index] ? index : null;
       includeItem.addEventListener('click', () => {
         // Открываем модальное окно с детальной информацией
-        openIncludesModal(product.id, index);
+        openIncludesModal(product.id, highlightIndex);
       });
       
       const iconWrapper = document.createElement('span');
@@ -600,13 +608,11 @@ function openIncludesModal(productId, highlightIndex = null) {
   // Заполняем список комплектации
   listEl.innerHTML = '';
 
-  const targetItem =
-    highlightIndex !== null && Array.isArray(product.includesDetailed)
-      ? product.includesDetailed[highlightIndex]
-      : null;
   const resolvedHighlightIndex =
-    targetItem && detailedItems.includes(targetItem)
-      ? detailedItems.indexOf(targetItem)
+    typeof highlightIndex === 'number' &&
+    highlightIndex >= 0 &&
+    highlightIndex < detailedItems.length
+      ? highlightIndex
       : null;
 
   detailedItems.forEach((item, index) => {
