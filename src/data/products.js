@@ -7,6 +7,7 @@
  *    - Измените поля: name, description, fullDescription, features, specs
  *    - Для изменения изображений измените массив images
  *    - Для изменения фотографий в "Что входит в комплекс" измените includesDetailed[].image
+ *    - Чтобы временно скрыть карточку в комплектации, установите includesDetailed[].enabled = false
  * 
  * 2. РЕДАКТИРОВАНИЕ ФОТОГРАФИЙ:
  *    - Основные изображения товара: измените массив images
@@ -89,6 +90,7 @@ export const bitumenTanks = [
     ],
     includesDetailed: [
       {
+        enabled: false,
         title: 'Горизонтальная ёмкость 50 м³',
         description: 'Горизонтальная ёмкость из высококачественной стали с антикоррозийным покрытием. Диаметр 2.8 м, длина 8.5 м. Оптимальна для небольших производств.',
         image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=800&h=600&fit=crop' // Измените URL для замены фотографии
@@ -745,4 +747,3 @@ export const products = [
     images: [plantArt.cobalt, plantArt.hero, plantArt.lumen]
   }
 ];
-

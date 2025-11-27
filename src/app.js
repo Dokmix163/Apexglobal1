@@ -572,14 +572,22 @@ function openIncludesModal(productId, highlightIndex = null) {
   const titleEl = document.querySelector('#includes-modal-title');
   const listEl = document.querySelector('#includes-modal-list');
   
-  if (!product || !modal || !titleEl || !listEl || !product.includesDetailed) {
+  if (!product || !modal || !titleEl || !listEl) {
     console.error('Не удалось открыть модальное окно комплектации:', {
       product: !!product,
       modal: !!modal,
       titleEl: !!titleEl,
-      listEl: !!listEl,
-      hasIncludesDetailed: !!product?.includesDetailed
+      listEl: !!listEl
     });
+    return;
+  }
+
+  const detailedItems = Array.isArray(product.includesDetailed)
+    ? product.includesDetailed.filter((item) => item && item.enabled !== false)
+    : [];
+
+  if (detailedItems.length === 0) {
+    console.warn('Для этого продукта нет активных элементов includesDetailed');
     return;
   }
 
@@ -591,13 +599,23 @@ function openIncludesModal(productId, highlightIndex = null) {
 
   // Заполняем список комплектации
   listEl.innerHTML = '';
-  product.includesDetailed.forEach((item, index) => {
+
+  const targetItem =
+    highlightIndex !== null && Array.isArray(product.includesDetailed)
+      ? product.includesDetailed[highlightIndex]
+      : null;
+  const resolvedHighlightIndex =
+    targetItem && detailedItems.includes(targetItem)
+      ? detailedItems.indexOf(targetItem)
+      : null;
+
+  detailedItems.forEach((item, index) => {
     const includeCard = document.createElement('div');
     includeCard.className = 'include-detail-card';
     includeCard.style.opacity = '0';
     includeCard.style.transform = 'translateY(20px)';
     
-    if (highlightIndex !== null && index === highlightIndex) {
+    if (resolvedHighlightIndex !== null && index === resolvedHighlightIndex) {
       includeCard.classList.add('highlighted');
     }
     
@@ -608,7 +626,7 @@ function openIncludesModal(productId, highlightIndex = null) {
       includeCard.style.transform = 'translateY(0)';
       
       // Прокручиваем к выделенному элементу
-      if (highlightIndex !== null && index === highlightIndex) {
+      if (resolvedHighlightIndex !== null && index === resolvedHighlightIndex) {
         setTimeout(() => {
           includeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 500);
