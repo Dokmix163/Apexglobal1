@@ -136,7 +136,7 @@ export const bitumenTanks = [
   },
   {
     id: 'bitumen-tank-100',
-    enabled: true,
+    enabled: false,
     name: 'Битумная ёмкость 100 м³',
     capacity: 100,
     capacityCategory: 'medium',
@@ -207,7 +207,7 @@ export const bitumenTanks = [
   },
   {
     id: 'bitumen-tank-150',
-    enabled: true,
+    enabled: false,
     name: 'Битумная ёмкость 150 м³',
     capacity: 150,
     capacityCategory: 'large',
@@ -278,7 +278,7 @@ export const bitumenTanks = [
   },
   {
     id: 'bitumen-tank-200',
-    enabled: true,
+    enabled: false,
     name: 'Битумная ёмкость 200 м³',
     capacity: 200,
     capacityCategory: 'large',
@@ -353,7 +353,7 @@ export const bitumenTanks = [
 export const products = [
   {
     id: 'apexcore-320',
-    enabled: true, // Установите false, чтобы скрыть товар
+    enabled: false, // Установите false, чтобы скрыть товар
     name: 'ApexCore 320',
     capacity: 320,
     capacityCategory: 'high',
@@ -422,7 +422,7 @@ export const products = [
   },
   {
     id: 'apexflex-210',
-    enabled: true,
+    enabled: false,
     name: 'ApexFlex 210',
     capacity: 210,
     capacityCategory: 'medium',
@@ -482,7 +482,7 @@ export const products = [
   },
   {
     id: 'apexmobile-160',
-    enabled: true,
+    enabled: false,
     name: 'ApexMobile 160',
     capacity: 160,
     capacityCategory: 'low',
@@ -550,7 +550,7 @@ export const products = [
   },
   {
     id: 'apexeco-260',
-    enabled: true,
+    enabled: false,
     name: 'ApexEco 260',
     capacity: 260,
     capacityCategory: 'medium',
@@ -618,7 +618,7 @@ export const products = [
   },
   {
     id: 'apexmicro-140',
-    enabled: true,
+    enabled: false,
     name: 'ApexMicro 140',
     capacity: 140,
     capacityCategory: 'low',
@@ -686,7 +686,7 @@ export const products = [
   },
   {
     id: 'apexpro-400',
-    enabled: true,
+    enabled: false,
     name: 'ApexPro 400',
     capacity: 400,
     capacityCategory: 'high',
