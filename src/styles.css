@@ -784,7 +784,8 @@ video, iframe {
 }
 
 .filter-group select:focus {
-  outline: none;
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
   border-color: rgba(201, 168, 87, 0.45);
   box-shadow: 0 0 0 3px rgba(201, 168, 87, 0.15);
 }
@@ -1205,9 +1206,28 @@ video, iframe {
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
-  outline: none;
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
   border-color: rgba(201, 168, 87, 0.45);
   box-shadow: 0 0 0 3px rgba(201, 168, 87, 0.12);
+}
+
+.form-group.has-error input,
+.form-group.has-error textarea,
+.form-group.has-error select {
+  border-color: rgba(255, 107, 107, 0.9);
+  box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
+}
+
+.form-group.has-error label {
+  color: var(--error);
+}
+
+.form-error {
+  min-height: 0.9rem;
+  font-size: 0.78rem;
+  color: var(--error);
+  margin: -4px 0 0;
 }
 
 .form-group textarea {
@@ -1379,6 +1399,11 @@ video, iframe {
 .toast.error {
   border-color: rgba(255, 107, 107, 0.35);
   color: var(--error);
+}
+
+.toast.info {
+  border-color: rgba(201, 168, 87, 0.35);
+  color: var(--gold);
 }
 
 .toast.visible {

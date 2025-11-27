@@ -56,16 +56,13 @@ function validateInquiry(body) {
   if (!data.name || data.name.length < 2) {
     errors.push('Укажите имя (не менее 2 символов).');
   }
-  if (!data.productId) {
-    errors.push('Выберите продукт.');
-  }
   if (!data.phone && !data.email) {
     errors.push('Укажите телефон или email.');
   }
 
   if (data.phone) {
     const digits = data.phone.replace(/\D+/g, '');
-    if (!(digits.length >= 11 && (digits.startsWith('7') || digits.startsWith('8')))) {
+    if (digits.length < 10) {
       errors.push('Телефон указан в неверном формате.');
     }
   }
@@ -148,7 +145,10 @@ async function sendInquiryEmail(inquiryData) {
 
   const emailTo = process.env.EMAIL_TO || 'sales@apexglobals.ru';
   const emailFrom = process.env.EMAIL_FROM || process.env.SMTP_USER;
-  const productName = PRODUCT_NAMES[inquiryData.productId] || inquiryData.productId;
+  const productName =
+    PRODUCT_NAMES[inquiryData.productId] ||
+    inquiryData.productId ||
+    'Запрос подбора решения';
 
   const subject = `Новая заявка с сайта ApexGlobal: ${productName}`;
 

@@ -51,6 +51,44 @@ const consentModal = document.querySelector('#consent-modal');
 let currentGalleryIndex = 0;
 let currentProductImages = [];
 let previousContactFocusElement = null;
+const errorFields = ['name', 'phone', 'productId'];
+
+function clearFieldErrors() {
+  errorFields.forEach((fieldId) => {
+    const field = document.querySelector(`#${fieldId}`);
+    const formGroup = field?.closest('.form-group');
+    const errorEl = document.querySelector(`[data-error-for="${fieldId}"]`);
+    field?.removeAttribute('aria-invalid');
+    if (formGroup) {
+      formGroup.classList.remove('has-error');
+    }
+    if (errorEl) {
+      errorEl.textContent = '';
+    }
+  });
+}
+
+function setFieldError(fieldId, message) {
+  const field = document.querySelector(`#${fieldId}`);
+  const errorEl = document.querySelector(`[data-error-for="${fieldId}"]`);
+  const formGroup = field?.closest('.form-group');
+  if (!field || !formGroup) {
+    return;
+  }
+  if (message) {
+    formGroup.classList.add('has-error');
+    field.setAttribute('aria-invalid', 'true');
+    if (errorEl) {
+      errorEl.textContent = message;
+    }
+  } else {
+    formGroup.classList.remove('has-error');
+    field.removeAttribute('aria-invalid');
+    if (errorEl) {
+      errorEl.textContent = '';
+    }
+  }
+}
 
 // Функция для получения SVG иконки по типу
 function getIconSVG(iconType) {
@@ -782,11 +820,8 @@ function openContactModal() {
     contactModalClose?.focus();
   }
   
-  // Инициализируем маску телефона для модальной формы
   if (phoneInputModal) {
-    if (!phoneInputModal.value.trim()) {
-      phoneInputModal.value = '+7 ';
-    }
+    phoneInputModal.setAttribute('placeholder', '+7 (___) ___-__-__');
   }
 }
 
@@ -902,6 +937,7 @@ async function handleSubmit(event) {
   }
 
   const formData = new FormData(form);
+  clearFieldErrors();
 
   // Honeypot: silently drop
   if (formData.get('website')) {
@@ -929,7 +965,9 @@ async function handleSubmit(event) {
   // Проверка обязательных полей
   const name = formData.get('name')?.trim() || '';
   if (!name || name.length < 2) {
-    showToast('Укажите имя и компанию (не менее 2 символов).', 'error');
+    const message = 'Укажите имя и компанию (не менее 2 символов).';
+    showToast(message, 'error');
+    setFieldError('name', message);
     document.querySelector('#name')?.focus();
     // Восстанавливаем состояние кнопки
     if (submitBtn) {
@@ -942,29 +980,20 @@ async function handleSubmit(event) {
 
   const rawPhone = String(formData.get('phone') || '').trim();
   const phoneDigits = rawPhone.replace(/\D+/g, '');
-  const isValidPhone = phoneDigits.length >= 11 && (phoneDigits.startsWith('7') || phoneDigits.startsWith('8'));
+  const isValidPhone = phoneDigits.length >= 10;
 
   const payload = {
     name: name,
     phone: rawPhone,
     email: formData.get('email')?.trim(),
-    productId: formData.get('productId')?.trim(),
+    productId: formData.get('productId')?.trim() || state.selectedProductId || '',
     message: formData.get('message')?.trim()
   };
 
-  if (!payload.productId) {
-    showToast('Выберите комплекс в каталоге перед отправкой заявки.', 'error');
-    // Восстанавливаем состояние кнопки
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      if (submitText) submitText.style.display = 'inline';
-      if (submitSpinner) submitSpinner.style.display = 'none';
-    }
-    return;
-  }
-
   if (!isValidPhone) {
-    showToast('Введите корректный телефон в формате +7 (___) ___-__-__', 'error');
+    const message = 'Введите корректный телефон (не менее 10 цифр).';
+    showToast(message, 'error');
+    setFieldError('phone', message);
     phoneInput?.focus();
     // Восстанавливаем состояние кнопки
     if (submitBtn) {
@@ -1011,6 +1040,7 @@ async function handleSubmit(event) {
     
     // Сбрасываем выбранный продукт после успешной отправки
     selectProduct(null);
+    clearFieldErrors();
     
     // Восстанавливаем маску телефона
     if (phoneInput && !phoneInput.value.trim()) {
@@ -1370,36 +1400,9 @@ function init() {
 
   form?.addEventListener('submit', handleSubmit);
 
-  // Simple phone mask
   if (phoneInput) {
-    // Prefill with +7 on load if empty
-    if (!phoneInput.value.trim()) {
-      phoneInput.value = '+7 ';
-    }
-
-    // Ensure +7 appears on focus if cleared
     phoneInput.addEventListener('focus', () => {
-      if (!phoneInput.value.trim() || !phoneInput.value.trim().startsWith('+7')) {
-        phoneInput.value = '+7 ';
-      }
-    });
-
-    phoneInput.addEventListener('input', () => {
-      let digits = phoneInput.value.replace(/\D+/g, '');
-      if (digits.startsWith('8')) digits = '7' + digits.slice(1);
-      if (!digits.startsWith('7')) digits = '7' + digits;
-      const parts = ['+7'];
-      if (digits.length > 1) {
-        const a = digits.slice(1, 4);
-        if (a) parts.push(` (${a}`);
-        const b = digits.slice(4, 7);
-        if (b) parts.push(`) ${b}`);
-        const c = digits.slice(7, 9);
-        if (c) parts.push(`-${c}`);
-        const d = digits.slice(9, 11);
-        if (d) parts.push(`-${d}`);
-      }
-      phoneInput.value = parts.join('');
+      phoneInput.setAttribute('placeholder', '+7 (___) ___-__-__');
     });
   }
 
@@ -1458,180 +1461,80 @@ function init() {
 
   // Обработчик формы в модальном окне
   if (contactFormModal) {
-    contactFormModal.addEventListener('submit', async (event) => {
+    contactFormModal.addEventListener('submit', (event) => {
       event.preventDefault();
-      
-      const formData = new FormData(contactFormModal);
-      
-      // Honeypot: silently drop
-      if (formData.get('website')) {
-        // Восстанавливаем состояние кнопки перед выходом
+
+      const submitBtnModal = contactFormModal.querySelector('button[type="submit"]');
+      const submitTextModal = submitBtnModal?.querySelector('.submit-text');
+      const submitSpinnerModal = submitBtnModal?.querySelector('.submit-spinner');
+      const modalFormData = new FormData(contactFormModal);
+
+      const restoreModalButton = () => {
         if (submitBtnModal) {
           submitBtnModal.disabled = false;
           if (submitTextModal) submitTextModal.style.display = 'inline';
           if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
         }
-        return;
-      }
+      };
 
-      const submitBtnModal = contactFormModal.querySelector('button[type="submit"]');
-      const submitTextModal = submitBtnModal?.querySelector('.submit-text');
-      const submitSpinnerModal = submitBtnModal?.querySelector('.submit-spinner');
-      
-      // Показываем индикатор отправки
       if (submitBtnModal) {
         submitBtnModal.disabled = true;
         if (submitTextModal) submitTextModal.style.display = 'none';
         if (submitSpinnerModal) submitSpinnerModal.style.display = 'inline-flex';
       }
 
+      if (modalFormData.get('website')) {
+        restoreModalButton();
+        return;
+      }
+
       if (consentModal && !consentModal.checked) {
         showToast('Подтвердите согласие на обработку персональных данных.', 'error');
         consentModal.focus();
-        // Восстанавливаем состояние кнопки
-        if (submitBtnModal) {
-          submitBtnModal.disabled = false;
-          if (submitTextModal) submitTextModal.style.display = 'inline';
-          if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
-        }
+        restoreModalButton();
         return;
       }
 
-      // Проверка обязательных полей
-      const name = formData.get('name')?.trim() || '';
-      if (!name || name.length < 2) {
+      const nameModal = modalFormData.get('name')?.trim() || '';
+      if (!nameModal || nameModal.length < 2) {
         showToast('Укажите имя и компанию (не менее 2 символов).', 'error');
         document.querySelector('#name-modal')?.focus();
-        // Восстанавливаем состояние кнопки
-        if (submitBtnModal) {
-          submitBtnModal.disabled = false;
-          if (submitTextModal) submitTextModal.style.display = 'inline';
-          if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
-        }
+        restoreModalButton();
         return;
       }
 
-      const rawPhone = String(formData.get('phone') || '').trim();
-      const phoneDigits = rawPhone.replace(/\D+/g, '');
-      const isValidPhone = phoneDigits.length >= 11 && (phoneDigits.startsWith('7') || phoneDigits.startsWith('8'));
-
-      const payload = {
-        name: name,
-        phone: rawPhone,
-        email: formData.get('email')?.trim(),
-        productId: formData.get('productId')?.trim(),
-        message: formData.get('message')?.trim()
-      };
-
-      if (!payload.productId) {
-        showToast('Выберите комплекс в каталоге перед отправкой заявки.', 'error');
-        // Восстанавливаем состояние кнопки
-        if (submitBtnModal) {
-          submitBtnModal.disabled = false;
-          if (submitTextModal) submitTextModal.style.display = 'inline';
-          if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
-        }
-        return;
-      }
-
-      if (!isValidPhone) {
-        showToast('Введите корректный телефон в формате +7 (___) ___-__-__', 'error');
+      const phoneModal = String(modalFormData.get('phone') || '').trim();
+      if (phoneModal.replace(/\D+/g, '').length < 10) {
+        showToast('Введите корректный телефон (не менее 10 цифр).', 'error');
         phoneInputModal?.focus();
-        // Восстанавливаем состояние кнопки
-        if (submitBtnModal) {
-          submitBtnModal.disabled = false;
-          if (submitTextModal) submitTextModal.style.display = 'inline';
-          if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
-        }
+        restoreModalButton();
         return;
       }
 
-      try {
-        const response = await fetch('/api/inquiry', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
+      if (!form) {
+        restoreModalButton();
+        return;
+      }
 
-        // Проверяем, что ответ не пустой
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          throw new Error('Сервер вернул неверный формат ответа');
-        }
+      form.querySelector('#name').value = nameModal;
+      form.querySelector('#phone').value = phoneModal;
+      form.querySelector('#email').value = modalFormData.get('email')?.trim() || '';
+      form.querySelector('#message').value = modalFormData.get('message')?.trim() || '';
 
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.message || 'Не удалось отправить заявку');
-        }
-
-        showToast(result.message || 'Заявка отправлена', 'success');
-        
-        // Закрываем модальное окно формы
-        closeContactModal();
-        
-        // Сбрасываем форму и выбор продукта
-        contactFormModal.reset();
+      const modalProductId = modalFormData.get('productId')?.trim() || '';
+      if (selectedProductInput) {
+        selectedProductInput.value = modalProductId;
+      }
+      if (modalProductId) {
+        selectProduct(modalProductId);
+      } else {
         selectProduct(null);
-        
-        // Восстанавливаем маску телефона
-        if (phoneInputModal && !phoneInputModal.value.trim()) {
-          phoneInputModal.value = '+7 ';
-        }
-      } catch (error) {
-        // Обрабатываем разные типы ошибок
-        let errorMessage = 'Произошла техническая ошибка. Попробуйте повторить попытку позже.';
-        
-        if (error instanceof TypeError && error.message.includes('fetch')) {
-          errorMessage = 'Проблема с подключением к интернету. Проверьте соединение и попробуйте снова.';
-        } else if (error instanceof SyntaxError) {
-          errorMessage = 'Ошибка обработки ответа сервера. Попробуйте позже.';
-        } else if (error.message) {
-          errorMessage = error.message;
-        }
-        
-        showToast(errorMessage, 'error');
-      } finally {
-        // Убираем индикатор отправки
-        if (submitBtnModal) {
-          submitBtnModal.disabled = false;
-          if (submitTextModal) submitTextModal.style.display = 'inline';
-          if (submitSpinnerModal) submitSpinnerModal.style.display = 'none';
-        }
       }
-    });
-  }
 
-  // Маска телефона для модальной формы
-  if (phoneInputModal) {
-    if (!phoneInputModal.value.trim()) {
-      phoneInputModal.value = '+7 ';
-    }
-
-    phoneInputModal.addEventListener('focus', () => {
-      if (!phoneInputModal.value.trim() || !phoneInputModal.value.trim().startsWith('+7')) {
-        phoneInputModal.value = '+7 ';
-      }
-    });
-
-    phoneInputModal.addEventListener('input', () => {
-      let digits = phoneInputModal.value.replace(/\D+/g, '');
-      if (digits.startsWith('8')) digits = '7' + digits.slice(1);
-      if (!digits.startsWith('7')) digits = '7' + digits;
-      const parts = ['+7'];
-      if (digits.length > 1) {
-        const a = digits.slice(1, 4);
-        if (a) parts.push(` (${a}`);
-        const b = digits.slice(4, 7);
-        if (b) parts.push(`) ${b}`);
-        const c = digits.slice(7, 9);
-        if (c) parts.push(`-${c}`);
-        const d = digits.slice(9, 11);
-        if (d) parts.push(`-${d}`);
-      }
-      phoneInputModal.value = parts.join('');
+      consent.checked = true;
+      restoreModalButton();
+      closeContactModal();
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     });
   }
 
@@ -1655,7 +1558,7 @@ window.addEventListener('unhandledrejection', (event) => {
 
 // Регистрация Service Worker для PWA (с поддержкой Safari)
 if ('serviceWorker' in navigator) {
-  // Safari требует полной загрузки страницы перед регистрацией SW
+  let updateNotified = false;
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('./sw.js', {
@@ -1663,31 +1566,25 @@ if ('serviceWorker' in navigator) {
       })
       .then((registration) => {
         console.log('SW registered:', registration);
-        // Проверка обновлений для Safari
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                console.log('New SW available');
+              if (
+                newWorker.state === 'installed' &&
+                navigator.serviceWorker.controller &&
+                !updateNotified
+              ) {
+                updateNotified = true;
+                showToast('Доступна новая версия сайта. Обновите страницу, когда будете готовы.', 'info');
               }
             });
           }
         });
       })
       .catch((error) => {
-        // Safari может блокировать SW в некоторых случаях
         console.log('SW registration failed:', error);
       });
-  });
-  
-  // Обработка обновлений для Safari
-  let refreshing = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!refreshing) {
-      refreshing = true;
-      window.location.reload();
-    }
   });
 }
 
@@ -1696,16 +1593,31 @@ function setupEngagementFeatures() {
   // Баннер консультации
   const consultationBanner = document.querySelector('#consultation-banner');
   const consultationBannerClose = document.querySelector('.consultation-banner-close');
-  
-  // Показываем баннер через 5 секунд после загрузки страницы
-  setTimeout(() => {
+  const showBannerIfNeeded = () => {
+    if (!consultationBanner) {
+      return;
+    }
     const wasShown = sessionStorage.getItem('consultation-banner-shown');
-    if (!wasShown && consultationBanner) {
+    if (!wasShown) {
       consultationBanner.setAttribute('aria-hidden', 'false');
       consultationBanner.classList.add('is-visible');
       sessionStorage.setItem('consultation-banner-shown', 'true');
     }
-  }, 5000);
+  };
+
+  const handleScrollForBanner = () => {
+    if (window.scrollY > 600) {
+      showBannerIfNeeded();
+      window.removeEventListener('scroll', handleScrollForBanner);
+    }
+  };
+
+  window.addEventListener('scroll', handleScrollForBanner, { passive: true });
+
+  setTimeout(() => {
+    window.removeEventListener('scroll', handleScrollForBanner);
+    showBannerIfNeeded();
+  }, 30000);
 
   if (consultationBannerClose) {
     consultationBannerClose.addEventListener('click', () => {
