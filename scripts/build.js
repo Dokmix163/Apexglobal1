@@ -59,6 +59,27 @@ async function copyDir(src, dest) {
   }
 }
 
+async function versionProductData() {
+  const appPath = path.join(DIST_DIR, 'app.js');
+  const productsPath = path.join(DIST_DIR, 'data', 'products.js');
+
+  if (!fs.existsSync(appPath) || !fs.existsSync(productsPath)) {
+    return;
+  }
+
+  const productsContent = await fsp.readFile(productsPath, 'utf8');
+  const dataHash = getFileHash(productsContent);
+  const importRegex = /(\.\/data\/products\.js)(\?v=[^'"`]*)?/g;
+
+  let appContent = await fsp.readFile(appPath, 'utf8');
+  const updatedAppContent = appContent.replace(importRegex, `./data/products.js?v=${dataHash}`);
+
+  if (updatedAppContent !== appContent) {
+    await fsp.writeFile(appPath, updatedAppContent, 'utf8');
+    console.log(`• Версия данных products.js обновлена: ${dataHash}`);
+  }
+}
+
 async function updateHTMLWithVersions() {
   // Читаем файлы и генерируем хэши
   const cssPath = path.join(DIST_DIR, 'styles.css');
@@ -148,6 +169,9 @@ async function build() {
   await copyDir(SRC_DIR, DIST_DIR);
 
   console.log('• CSS обработан с автопрефиксером');
+  
+  console.log('• Обновление версии данных…');
+  await versionProductData();
   
   console.log('• Обновление версий в HTML…');
   await updateHTMLWithVersions();
